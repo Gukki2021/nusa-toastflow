@@ -1,0 +1,22 @@
+# --- Private club data: NEVER commit (contains member names / emails) ---
+data/members.json
+data/history.json
+data/member-pathways.json
+
+# Keep the anonymised samples and the public Pathways catalogue tracked:
+!data/members.sample.json
+!data/history.sample.json
+!data/projects.json
+
+# Source spreadsheets / exports
+*.xlsx
+*.pdf
+*.zip
+ToastFlow-Programming-*.csv
+# …but keep the bundled official Toastmasters reference PDF
+!assets/reference/*.pdf
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+node_modules/

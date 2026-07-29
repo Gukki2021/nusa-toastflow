@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ToastFlow · NUS Alumni Toastmasters</title>
+<meta name="supabase-url" content="https://bizrpwkpcrzywihbecjb.supabase.co">
+<meta name="supabase-anon-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpenJwd2twY3J6eXdpaGJlY2piIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1MjgzODQsImV4cCI6MjEwMDEwNDM4NH0.mmgSXEuX9AvcJ5XYLMONvCQ2S7KpM2wC1w-ofcxt1xc">
+<!-- Meeting Appointment Holders sheet (shared "anyone with link"), read as CSV by date. Leave blank to disable. -->
+<meta name="appointments-csv-url" content="https://docs.google.com/spreadsheets/d/1IOs1UZqDV0r5e08W3cuW2DAWTLx86FZIDuByiVvHKCc/export?format=csv&amp;gid=1368429787">
+<style>
+:root{--navy:#18243f;--red:#b52f3b;--gold:#d7ad59;--cream:#f7f3eb;--paper:#fffdfa;--ink:#202638;--muted:#6d7382;--line:#e5ded2}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--paper);color:var(--ink)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.top{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px 6vw;background:rgba(255,253,250,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}.mark{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--red);color:#fff;font-weight:800}
+.brand strong,.brand small{display:block}.brand small{color:var(--muted);font-size:11px}
+.btn{border:0;border-radius:999px;padding:11px 18px;font-weight:750}.primary{background:var(--red);color:#fff}.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.hero{padding:78px 7vw 54px;background:radial-gradient(circle at 80% 15%,rgba(215,173,89,.18),transparent 28%),linear-gradient(135deg,#fbf7ef,#fffdfa)}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--red)}
+h1,h2{font-family:Georgia,serif;line-height:1.05}h1{font-size:clamp(46px,7vw,82px);margin:18px 0;max-width:900px}h1 em{color:var(--red)}
+.hero p{font-size:18px;color:var(--muted);max-width:720px}
+.notice{display:inline-flex;gap:10px;align-items:center;margin-top:24px;padding:12px 16px;border-radius:14px;background:#fff;border:1px solid var(--line);font-size:13px}
+.section{padding:72px 7vw}.section-head{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:30px}.section h2{font-size:clamp(36px,5vw,56px);margin:10px 0}
+.month-tabs{display:flex;flex-wrap:wrap;gap:8px}.month-tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 14px;font-weight:700}.month-tabs button.active{background:var(--navy);color:#fff}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:24px}
+.card{background:#fff;border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:0 18px 45px rgba(24,36,63,.07)}
+.meeting-head{padding:26px;background:var(--navy);color:#fff;display:flex;justify-content:space-between;gap:20px}
+.date strong{font-family:Georgia,serif;font-size:54px;display:block;line-height:.9}.date span{color:var(--gold);font-weight:800;letter-spacing:.1em}
+.meeting-head h3{font-size:25px;margin:0 0 6px}.meeting-head p{margin:0;color:#c7cfdd}.body{padding:26px}
+.meta{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin-bottom:18px}
+.slots{display:grid;gap:10px}.slot{display:flex;justify-content:space-between;align-items:center;padding:14px;border:1px dashed #d8cdbb;border-radius:14px;background:#fffdf8}
+.slot.booked{border-style:solid;background:#f7fbf8}.slot small{display:block;color:var(--muted);margin-top:3px}
+.open{font-size:11px;font-weight:850;color:var(--red);letter-spacing:.07em}.booked .open{color:#267651}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.roles{display:grid;gap:10px}.role{display:flex;justify-content:space-between;align-items:center;padding:14px;border:1px solid var(--line);border-radius:14px}
+.role span{font-weight:700}.role button{border:0;border-radius:999px;padding:8px 12px;background:var(--cream);font-weight:750}
+.footer-note{padding:16px 26px;background:var(--cream);font-size:12px;color:var(--muted)}
+dialog{border:0;border-radius:24px;padding:0;width:min(520px,calc(100% - 24px));box-shadow:0 24px 70px rgba(0,0,0,.25)}
+dialog#adminModal{width:min(960px,calc(100% - 24px))}
+dialog::backdrop{background:rgba(10,18,35,.7)}form{padding:28px}.close{float:right;border:0;background:none;font-size:26px}
+label{display:block;font-size:12px;font-weight:800;margin-top:14px}
+input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}.hint{font-size:11px;color:var(--muted);margin-top:14px}
+.toast{position:fixed;right:20px;bottom:20px;background:var(--navy);color:#fff;padding:13px 16px;border-radius:12px;display:none;max-width:340px}.toast.show{display:block}
+.admin-tools{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.admin-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.metric{padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--cream)}.metric strong{display:block;font-size:24px}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px}
+.admin-table th,.admin-table td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+.gap{color:var(--red);font-weight:800}.ok{color:#267651;font-weight:800}
+.recs{display:flex;flex-direction:column;gap:6px}
+.rec{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;padding:7px 9px;border:1px solid var(--line);border-radius:10px;background:#fbfaf6}
+.rec .nm{font-weight:750}.rec .why{color:var(--muted);font-size:11px;display:block;margin-top:2px}
+.rec .pick{border:0;background:var(--navy);color:#fff;border-radius:999px;padding:5px 11px;font-size:11px;font-weight:750;white-space:nowrap}
+.rec .sc{font-size:10px;color:var(--gold);font-weight:800}
+.tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 7px;border-radius:999px;background:var(--cream);color:var(--navy);margin-left:6px}
+.role-select{width:100%;max-width:200px;padding:7px 8px;margin:0;font-size:12px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.editable{cursor:text;padding:3px 5px;border-radius:6px;min-height:22px}.editable:hover{background:var(--cream);outline:1px dashed var(--line)}
+@media(max-width:700px){.admin-summary{grid-template-columns:1fr}.admin-table{display:block;overflow:auto}}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}}
+@media(max-width:600px){.top{padding:13px 16px}.top .primary{display:none}.hero,.section{padding-left:20px;padding-right:20px}.meeting-head{flex-direction:column}.brand strong{font-size:12px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand"><div class="mark">TM</div><div><strong>ToastFlow · NUS Alumni Toastmasters</strong><small>Club meeting &amp; role planner</small></div></div><div style="display:flex;gap:8px"><a class="btn ghost" href="reference.html" style="text-decoration:none">Pathways</a><button class="btn ghost" onclick="openAdmin()">Admin</button><button class="btn primary" onclick="openBooking()">Reserve a Slot</button></div></header>
+
+<section class="hero"><div class="eyebrow">2026 PROGRAMMING SHEET</div><h1>Choose your date.<br><em>Step up and speak.</em></h1><p>Our club meets on the second Friday of every month. Members can reserve a Prepared Speech or take an open meeting role without creating an account — with smart, fair role suggestions working behind the scenes.</p><div class="notice">📅 Upcoming: 14 Aug · 11 Sep · 9 Oct · 13 Nov · 11 Dec 2026</div></section>
+
+<section class="section"><div class="section-head"><div><div class="eyebrow">UPCOMING MEETINGS</div><h2>From now to year-end.</h2></div><div class="month-tabs" id="tabs"></div></div>
+<div class="grid"><article class="card" id="meetingCard"></article>
+<aside class="card"><div class="body"><div class="eyebrow">OPEN MEETING ROLES</div><h2 style="font-size:34px">Take a role. Build a skill.</h2><div class="roles" id="roles"></div></div><div class="footer-note">No account required. Enter your name and contact details so the club can confirm your reservation.</div></aside></div></section>
+
+<dialog id="modal"><form id="form"><button type="button" class="close" onclick="modal.close()">×</button><div class="eyebrow">QUICK RESERVATION</div><h2 style="font-size:38px;margin-bottom:6px">Reserve without logging in.</h2><p style="color:var(--muted);margin-top:0">Just your name and a role — that's all you need.</p><label>Your name<input id="name" required placeholder=""></label><label>Meeting<select id="meeting" required></select></label><label>Reservation type<select id="role" required></select></label><label>Pathways project (for prepared speeches)<input id="project" list="pathwaysList" placeholder="e.g. PM L2: Understanding Your Communication Style"><datalist id="pathwaysList"></datalist></label><label>Email or WhatsApp <span style="font-weight:400;color:var(--muted)">(optional)</span><input id="contact" placeholder="Optional — only if you'd like a confirmation"></label><label>Speech title / note <span style="font-weight:400;color:var(--muted)">(optional)</span><textarea id="note" rows="2" placeholder=""></textarea></label><div class="form-actions"><button type="button" class="btn ghost" onclick="modal.close()">Cancel</button><button class="btn primary">Reserve</button></div><div class="hint">No account required. Anything you share is visible only to the club's planning team.</div></form></dialog>
+
+<dialog id="willModal"><form id="willForm"><button type="button" class="close" onclick="willModal.close()">×</button><div class="eyebrow">REGISTER INTEREST</div><h2 style="font-size:38px;margin-bottom:6px">Tell us what you'd like to do.</h2><p style="color:var(--muted);margin-top:0">No login, no contact details — just your name and the roles you're happy to take. The club uses this to plan.</p><label>Your name<input id="willName" required placeholder=""></label><label>Meeting<select id="willMeeting" required></select></label><label>Roles you're willing to take</label><div id="willRoles" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px"></div><label>Note (optional)<input id="willNote" placeholder="e.g. prefer an evaluator role, or a speech title"></label><div class="form-actions"><button type="button" class="btn ghost" onclick="willModal.close()">Cancel</button><button class="btn primary">Submit interest</button></div><div class="hint">You can submit again anytime to update your choices. Nothing is confirmed until roles are assigned.</div></form></dialog>
+
+<dialog id="loginModal"><form id="loginForm"><button type="button" class="close" onclick="loginModal.close()">×</button><div class="eyebrow">CLUB ADMIN</div><h2 style="font-size:34px;margin-bottom:6px">Enter passcode</h2><p style="color:var(--muted);margin-top:0">Exco members only. Enter the shared passcode to open the planner.</p><label>Passcode<span style="display:flex;gap:6px;align-items:stretch"><input id="loginPass" type="password" autocomplete="off" required style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;margin-top:7px" onclick="togglePass('loginPass',this)" aria-label="Show or hide passcode">👁</button></span></label><div class="form-actions"><button type="button" class="btn ghost" onclick="loginModal.close()">Cancel</button><button class="btn primary">Enter</button></div><div class="hint" id="loginErr" style="color:var(--red);display:none">Wrong passcode — try again.</div></form></dialog>
+
+<dialog id="adminModal"><form method="dialog"><button type="button" class="close" onclick="adminModal.close()">×</button><div class="eyebrow">CLUB ADMIN</div><h2 style="font-size:38px;margin-bottom:6px">Programming dashboard</h2><p style="color:var(--muted);margin-top:0">Review reservations, get smart role suggestions from past meetings, and generate this month's programming sheet.</p>
+<label>Meeting<select id="adminMeeting" onchange="renderAdmin()"></select></label>
+<label>Venue <span style="font-weight:400;color:var(--muted)">— shown on the site &amp; programming sheet</span><span style="display:flex;gap:8px"><input id="venueInput" placeholder="e.g. SMU … Classroom 2.2 (or leave for 'To be confirmed')" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveVenue()">Save venue</button></span></label>
+<div class="admin-summary" id="adminSummary"></div>
+<div class="admin-tools">
+  <button type="button" class="btn primary" onclick="generateSheet()">📄 Generate Programming Sheet</button>
+  <button type="button" class="btn ghost" onclick="exportCSV()">Export CSV</button>
+  <button type="button" class="btn ghost" onclick="copySheetData()">Copy for Google Sheets</button>
+  <button type="button" class="btn ghost" onclick="toggleRoster()">Roster &amp; Pathways</button>
+  <button type="button" class="btn ghost" onclick="loadBookings().then(renderAdmin)">Refresh</button>
+</div>
+<div id="rosterBox" style="display:none;margin:8px 0 4px"></div>
+<div id="willBox" style="display:none;margin:8px 0 4px"></div>
+<div id="adminTable"></div>
+<div class="hint">Recommendations are computed from the historical Program Plan (rotation fairness, role freshness &amp; Pathways level). They are suggestions — you decide. "Generate Programming Sheet" opens a print-ready sheet pre-filled with confirmed reservations.</div>
+</form></dialog>
+<div class="toast" id="toast"></div>
+
+<script src="scripts/recommend.js?v=9"></script>
+<script src="scripts/appointments.js?v=9"></script>
+<script>
+const SUPABASE_URL=document.querySelector('meta[name="supabase-url"]').content;
+const SUPABASE_ANON_KEY=document.querySelector('meta[name="supabase-anon-key"]').content;
+const configured=!SUPABASE_URL.includes('__SUPABASE_')&&!SUPABASE_ANON_KEY.includes('__SUPABASE_');
+const meetings=[
+{month:'August',date:'2026-08-14',day:'14',label:'AUG',theme:'Speak with Purpose'},
+{month:'September',date:'2026-09-11',day:'11',label:'SEP',theme:'Stories That Stay'},
+{month:'October',date:'2026-10-09',day:'09',label:'OCT',theme:'Courage in Communication'},
+{month:'November',date:'2026-11-13',day:'13',label:'NOV',theme:'Lead Through Listening'},
+{month:'December',date:'2026-12-11',day:'11',label:'DEC',theme:'Reflect, Celebrate, Grow'}
+];
+const roleNames=ToastFlow.ROLES;
+const MEETING_INFO={time:'7:30–9:50 PM'};
+// Venue is per-meeting. Only 14 Aug is confirmed; Sep–Dec rooms are still TBC.
+const SMU_DIRECTIONS='https://academy.smu.edu.sg/getting-smu/smu-school-economics-school-computing-information-systems-2';
+const VENUES={
+  '2026-08-14':{short:'SMU · Classroom 2.2',full:'Singapore Management University, School of Economics / School of Information Systems 2, Classroom 2.2',directions:SMU_DIRECTIONS}
+};
+let VENUE_OVERRIDES={}; // {date: venue text} maintained in the admin, stored in Supabase
+function venueFor(date){
+  if(VENUE_OVERRIDES[date]){const v=VENUE_OVERRIDES[date];return{short:v.length>28?v.slice(0,26)+'…':v,full:v,directions:/SMU|Stamford|Management University/i.test(v)?SMU_DIRECTIONS:''};}
+  return VENUES[date]||{short:'To be confirmed',full:'Venue to be confirmed',directions:''};
+}
+async function loadVenues(){if(!configured)return;try{const res=await fetch(`${SUPABASE_URL}/rest/v1/public_meeting_info?select=meeting_date,venue`,{headers});if(res.ok){VENUE_OVERRIDES={};(await res.json()).forEach(r=>{if(r.venue)VENUE_OVERRIDES[r.meeting_date]=r.venue;});}}catch(e){}}
+function saveVenue(){const el=document.getElementById('venueInput');if(!el)return;const v=el.value.trim();adminRpc('admin_set_venue',{p_meeting_date:currentAdminDate(),p_venue:v},'Venue saved.').then(()=>{VENUE_OVERRIDES[currentAdminDate()]=v;render();});}
+let active=0,selectedRole='Prepared Speech 1',bookings=[],loading=false;
+let MEMBERS=[],HISTORY=[],PROJECTS=[],PATHWAYS={paths:[],projects:[]},MEMBER_PATHWAYS=[],PATHOF={};
+let APPTS=null; // parsed Meeting Appointment Holders sheet (from published CSV)
+let WILLING=[]; // member willingness registrations (public_willingness)
+const APPTS_CSV_URL=(document.querySelector('meta[name="appointments-csv-url"]')||{}).content||'';
+const headers={'apikey':SUPABASE_ANON_KEY,'Authorization':`Bearer ${SUPABASE_ANON_KEY}`,'Content-Type':'application/json'};
+
+// ---- load recommendation data (members + history). Kept out of Supabase for privacy in v1. ----
+async function loadData(){
+  try{
+    const [m,h,p,pw]=await Promise.all([
+      fetch('data/members.json').then(r=>r.ok?r.json():[]),
+      fetch('data/history.json').then(r=>r.ok?r.json():[]),
+      fetch('data/projects.json').then(r=>r.ok?r.json():[]),
+      fetch('data/pathways.json').then(r=>r.ok?r.json():{paths:[],projects:[]})
+    ]);
+    MEMBERS=m;HISTORY=h;PROJECTS=p;PATHWAYS=pw;
+    // member -> current Pathway database (from Base Camp dashboard export)
+    try{MEMBER_PATHWAYS=await fetch('data/member-pathways.json').then(r=>r.ok?r.json():[]);}catch(_){MEMBER_PATHWAYS=[];}
+    PATHOF={};MEMBER_PATHWAYS.forEach(x=>{PATHOF[x.name.toLowerCase()]={path:x.currentPath,cred:x.credential};});
+    // build the Pathways project picker: path names first (to prefix), then project list
+    const opts=[
+      ...(PATHWAYS.paths||[]),
+      ...(PATHWAYS.projects||[]).map(pr=>`${pr.code}: ${pr.name}`)
+    ];
+    const list=document.getElementById('pathwaysList');
+    if(list)list.innerHTML=[...new Set(opts)].map(o=>`<option value="${o.replace(/"/g,'&quot;')}">`).join('');
+  }catch(e){console.warn('recommendation data not available',e)}
+  // Input source #2: the Meeting Appointment Holders Google Sheet (published as CSV).
+  // Its columns cover all dates, so it feeds BOTH live appointments and recommendation history.
+  if(APPTS_CSV_URL){
+    try{
+      APPTS=await ToastFlow.fetchAppointments(APPTS_CSV_URL);
+      if(APPTS&&APPTS.historyRows&&APPTS.historyRows.length)HISTORY=APPTS.historyRows; // live history wins over static file
+    }catch(e){console.warn('appointment CSV not available',e)}
+  }
+}
+
+function bookingsFor(date){return bookings.filter(x=>x.meeting_date===date)}
+// ---- member willingness (no-login role interest) ----
+async function loadWillingness(){if(!configured)return;try{const res=await fetch(`${SUPABASE_URL}/rest/v1/public_willingness?select=member_name,meeting_date,willing_roles,note&order=updated_at.desc`,{headers});if(res.ok)WILLING=await res.json();}catch(e){console.warn('willingness load failed',e);}}
+function willingFor(date){return WILLING.filter(w=>w.meeting_date===date)}
+function willingNamesFor(date,role){return willingFor(date).filter(w=>(w.willing_roles||[]).includes(role)).map(w=>w.member_name)}
+// Merge the two input sources for a meeting. Online reservations (Supabase) take
+// priority; the appointment sheet fills any role not reserved online.
+function apptFor(date){return (APPTS&&APPTS.byDate&&APPTS.byDate[date])||{}}
+function saaFor(date){return (APPTS&&APPTS.rawByDate&&APPTS.rawByDate[date]&&APPTS.rawByDate[date]['SAA'])||''}
+// hold types (planning placeholders, shown only in admin — never as detail to the public)
+function isExternal(name,note){return /\[EXTERNAL/i.test(note||'')||/^external\b/i.test(name||'')}
+function isSoftBlock(note){return /\[SOFTBLOCK\]/i.test(note||'')}
+function isHold(name,note){return isExternal(name,note)||isSoftBlock(note)}
+// tentative sheet notes (?, TBC, TBD, "one more", "to be decided") are NOT firm → treat as open
+function isTentative(v){return /\?|(^|[^a-z])(tbc|tbd)([^a-z]|$)|one more|to be decided/i.test(String(v||''))}
+// a slot counts as filled only if it has a real name and isn't left open/tentative
+function slotFilled(e){return !!(e&&e.name&&!e.open)}
+// notes are stored as "Pathways project — optional title"
+function projectOf(note){return String(note||'').split(' — ')[0].trim()}
+function titleOf(note){return String(note||'').split(' — ').slice(1).join(' — ').trim()}
+// does this text look like a real Pathways project (vs a speech title)?
+function looksLikeProject(s){return /\bL[1-5]\b|\bP[1-6]\b|ice breaker|vocal variety|body language|communication style|leadership style|mentoring|humou?r|storytelling|writing a speech|active listening|reflect on your path|evaluation and feedback/i.test(String(s||''))}
+// what to show in the admin Pathways column: the stored project if it looks like one,
+// else the member's current Pathway as a starting point (never the speech title).
+function displayProject(note,memberName){
+  const p=projectOf(note);
+  if(looksLikeProject(p))return{text:p,firm:true};
+  const pp=pathOf(memberName);
+  if(pp&&pp.path)return{text:pp.path,firm:false};
+  return{text:'',firm:false};
+}
+function mergedFor(date){
+  const out={};
+  const ap=apptFor(date);
+  for(const r in ap){
+    const nm=ap[r].name;
+    if(isTentative(nm))out[r]={name:'',source:'sheet',open:true,tentative:nm};   // open for booking, TBC noted for admin
+    else out[r]={name:nm,note:'',source:'sheet'};
+  }
+  bookingsFor(date).forEach(x=>{
+    const prev=out[x.reservation_type];
+    out[x.reservation_type]={name:x.member_name,note:x.note||'',source:'online',confirmed:!!x.confirmed,
+      ext:isExternal(x.member_name,x.note),soft:isSoftBlock(x.note),hold:isHold(x.member_name,x.note),
+      conflict:(prev&&prev.name&&!prev.open&&prev.name!==x.member_name)?prev.name:null};
+  });
+  return out;
+}
+function renderTabs(){tabs.innerHTML=meetings.map((m,i)=>`<button class="${i===active?'active':''}" onclick="active=${i};render()">${m.month}</button>`).join('')}
+function render(){renderTabs();const m=meetings[active],mg=mergedFor(m.date);const speechSlots=[1,2,3,4].map(n=>{const x=mg[`Prepared Speech ${n}`];const filled=slotFilled(x),hold=x&&x.hold;return `<div class="slot ${filled?'booked':''}"><div><strong>${filled?(hold?'Reserved':escapeHtml(x.name)):`Prepared Speech ${n}`}</strong><small>${filled?(hold?'Reserved':escapeHtml(x.note||'Reserved')):'Available for booking'}</small></div><span class="open">${filled?'BOOKED':'OPEN'}</span></div>`}).join('');meetingCard.innerHTML=`<div class="meeting-head"><div class="date"><strong>${m.day}</strong><span>${m.label} 2026</span></div><div><h3>${m.theme}</h3><p>Friday · ${MEETING_INFO.time} · ${venueFor(m.date).short}</p></div></div><div class="body"><div class="meta"><span>📅 ${new Date(m.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</span><span>🕜 ${MEETING_INFO.time}</span><span>📍 ${venueFor(m.date).full}${venueFor(m.date).directions?` · <a href="${venueFor(m.date).directions}" target="_blank" rel="noopener">Directions</a>`:''}</span></div><div class="slots">${loading?'<p>Refreshing live availability…</p>':speechSlots}</div><div class="actions"><button class="btn primary" onclick="openNextSpeech()">Reserve a Speech</button><button class="btn ghost" onclick="downloadICS(${active})">Add to Calendar</button><button class="btn ghost" onclick="shareMeeting(${active})">Share</button><button class="btn ghost" onclick="loadBookings()">Refresh</button></div></div><div class="footer-note">${configured?'Live shared availability powered by Supabase.':'Supabase setup required before public reservations can be saved.'}</div>`;renderRoles();populateForm()}
+function renderRoles(){const m=meetings[active],mg=mergedFor(m.date);roles.innerHTML=roleNames.slice(4).map(r=>{const x=mg[r];const filled=slotFilled(x),hold=x&&x.hold;return `<div class="role" ${hold?'style="opacity:.75"':''}><span>${filled?(hold?`${r} · <em>Reserved</em>`:`${r} · ${escapeHtml(x.name)}`):r}</span><button ${filled?'disabled':''} onclick="openBooking('${r}')">${filled?(hold?'Reserved':'Taken'):'Take role'}</button></div>`}).join('')}
+function populateForm(){meeting.innerHTML=meetings.map((m,i)=>`<option value="${m.date}" ${i===active?'selected':''}>${m.month} ${m.day}, 2026</option>`).join('');role.innerHTML=roleNames.map(r=>`<option>${r}</option>`).join('');role.value=selectedRole}
+function openNextSpeech(){const mg=mergedFor(meetings[active].date);const next=[1,2,3,4].map(n=>`Prepared Speech ${n}`).find(r=>!slotFilled(mg[r]));if(!next){show('All prepared speech slots are currently booked.');return}openBooking(next)}
+function openBooking(r='Prepared Speech 1'){if(!configured){show('Supabase is not configured yet.');return}selectedRole=r;populateForm();modal.showModal()}
+async function loadBookings(){if(!configured){render();return}loading=true;render();try{const res=await fetch(`${SUPABASE_URL}/rest/v1/public_reservations?select=meeting_date,reservation_type,member_name,note,status,confirmed&status=eq.confirmed&order=meeting_date.asc`,{headers});if(!res.ok){const t=await res.text(); if(res.status===404||t.includes('PGRST')) throw new Error('DATABASE_NOT_INITIALIZED'); throw new Error(t);}bookings=await res.json()}catch(err){console.error(err);show(err.message==='DATABASE_NOT_INITIALIZED'?'Database is not initialized yet. Please ask an admin to run the setup script.':'Could not load live availability.')}finally{loading=false;render()}}
+form.addEventListener('submit',async e=>{e.preventDefault();if(!configured){show('Supabase is not configured yet.');return}const submit=form.querySelector('button[type="submit"],button:not([type])');submit.disabled=true;submit.textContent='Reserving…';const proj=(document.getElementById('project').value||'').trim();const noteText=note.value.trim();
+if(/^Prepared Speech/.test(role.value)&&!proj){show('Please enter the full Pathways project name for a prepared speech.');submit.disabled=false;submit.textContent='Reserve';return;}
+const combinedNote=[proj,noteText].filter(Boolean).join(' — ');const payload={p_meeting_date:meeting.value,p_reservation_type:role.value,p_member_name:name.value.trim(),p_contact:contact.value.trim(),p_note:combinedNote};try{const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),12000);const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/reserve_slot`,{method:'POST',headers,body:JSON.stringify(payload),signal:ctrl.signal});clearTimeout(to);const body=await res.text();if(!res.ok){if(res.status===409||body.toLowerCase().includes('already'))show('That slot has just been taken. Please choose another.');else throw new Error(body);return}modal.close();form.reset();active=meetings.findIndex(x=>x.date===payload.p_meeting_date);show('Reserved. See you at the meeting!');loadBookings()}catch(err){console.error(err);show(err.name==='AbortError'?'Network is slow — please try again.':'Reservation failed. Please try again.')}finally{submit.disabled=false;submit.textContent='Reserve'}})
+function downloadICS(i){const m=meetings[i],d=m.date.replaceAll('-','');const content=`BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART;TZID=Asia/Singapore:${d}T193000\nDTEND;TZID=Asia/Singapore:${d}T215500\nSUMMARY:NUS Alumni Toastmasters · ${m.theme}\nDESCRIPTION:ToastFlow monthly meeting. Prepared speeches and meeting roles.\nLOCATION:${venueFor(m.date).full}\nEND:VEVENT\nEND:VCALENDAR`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:'text/calendar'}));a.download=`ToastFlow-${m.date}.ics`;a.click();URL.revokeObjectURL(a.href)}
+async function shareMeeting(i){const m=meetings[i];const d=new Date(m.date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const v=venueFor(m.date);const text=`NUS Alumni Toastmasters — ${m.theme}\n📅 ${d} · ${MEETING_INFO.time}\n📍 ${v.full}${v.directions?`\nDirections: ${v.directions}`:''}\n${location.href}`;try{if(navigator.share){await navigator.share({title:`NUSA Toastmasters · ${m.theme}`,text});}else{await navigator.clipboard.writeText(text);show('Meeting details copied — paste to share with a friend.');}}catch(e){/* user cancelled */}}
+function show(t){toast.textContent=t;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3600)}
+function escapeHtml(v=''){return v.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+
+// ---------- REGISTER INTEREST (willingness) ----------
+function openWill(){
+  if(!configured){show('Supabase is not configured yet.');return}
+  willMeeting.innerHTML=meetings.map((m,i)=>`<option value="${m.date}" ${i===active?'selected':''}>${m.month} ${m.day}, 2026</option>`).join('');
+  willRoles.innerHTML=roleNames.map(r=>`<label style="font-weight:600;font-size:13px;display:flex;gap:7px;align-items:center;margin:0"><input type="checkbox" value="${r}" style="width:auto;margin:0">${r}</label>`).join('');
+  willModal.showModal();
+}
+document.getElementById('willForm').addEventListener('submit',async e=>{
+  e.preventDefault();if(!configured){show('Supabase is not configured yet.');return}
+  const roles=[...willRoles.querySelectorAll('input:checked')].map(x=>x.value);
+  if(!roles.length){show('Pick at least one role you\'re willing to take.');return}
+  const submit=e.target.querySelector('button[type="submit"],button:not([type])');submit.disabled=true;submit.textContent='Submitting…';
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/register_willingness`,{method:'POST',headers,body:JSON.stringify({p_member_name:willName.value.trim(),p_meeting_date:willMeeting.value,p_roles:roles,p_note:willNote.value.trim()})});
+    if(!res.ok)throw new Error(await res.text());
+    willModal.close();e.target.reset();await loadWillingness();show('Thanks! Your interest is registered — we will plan around it.');
+  }catch(err){console.error(err);show('Could not submit. Please try again.');}
+  finally{submit.disabled=false;submit.textContent='Submit interest';}
+});
+
+// ---------- ADMIN ----------
+let EXCO_PASS='';
+function openAdmin(){
+  if(!configured){show('Supabase is not configured yet.');return}
+  if(EXCO_PASS){showAdmin();return;}
+  document.getElementById('loginErr').style.display='none';document.getElementById('loginPass').value='';loginModal.showModal();
+}
+function showAdmin(){adminMeeting.innerHTML=meetings.map((m,i)=>`<option value="${m.date}">${m.month} ${m.day}, 2026</option>`).join('');adminMeeting.value=meetings[active].date;renderAdmin();adminModal.showModal();}
+document.getElementById('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();const p=document.getElementById('loginPass').value.trim();if(!p)return;
+  const btn=e.target.querySelector('button[type="submit"],button:not([type])');btn.disabled=true;btn.textContent='Checking…';
+  try{const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_verify`,{method:'POST',headers,body:JSON.stringify({p_passcode:p})});
+    if(!res.ok){document.getElementById('loginErr').style.display='block';return;}
+    EXCO_PASS=p;loginModal.close();showAdmin();
+  }catch(err){document.getElementById('loginErr').textContent='Could not verify — check your connection.';document.getElementById('loginErr').style.display='block';}
+  finally{btn.disabled=false;btn.textContent='Enter';}
+});
+function excoPass(){return EXCO_PASS;}
+function togglePass(id,btn){const el=document.getElementById(id);if(!el)return;const show=el.type==='password';el.type=show?'text':'password';if(btn)btn.textContent=show?'🙈':'👁';el.focus();}
+function currentAdminDate(){return adminMeeting?.value||meetings[active].date}
+// look up a member's current Pathway (fuzzy on shared name tokens)
+function pathOf(name){
+  if(!name)return null;const k=name.toLowerCase();
+  if(PATHOF[k])return PATHOF[k];
+  const nt=k.split(/\s+/).filter(t=>t.length>1);
+  let best=null,bs=0;
+  for(const x of MEMBER_PATHWAYS){const xt=x.name.toLowerCase().split(/\s+/);const s=xt.filter(t=>nt.includes(t)).length;if(s>bs){bs=s;best=x;}}
+  return bs>=2?{path:best.currentPath,cred:best.credential}:null;
+}
+// most recent project a member delivered, from the appointment/track-sheet history
+function latestProjectOf(name){
+  if(!HISTORY.length||!name)return '';
+  const rows=HISTORY.filter(h=>/^speech/i.test(h.role)&&h.date).map(h=>({date:h.date,raw:h.raw,m:ToastFlow.matchMember(h.raw,MEMBERS)}))
+    .filter(h=>h.m&&h.m.name===name).sort((a,b)=>b.date.localeCompare(a.date));
+  if(!rows.length)return '';
+  const m=rows[0].raw.match(/[-–—:]\s*(.+)$/);            // text after the name
+  return (m?m[1]:'').replace(/\s+/g,' ').trim();
+}
+function renderRoster(){
+  const el=document.getElementById('rosterBox');if(!el)return;
+  if(!MEMBER_PATHWAYS.length){el.innerHTML='<p class="hint">No member-Pathway data loaded (data/member-pathways.json).</p>';return;}
+  el.innerHTML=`<table class="admin-table"><thead><tr><th>Member</th><th>Credential</th><th>Current Pathway (in progress)</th><th>Latest project (track sheet)</th></tr></thead><tbody>${
+    MEMBER_PATHWAYS.map(x=>`<tr><td>${escapeHtml(x.name)}</td><td>${escapeHtml(x.credential||'—')}</td><td>${escapeHtml(x.currentPath||'—')}</td><td>${escapeHtml(latestProjectOf(x.name)||'—')}</td></tr>`).join('')}</tbody></table>`;
+}
+function toggleRoster(){const b=document.getElementById('rosterBox');if(!b)return;b.style.display=b.style.display==='none'?'block':'none';if(b.style.display==='block')renderRoster();}
+function renderWill(){
+  const el=document.getElementById('willBox');if(!el)return;const w=willingFor(currentAdminDate());
+  if(!w.length){el.innerHTML='<p class="hint">No interest registered for this meeting yet. Members can use “Register Interest”.</p>';return;}
+  el.innerHTML=`<table class="admin-table"><thead><tr><th>Member</th><th>Willing to take</th><th>Note</th></tr></thead><tbody>${
+    w.map(x=>`<tr><td>${escapeHtml(x.member_name)}</td><td>${(x.willing_roles||[]).map(r=>`<span class="tag">${escapeHtml(r)}</span>`).join(' ')}</td><td>${escapeHtml(x.note||'—')}</td></tr>`).join('')}</tbody></table>`;
+}
+function toggleWill(){const b=document.getElementById('willBox');if(!b)return;b.style.display=b.style.display==='none'?'block':'none';if(b.style.display==='block')renderWill();}
+function rowsForAdmin(){const date=currentAdminDate();const mg=mergedFor(date);return roleNames.map(role=>{const x=mg[role]||{};return {role,member_name:slotFilled(x)?x.name:'',note:x.note||'',source:x.source||'',hold:!!x.hold,soft:!!x.soft,ext:!!x.ext,confirmed:!!x.confirmed,tentative:x.tentative||'',conflict:x.conflict||null}})}
+function computeRecs(date){
+  if(!MEMBERS.length||!HISTORY.length)return {};
+  const mg=mergedFor(date);
+  const taken=Object.values(mg).filter(slotFilled).map(x=>x.name);
+  const openRoles=roleNames.filter(r=>!slotFilled(mg[r]));
+  const willing={};roleNames.forEach(r=>{willing[r]=willingNamesFor(date,r);});
+  return ToastFlow.recommendMeeting({members:MEMBERS,history:HISTORY,openRoles,taken,asOf:date,willing,limit:3});
+}
+function renderAdmin(){if(!document.getElementById('adminTable'))return;const date=currentAdminDate();const rows=rowsForAdmin();const recs=computeRecs(date);
+const vi=document.getElementById('venueInput');if(vi&&document.activeElement!==vi){const vf=venueFor(date);vi.value=(vf.full==='Venue to be confirmed')?'':vf.full;}
+const filled=rows.filter(r=>r.member_name).length;const speeches=rows.filter(r=>r.role.startsWith('Prepared Speech')&&r.member_name).length;const evaluators=rows.filter(r=>r.role.startsWith('Speech Evaluator')&&r.member_name).length;
+adminSummary.innerHTML=`<div class="metric"><small>Roles filled</small><strong>${filled}/${roleNames.length}</strong></div><div class="metric"><small>Prepared speeches</small><strong>${speeches}/4</strong></div><div class="metric"><small>Speech evaluators</small><strong>${evaluators}/${Math.max(speeches,1)}</strong></div>`;
+adminTable.innerHTML=`<table class="admin-table"><thead><tr><th style="width:17%">Role / Slot</th><th style="width:27%">Member <span class="why">(pick / dbl-click to type)</span></th><th style="width:26%">Pathways project <span class="why">(dbl-click)</span></th><th style="width:11%">Status</th><th style="width:19%">Exco actions</th></tr></thead><tbody>${rows.map(r=>{
+  const rq=JSON.stringify(r.role).replace(/"/g,'&quot;');
+  const isSpeech=/^Prepared Speech/.test(r.role);
+  const suggested=(recs[r.role]||[]).map(c=>c.member.name);
+  const tag=r.member_name?(r.confirmed?'CONFIRMED':r.ext?'EXTERNAL':r.soft?'SOFT-BLOCK':r.source==='online'?'ONLINE':'SHEET'):'';
+  const srcTag=tag?`<span class="tag"${r.confirmed?' style="background:#dff0e4;color:#1c7a3f"':''}>${tag}</span>`:'';
+  const conflictNote=r.conflict?`<div class="why" style="color:var(--red)">⚠ sheet had ${escapeHtml(r.conflict)} — online kept</div>`:'';
+  const nameLine=`<div class="editable" ondblclick="inlineEdit(this,${rq},'name')" title="Double-click to edit name"><b>${r.member_name?escapeHtml(r.member_name):'<span class="why">— none —</span>'}</b> ${srcTag}</div>`;
+  const memberCell=`<div>${nameLine}${conflictNote}${roleSelect(r.role,'',suggested)}</div>`;
+  const dp=isSpeech?displayProject(r.note,r.member_name):null;
+  const projCell=isSpeech?`<div class="editable" ondblclick="inlineEdit(this,${rq},'project')" title="Double-click to edit project">${dp.text?(dp.firm?escapeHtml(dp.text):`<span class="why">${escapeHtml(dp.text)} — set project</span>`):'<span class="why">— set project —</span>'}</div>`:'<span class="why">—</span>';
+  const status=r.member_name?(r.confirmed?'<b class="ok">Confirmed</b>':r.hold?'Held':'Filled'):'<b class="gap">Open</b>';
+  const actionSel=`<select class="role-select" data-role="${escapeHtml(r.role)}" onchange="adminAction(this.dataset.role,this.value);this.selectedIndex=0"><option value="">— action… —</option><option value="confirm">Confirm (lock)</option><option value="amend">Amend (unlock)</option><option value="remove">Remove / clear</option></select>`;
+  return `<tr><td>${escapeHtml(r.role)}</td><td>${memberCell}</td><td>${projCell}</td><td>${status}</td><td>${actionSel}</td></tr>`;
+}).join('')}</tbody></table>`}
+
+// ---------- EXCO ADMIN ACTIONS (passcode-gated Supabase RPCs) ----------
+async function adminRpc(fn,body,okMsg){
+  const p=excoPass();if(!p)return;
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`,{method:'POST',headers,body:JSON.stringify({p_passcode:p,...body})});
+    const t=await res.text();
+    if(!res.ok){
+      if(/passcode/i.test(t))show('Wrong exco passcode.');
+      else if(/admin_/.test(t)||res.status===404)show('Admin functions not installed yet — run supabase-admin-functions.sql.');
+      else show('Action failed: '+t.slice(0,80));
+      return;
+    }
+    await loadBookings();renderAdmin();show(okMsg);
+  }catch(e){console.error(e);show('Action failed. Check connection.');}
+}
+// Per-role assignment dropdown: existing members + External / Other / TBC / Vacant.
+// role-specific default candidates (surfaced at the top of Suggested)
+const ROLE_DEFAULTS={'Language Evaluator':['Kwong Fook Lau']};
+function roleSelect(role,current,suggested){
+  const e=escapeHtml;const names=MEMBERS.map(m=>m.name);
+  const sug=[...new Set([...(ROLE_DEFAULTS[role]||[]),...(suggested||[])].filter(Boolean))];const inSug=new Set(sug);
+  const others=names.filter(n=>!inSug.has(n));
+  const grp=(label,arr)=>arr.length?`<optgroup label="${label}">`+arr.map(n=>`<option value="${e(n)}">${e(n)}</option>`).join('')+`</optgroup>`:'';
+  return `<select class="role-select" data-role="${e(role)}" onchange="adminAssign(this.dataset.role,this.value);this.selectedIndex=0">`
+    +`<option value="">${current?e(current):'— assign… —'}</option>`
+    +grp('Suggested',sug)+grp('Members',others)
+    +`<optgroup label="Set to"><option value="__EXTERNAL__">External guest / evaluator…</option><option value="__TBC__">To be confirmed (TBC)</option><option value="__VACANT__">Vacant / clear</option></optgroup>`
+    +`</select>`;
+}
+function adminAssign(role,val){
+  if(!val)return;const date=currentAdminDate();
+  if(val==='__VACANT__')return adminRpc('admin_release_slot',{p_meeting_date:date,p_reservation_type:role},`${role}: cleared (Vacant).`);
+  if(val==='__TBC__')return adminRpc('admin_set_holder',{p_meeting_date:date,p_reservation_type:role,p_member_name:'TBC — to be confirmed',p_note:'[SOFTBLOCK]'},`${role}: set to TBC.`);
+  if(val==='__EXTERNAL__'){const nm=prompt('External guest / evaluator name (leave blank for "to be added later"):');const name=(nm&&nm.trim())?nm.trim():'External — admin to add';return adminRpc('admin_set_holder',{p_meeting_date:date,p_reservation_type:role,p_member_name:name,p_note:'[EXTERNAL]'},`${role}: external — ${name}.`);}
+  const cur=mergedFor(date)[role]||{};const keepNote=(cur.note&&!cur.hold&&!cur.open)?cur.note:'';
+  return adminRpc('admin_set_holder',{p_meeting_date:date,p_reservation_type:role,p_member_name:val,p_note:keepNote},`${role}: assigned to ${val}.`);
+}
+// True inline editing: double-click a cell → it becomes an input; Enter/blur saves, Esc cancels.
+function inlineEdit(el,role,field){
+  if(el.dataset.editing)return;el.dataset.editing='1';
+  const cur=mergedFor(currentAdminDate())[role]||{};
+  const start=field==='name'?(slotFilled(cur)?cur.name:''):(looksLikeProject(projectOf(cur.note))?projectOf(cur.note):'');
+  const inp=document.createElement('input');inp.type='text';inp.value=start;
+  inp.setAttribute('list',field==='project'?'pathwaysList':'');
+  inp.style.cssText='width:100%;font-size:12px;padding:5px;margin:0';
+  el.innerHTML='';el.appendChild(inp);inp.focus();inp.select();
+  let done=false;
+  const finish=save=>{if(done)return;done=true;const v=inp.value.trim();
+    if(!save||v===start.trim()){renderAdmin();return;}  // no change → don't write
+    if(field==='name'){
+      if(!v)return adminRpc('admin_release_slot',{p_meeting_date:currentAdminDate(),p_reservation_type:role},`${role}: cleared.`);
+      const keepNote=(cur.note&&!cur.hold&&!cur.open)?cur.note:'';
+      return adminRpc('admin_set_holder',{p_meeting_date:currentAdminDate(),p_reservation_type:role,p_member_name:v,p_note:keepNote},`${role}: ${v}.`);
+    }
+    if(!slotFilled(cur)){show('Assign a name first, then set the project.');return renderAdmin();}
+    const title=titleOf(cur.note);const note=v+(title?` — ${title}`:'');
+    adminRpc('admin_set_holder',{p_meeting_date:currentAdminDate(),p_reservation_type:role,p_member_name:cur.name,p_note:note},`${role}: project updated.`);
+  };
+  inp.addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();finish(true);}else if(ev.key==='Escape'){ev.preventDefault();finish(false);}});
+  inp.addEventListener('blur',()=>finish(true));
+}
+function adminAction(role,act){if(!act)return;const date=currentAdminDate();
+  if(act==='remove'){if(!confirm(`Remove / clear "${role}"?`))return;return adminRpc('admin_release_slot',{p_meeting_date:date,p_reservation_type:role},`${role}: removed.`);}
+  if(act==='confirm')return adminRpc('admin_set_confirmed',{p_meeting_date:date,p_reservation_type:role,p_confirmed:true},`${role}: confirmed (locked).`);
+  if(act==='amend')return adminRpc('admin_set_confirmed',{p_meeting_date:date,p_reservation_type:role,p_confirmed:false},`${role}: unlocked for amending.`);
+}
+
+// ---------- GENERATE PROGRAMMING SHEET ----------
+function generateSheet(){
+  const date=currentAdminDate();const m=meetings.find(x=>x.date===date)||{};
+  const mg=mergedFor(date);const assignments={};
+  for(const r in mg){const x=mg[r];
+    if(x.hold){assignments[r]={name:x.ext?'External evaluator (TBC)':'TBC',note:''};continue;}
+    if(!slotFilled(x))continue;
+    const a={name:x.name,note:x.note||''};
+    if(/^Prepared Speech/.test(r)){                       // build the FULL Pathways project name
+      const parts=(x.note||'').split(' — ');let projRaw=(parts[0]||'').trim();const title=parts.slice(1).join(' — ').trim();
+      const pp=pathOf(x.name);const path=pp&&pp.path?pp.path.replace(/\s*\(Simplified Chinese\)/i,'').trim():'';
+      if(!projRaw){const lp=latestProjectOf(x.name);if(lp)projRaw=lp;}   // fall back to the track sheet's latest project
+      let full=projRaw||path;                                            // else the member's current Pathway
+      if(path&&projRaw&&!projRaw.toLowerCase().includes(path.toLowerCase().slice(0,8)))full=path+' '+projRaw;
+      a.projectRaw=projRaw;a.project=full;a.title=title;a.pathway=path;
+    }
+    assignments[r]=a;
+  }
+  const cat=(PATHWAYS.projects&&PATHWAYS.projects.length?PATHWAYS.projects:PROJECTS);
+  const payload={date,theme:m.theme,meta:{theme:m.theme,saa:saaFor(date),venue:venueFor(date).full,directions:venueFor(date).directions,time:MEETING_INFO.time},assignments,projects:cat};
+  localStorage.setItem('toastflow_sheet',JSON.stringify(payload));
+  window.open('programming-sheet.html','_blank');
+}
+
+// ---------- exports ----------
+function exportRows(){const date=currentAdminDate();return rowsForAdmin().map(r=>({Meeting_Date:date,Role:r.role,Member:r.member_name||'',Note:r.note||'',Status:r.member_name?'Confirmed':'Open'}))}
+function csvEscape(v){return `"${String(v??'').replaceAll('"','""')}"`}
+function exportCSV(){const rows=exportRows(),hs=Object.keys(rows[0]);const csv='﻿'+[hs.join(','),...rows.map(r=>hs.map(h=>csvEscape(r[h])).join(','))].join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`ToastFlow-Programming-${currentAdminDate()}.csv`;a.click();URL.revokeObjectURL(a.href);show('CSV exported. Open it directly in Excel.')}
+async function copySheetData(){const rows=exportRows(),hs=Object.keys(rows[0]);const tsv=[hs.join('\t'),...rows.map(r=>hs.map(h=>r[h]).join('\t'))].join('\n');await navigator.clipboard.writeText(tsv);show('Copied. Paste directly into Google Sheets.')}
+
+(async function init(){await loadData();await loadVenues();render();loadBookings();loadWillingness();setInterval(()=>{loadBookings();loadWillingness();},30000);})();
+</script>
+</body></html>

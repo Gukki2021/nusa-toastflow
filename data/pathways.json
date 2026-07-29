@@ -1,0 +1,39 @@
+{
+  "_source": "https://docs.google.com/forms/d/e/1FAIpQLSd-BVuFI500kWUxTruVVgm2WpTZ3FQPNi7YX0Ld7odaekNx4A/viewform",
+  "_note": "Pathways taxonomy for the project picker. Objective/timing filled only for the club's own commonly-used projects; extend as needed.",
+  "paths": [
+    "Presentation Mastery",
+    "Dynamic Leadership",
+    "Engaging Humour",
+    "Motivational Strategies",
+    "Visionary Communication",
+    "Persuasive Influence",
+    "The Communication Series: Entertaining Speaker + Storytelling"
+  ],
+  "pathsOld": [
+    "Leadership Development",
+    "Innovative Planning",
+    "Strategic Relationships",
+    "Team Collaboration",
+    "Effective Coaching"
+  ],
+  "projects": [
+    {"code": "L1 P1", "name": "Ice Breaker", "objective": "The purpose of this project is for the member to introduce himself or herself to the club and learn the basic structure of a public speech.", "timing": "5 –7 min"},
+    {"code": "L1 P2", "name": "Writing a Speech with Purpose", "objective": "Learn or review basic methods for writing a speech with a defined purpose and to present a well-organized speech on any topic.", "timing": "5 –7 min"},
+    {"code": "L1 P3", "name": "Introduction to Vocal Variety and Body Language", "objective": "The purpose of this project is for the member to practice using vocal variety or body language to enhance a speech.", "timing": "5 –7 min"},
+    {"code": "L1 P4", "name": "Evaluation and Feedback", "objective": "", "timing": ""},
+    {"code": "L2 P3", "name": "Introduction to Toastmasters Mentoring", "objective": "The purpose of this project is for the member to clearly define how Toastmasters envisions mentoring. The purpose of this speech is for the member to share some aspect of a previous experience as a protégé.", "timing": "5 –7 min"},
+    {"code": "L1", "name": "The Communication Series: Entertaining Speaker + Storytelling — Organise Your Speech", "objective": "Select an appropriate outline; make your message clear with supporting material; use appropriate transitions; create a strong opening and conclusion.", "timing": "5 –7 min"},
+    {"code": "L2 P1", "name": "Understanding Your Communication Style", "objective": "Identify your communication style, recognise your strengths and blind spots, and learn to adapt your communication to different people and situations.", "timing": "5 –7 min"},
+    {"code": "L2 P1", "name": "Understanding Your Leadership Style", "objective": "", "timing": "5 –7 min"},
+    {"code": "L2 P1", "name": "Know Your Sense of Humour", "objective": "", "timing": "5 –7 min"},
+    {"code": "L2 P1", "name": "Active Listening", "objective": "", "timing": "5 –7 min"},
+    {"code": "L3 P1", "name": "Level 3 Project", "objective": "", "timing": "5 –7 min"},
+    {"code": "L3 Elective", "name": "Level 3 Elective", "objective": "", "timing": "5 –7 min"},
+    {"code": "L4 Elective", "name": "The Power of Humour in an Impromptu Speech", "objective": "Develop a method for giving impromptu speeches and practise adapting rehearsed stories during a presentation.", "timing": "Two x 2-3 min"},
+    {"code": "L4 P1", "name": "Level 4 Project", "objective": "", "timing": ""},
+    {"code": "L5 P3", "name": "Reflect on Your Path", "objective": "", "timing": ""},
+    {"code": "PMP", "name": "Speech 1: Mentoring", "objective": "", "timing": ""},
+    {"code": "PMP", "name": "Speech 2: Advanced Mentoring", "objective": "", "timing": ""}
+  ]
+}
