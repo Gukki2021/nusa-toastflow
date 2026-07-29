@@ -77,7 +77,9 @@ def main(md_path, members_path=None):
 
     os.makedirs(OUT, exist_ok=True)
     json.dump(out, open(os.path.join(OUT, 'member-pathways.json'), 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
-    print(f"  data/member-pathways.json ({len(out)} members)")
+    # This file has no emails, so a public copy is committed & deployed (GitHub Pages).
+    json.dump(out, open(os.path.join(OUT, 'member-pathways.public.json'), 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
+    print(f"  data/member-pathways.json + .public.json ({len(out)} members)")
     for r in out:
         print(f"   {r['name']:20} {r['credential'] or '-':10} {r['currentPath']}")
 

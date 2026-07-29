@@ -1,5 +1,8 @@
 # ToastFlow · NUS Alumni Toastmasters
 
+**Live site:** https://gukki2021.github.io/nusa-toastflow/
+**Repo:** https://github.com/Gukki2021/nusa-toastflow
+
 A lightweight, no-login **VP Education programming planner** for the NUS Alumni
 Toastmasters Club. Members reserve prepared-speech slots and meeting roles;
 the VPE gets **smart, fair role suggestions** drawn from past meetings and can
@@ -84,18 +87,22 @@ This rewrites `data/members.json` and `data/history.json` on your machine only.
 
 ## Privacy model
 
-`members.json` and `history.json` contain member names (and some emails) and are
-**never committed** (see `.gitignore`). They live only on the VPE's machine.
+`members.json` and `history.json` contain member **emails** and are **never
+committed** (see `.gitignore`). Two **email-free** copies *are* committed and
+deployed so the live site's recommendations, member dropdowns and roster work:
 
-- The **public site** (GitHub Pages) works without them — reservations run
-  through Supabase. Recommendations simply don't appear.
-- The **VPE** runs the site locally (or keeps a private copy of the data) to get
-  role suggestions and generate sheets.
-- To make recommendations available to the whole committee later, move the
-  roster + history into private Supabase tables — see *Roadmap* below.
+- `members.public.json` — names + Pathways credentials only (no emails)
+- `member-pathways.public.json` — names + current Pathway (no emails)
 
-The Supabase **anon key** in `index.html` is safe to publish by design. Never put
-the service-role key in the browser.
+`extract-data.py` / `extract-basecamp.py` regenerate both the private and the
+`.public.json` files. The app loads the private local file first, then falls back
+to the public copy (what GitHub Pages serves). Appointment **history** on the live
+site comes from the published Google Sheet CSV, not from `history.json`.
+
+The Supabase **anon key** in `index.html` is safe to publish by design (Row-Level
+Security protects the data). Never put the service-role key in the browser. Note:
+the `appointments-csv-url` (a shared Google Sheet) is fetched client-side, so the
+appointment roster it contains is visible to anyone using the site.
 
 ---
 

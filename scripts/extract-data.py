@@ -77,7 +77,13 @@ def main(path):
         with open(os.path.join(OUT, f"{name}.json"), "w", encoding="utf-8") as f:
             json.dump(data, f, indent=1, ensure_ascii=False)
         print(f"  data/{name}.json  ({len(data)} rows)")
-    print("Done. Note: members.json and history.json are git-ignored (contain member data).")
+
+    # Email-free public roster — this one IS committed and deployed (GitHub Pages).
+    members_public = [{"name": m["name"], "credentials": m.get("credentials", "")} for m in members]
+    with open(os.path.join(OUT, "members.public.json"), "w", encoding="utf-8") as f:
+        json.dump(members_public, f, indent=1, ensure_ascii=False)
+    print(f"  data/members.public.json  ({len(members_public)} rows, no emails — committed)")
+    print("Done. members.json & history.json are git-ignored; members.public.json is deployed.")
 
 
 if __name__ == "__main__":
