@@ -94,8 +94,8 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 </form></dialog>
 <div class="toast" id="toast"></div>
 
-<script src="scripts/recommend.js?v=10"></script>
-<script src="scripts/appointments.js?v=10"></script>
+<script src="scripts/recommend.js?v=11"></script>
+<script src="scripts/appointments.js?v=11"></script>
 <script>
 const SUPABASE_URL=document.querySelector('meta[name="supabase-url"]').content;
 const SUPABASE_ANON_KEY=document.querySelector('meta[name="supabase-anon-key"]').content;
@@ -220,7 +220,9 @@ form.addEventListener('submit',async e=>{
   const proj=(document.getElementById('project').value||'').trim();const noteText=note.value.trim();
   if(/^Prepared Speech/.test(role.value)&&!proj){show('Please enter the full Pathways project name for a prepared speech.');return;}
   const combinedNote=[proj,noteText].filter(Boolean).join(' — ');
-  const payload={p_meeting_date:meeting.value,p_reservation_type:role.value,p_member_name:name.value.trim(),p_contact:contact.value.trim(),p_note:combinedNote};
+  const memberName=(document.getElementById('name').value||'').trim();
+  if(!memberName){show('Please enter your name.');return;}
+  const payload={p_meeting_date:meeting.value,p_reservation_type:role.value,p_member_name:memberName,p_contact:contact.value.trim(),p_note:combinedNote};
   if(slotFilled(mergedFor(payload.p_meeting_date)[payload.p_reservation_type])){show('That slot is already taken. Please pick another.');return;}
   // OPTIMISTIC: close & show the booking instantly, then save in the background.
   const optimistic={meeting_date:payload.p_meeting_date,reservation_type:payload.p_reservation_type,member_name:payload.p_member_name,note:combinedNote,status:'confirmed',confirmed:false};
