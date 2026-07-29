@@ -129,17 +129,19 @@ const APPTS_CSV_URL=(document.querySelector('meta[name="appointments-csv-url"]')
 const headers={'apikey':SUPABASE_ANON_KEY,'Authorization':`Bearer ${SUPABASE_ANON_KEY}`,'Content-Type':'application/json'};
 
 // ---- load recommendation data (members + history). Kept out of Supabase for privacy in v1. ----
+// Try the private (local, git-ignored) file first, then the deployed email-free public copy.
+async function loadJSON(urls,fallback){for(const u of urls){try{const r=await fetch(u);if(r.ok){const j=await r.json();if(j&&((j.length!==undefined?j.length:Object.keys(j).length)))return j;}}catch(_){}}return fallback;}
 async function loadData(){
   try{
     const [m,h,p,pw]=await Promise.all([
-      fetch('data/members.json').then(r=>r.ok?r.json():[]),
-      fetch('data/history.json').then(r=>r.ok?r.json():[]),
-      fetch('data/projects.json').then(r=>r.ok?r.json():[]),
-      fetch('data/pathways.json').then(r=>r.ok?r.json():{paths:[],projects:[]})
+      loadJSON(['data/members.json','data/members.public.json'],[]),
+      fetch('data/history.json').then(r=>r.ok?r.json():[]).catch(()=>[]),
+      fetch('data/projects.json').then(r=>r.ok?r.json():[]).catch(()=>[]),
+      fetch('data/pathways.json').then(r=>r.ok?r.json():{paths:[],projects:[]}).catch(()=>({paths:[],projects:[]}))
     ]);
     MEMBERS=m;HISTORY=h;PROJECTS=p;PATHWAYS=pw;
     // member -> current Pathway database (from Base Camp dashboard export)
-    try{MEMBER_PATHWAYS=await fetch('data/member-pathways.json').then(r=>r.ok?r.json():[]);}catch(_){MEMBER_PATHWAYS=[];}
+    MEMBER_PATHWAYS=await loadJSON(['data/member-pathways.json','data/member-pathways.public.json'],[]);
     PATHOF={};MEMBER_PATHWAYS.forEach(x=>{PATHOF[x.name.toLowerCase()]={path:x.currentPath,cred:x.credential};});
     // build the Pathways project picker: path names first (to prefix), then project list
     const opts=[
