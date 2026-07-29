@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ToastFlow · Exco Briefing</title>
+<style>
+:root{
+  --navy:#141d33;--navy2:#1c2947;--red:#b52f3b;--red-soft:#c8434f;--gold:#d7ad59;
+  --cream:#f7f3eb;--paper:#fffdfa;--ink:#1b2233;--muted:#6d7382;--line:#e7e0d4;
+  --shadow:0 24px 60px rgba(20,29,51,.14);
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--navy);overflow:hidden}
+.serif{font-family:Georgia,"Times New Roman",serif}
+a{color:inherit}
+
+/* ---------- deck shell ---------- */
+.deck{height:100%;display:flex;flex-direction:column}
+.topbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 5vw;color:#fff}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:34px;height:34px}
+.brand b{font-weight:800;letter-spacing:.2px}
+.brand small{display:block;color:#aeb7c9;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.dots{display:flex;gap:10px}
+.dot{width:9px;height:9px;border-radius:50%;background:#41506e;border:0;padding:0;cursor:pointer;transition:all .25s ease}
+.dot.on{background:var(--gold);width:26px;border-radius:6px}
+
+.stage{flex:1 1 auto;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:min(6vh,54px) 5vw;opacity:0;transform:translateY(16px);pointer-events:none;transition:none;overflow-y:auto;background:var(--navy)}
+.slide.active{opacity:1;transform:none;pointer-events:auto;transition:opacity .45s ease,transform .45s ease}
+.wrap{width:100%;max-width:1120px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+
+/* ---------- slide 1 ---------- */
+.hero h1{font-size:clamp(34px,5.4vw,68px);line-height:1.04;letter-spacing:-.02em;color:#fff;margin:16px 0 14px;max-width:16ch}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero .lead{font-size:clamp(16px,1.7vw,20px);line-height:1.6;color:#c3cad9;max-width:60ch}
+.pain{display:inline-flex;gap:10px;align-items:center;margin-top:22px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#d8dee9;font-size:13.5px}
+.goals{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.goal{background:var(--paper);border-radius:18px;padding:24px 22px;box-shadow:var(--shadow);transition:transform .2s ease,box-shadow .2s ease}
+.goal:hover{transform:translateY(-4px);box-shadow:0 30px 70px rgba(0,0,0,.28)}
+.goal .n{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-weight:800;color:#fff;background:var(--red);font-size:17px}
+.goal h3{font-size:19px;margin:16px 0 7px;letter-spacing:-.01em}
+.goal p{font-size:14px;line-height:1.55;color:var(--muted)}
+
+/* ---------- slide 2 ---------- */
+.h2{font-size:clamp(28px,4vw,46px);line-height:1.06;letter-spacing:-.02em;color:#fff;margin:14px 0 6px}
+.h2 span{color:var(--gold)}
+.toggle{display:inline-flex;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:5px;margin:22px 0 26px}
+.toggle button{border:0;background:transparent;color:#c3cad9;font-weight:750;font-size:14px;padding:10px 22px;border-radius:999px;cursor:pointer;transition:all .2s ease}
+.toggle button.on{background:var(--paper);color:var(--ink);box-shadow:0 6px 16px rgba(0,0,0,.2)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{background:var(--paper);border-radius:18px;padding:24px 22px;box-shadow:var(--shadow);position:relative;opacity:0;transform:translateY(10px);animation:pop .45s ease forwards}
+.step:nth-child(2){animation-delay:.08s}.step:nth-child(3){animation-delay:.16s}
+@keyframes pop{to{opacity:1;transform:none}}
+.step .k{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--red)}
+.step h4{font-size:18px;margin:8px 0 8px;letter-spacing:-.01em}
+.step p{font-size:14px;line-height:1.6;color:var(--muted)}
+.step .pill{display:inline-block;margin-top:12px;font-size:12px;font-weight:700;color:var(--navy);background:var(--cream);border-radius:999px;padding:5px 11px}
+.note{margin-top:22px;color:#aeb7c9;font-size:13.5px}
+
+/* ---------- slide 3 ---------- */
+.vision{display:grid;grid-template-columns:1.15fr .85fr;gap:44px;align-items:center}
+.vision h2{font-size:clamp(28px,4vw,50px);line-height:1.05;letter-spacing:-.02em;color:#fff;margin:14px 0 12px}
+.vision h2 em{color:var(--gold);font-style:italic}
+.vision p{color:#c3cad9;font-size:16px;line-height:1.6;max-width:46ch}
+.road{margin-top:26px;display:flex;flex-direction:column;gap:12px}
+.road .r{display:flex;gap:14px;align-items:flex-start}
+.road .r .bul{flex:0 0 auto;margin-top:4px;width:14px;height:14px;border-radius:50%;border:3px solid var(--gold);background:transparent}
+.road .r.now .bul{background:var(--gold)}
+.road .r b{color:#fff;font-size:15px}
+.road .r span{display:block;color:#98a1b5;font-size:13px;margin-top:2px}
+.cta-card{background:var(--paper);border-radius:22px;padding:30px;box-shadow:var(--shadow);text-align:center}
+.cta-card img{width:190px;height:190px;border-radius:14px;border:1px solid var(--line)}
+.cta-card .u{font-size:12.5px;color:var(--muted);word-break:break-all;margin:12px 0 16px}
+.cta{display:inline-flex;align-items:center;gap:9px;background:var(--red);color:#fff;text-decoration:none;font-weight:800;font-size:16px;padding:15px 26px;border-radius:999px;transition:transform .18s ease,background .18s ease}
+.cta:hover{transform:translateY(-2px);background:var(--red-soft)}
+
+/* ---------- nav ---------- */
+.nav{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:16px 5vw 22px;color:#8b95ab;font-size:13px}
+.arrow{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;transition:all .2s ease}
+.arrow:hover{background:rgba(255,255,255,.12)}
+.arrow:disabled{opacity:.3;cursor:default}
+.kbd{font-size:12px;color:#8b95ab}
+@media(max-width:820px){
+  .goals,.steps{grid-template-columns:1fr}
+  .vision{grid-template-columns:1fr;gap:28px}
+  .slide{padding:28px 24px}
+  .cta-card img{width:150px;height:150px}
+}
+</style>
+</head>
+<body>
+<div class="deck">
+  <div class="topbar">
+    <div class="brand"><img src="assets/tm-logo.png" alt=""><div><b>ToastFlow</b><small>NUS Alumni Toastmasters · Exco Briefing</small></div></div>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <div class="stage" id="stage">
+    <!-- SLIDE 1 -->
+    <section class="slide active">
+      <div class="wrap hero">
+        <div class="eyebrow">Why I built this</div>
+        <h1 class="serif">Coordinate <em>people &amp; time</em> — without the repetitive work.</h1>
+        <p class="lead">Every month we hand-chase who's speaking, who's evaluating, who's free — across chats, spreadsheets and memory. ToastFlow turns that into one shared, transparent place.</p>
+        <div class="pain">↺ &nbsp;Less manual coordination &nbsp;·&nbsp; fewer dropped roles &nbsp;·&nbsp; one source of truth</div>
+        <div class="goals">
+          <div class="goal"><div class="n">1</div><h3 class="serif">Transparent slots</h3><p>Everyone sees the live meeting programme — which speeches and roles are open, which are taken.</p></div>
+          <div class="goal"><div class="n">2</div><h3 class="serif">Book ahead, self-serve</h3><p>Members reserve a speech or role in seconds — no login, no waiting to be asked.</p></div>
+          <div class="goal"><div class="n">3</div><h3 class="serif">Managed in one place</h3><p>Exco assigns, confirms and generates the official programming sheet — one click, always current.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 -->
+    <section class="slide">
+      <div class="wrap">
+        <div class="eyebrow">How we'll use it</div>
+        <h2 class="h2 serif">Two minutes to learn. <span>Pick your view.</span></h2>
+        <div class="toggle" id="toggle">
+          <button class="on" data-v="member">For Members</button>
+          <button data-v="exco">For Exco</button>
+        </div>
+        <div class="steps" id="steps"></div>
+        <p class="note" id="note"></p>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 -->
+    <section class="slide">
+      <div class="wrap vision">
+        <div>
+          <div class="eyebrow">Where this goes</div>
+          <h2 class="serif">From a meeting planner to the club's <em>operating system</em>.</h2>
+          <p>If the trial works, we grow it module by module — one place to run the whole club.</p>
+          <div class="road">
+            <div class="r now"><span class="bul"></span><div><b>Today — Programming planner</b><span>Reservations · smart role suggestions · one-click programming sheet</span></div></div>
+            <div class="r"><span class="bul"></span><div><b>Next — Membership &amp; Pathways</b><span>Roster, credentials, mentor matching, progress tracking</span></div></div>
+            <div class="r"><span class="bul"></span><div><b>Then — Attendance, awards &amp; comms</b><span>Best-speaker voting, attendance, reminders, guest follow-up</span></div></div>
+          </div>
+        </div>
+        <div class="cta-card">
+          <img src="assets/demo-qr.png" alt="Scan to open the demo">
+          <div class="u">gukki2021.github.io/nusa-toastflow</div>
+          <a class="cta" href="https://gukki2021.github.io/nusa-toastflow/" target="_blank" rel="noopener">Open the live demo →</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="nav">
+    <button class="arrow" id="prev" aria-label="Previous">‹</button>
+    <span class="kbd">Use ← / → or click the dots</span>
+    <button class="arrow" id="next" aria-label="Next">›</button>
+  </div>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];const dotsBox=document.getElementById('dots');
+let i=0;
+slides.forEach((_,k)=>{const b=document.createElement('button');b.className='dot'+(k===0?' on':'');b.onclick=()=>go(k);dotsBox.appendChild(b);});
+const dots=[...dotsBox.children];
+function go(n){i=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,k)=>s.classList.toggle('active',k===i));dots.forEach((d,k)=>d.classList.toggle('on',k===i));document.getElementById('prev').disabled=i===0;document.getElementById('next').disabled=i===slides.length-1;}
+document.getElementById('prev').onclick=()=>go(i-1);
+document.getElementById('next').onclick=()=>go(i+1);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(i+1);if(e.key==='ArrowLeft')go(i-1);});
+// touch swipe
+let x0=null;addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>50)go(i+(dx<0?1:-1));x0=null;});
+go(0);
+
+// slide 2 interactive Member/Exco toggle
+const CONTENT={
+  member:[
+    {k:'STEP 1',h:'Open the site',p:'Tap the link (or scan the QR). No account, no download.',pill:'Any phone or laptop'},
+    {k:'STEP 2',h:'Reserve a slot',p:'Hit “Reserve a Slot”, type your name, pick a speech or role. For a speech, choose your Pathways project.',pill:'~10 seconds'},
+    {k:'STEP 3',h:'Done — you\'re on',p:'Your name appears instantly for everyone. Change your mind? Just book another.',pill:'Live for all to see'}
+  ],
+  exco:[
+    {k:'STEP 1',h:'Enter Admin',p:'Open “Admin”, enter the shared Exco passcode. Everyone on the committee uses the same one.',pill:'Passcode-protected'},
+    {k:'STEP 2',h:'Assign & confirm',p:'Pick members from a dropdown, block external guests, set venue & title, confirm / amend / release roles.',pill:'Smart suggestions built in'},
+    {k:'STEP 3',h:'Generate the sheet',p:'One click builds the official programming sheet — Print/PDF, export Word, or share a link.',pill:'Always up to date'}
+  ]
+};
+const notes={member:'Nothing is final until Exco confirms — reserving just puts your hand up.',exco:'Suggestions are drawn from past meetings (fair rotation + Pathways fit) — you always decide.'};
+const stepsBox=document.getElementById('steps'),noteEl=document.getElementById('note');
+function renderSteps(v){stepsBox.innerHTML=CONTENT[v].map(s=>`<div class="step"><div class="k">${s.k}</div><h4 class="serif">${s.h}</h4><p>${s.p}</p><span class="pill">${s.pill}</span></div>`).join('');noteEl.textContent=notes[v];}
+document.querySelectorAll('#toggle button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#toggle button').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderSteps(b.dataset.v);});
+renderSteps('member');
+</script>
+</body></html>
