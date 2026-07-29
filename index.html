@@ -94,8 +94,8 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 </form></dialog>
 <div class="toast" id="toast"></div>
 
-<script src="scripts/recommend.js?v=9"></script>
-<script src="scripts/appointments.js?v=9"></script>
+<script src="scripts/recommend.js?v=10"></script>
+<script src="scripts/appointments.js?v=10"></script>
 <script>
 const SUPABASE_URL=document.querySelector('meta[name="supabase-url"]').content;
 const SUPABASE_ANON_KEY=document.querySelector('meta[name="supabase-anon-key"]').content;
@@ -215,9 +215,29 @@ function populateForm(){meeting.innerHTML=meetings.map((m,i)=>`<option value="${
 function openNextSpeech(){const mg=mergedFor(meetings[active].date);const next=[1,2,3,4].map(n=>`Prepared Speech ${n}`).find(r=>!slotFilled(mg[r]));if(!next){show('All prepared speech slots are currently booked.');return}openBooking(next)}
 function openBooking(r='Prepared Speech 1'){if(!configured){show('Supabase is not configured yet.');return}selectedRole=r;populateForm();modal.showModal()}
 async function loadBookings(){if(!configured){render();return}loading=true;render();try{const res=await fetch(`${SUPABASE_URL}/rest/v1/public_reservations?select=meeting_date,reservation_type,member_name,note,status,confirmed&status=eq.confirmed&order=meeting_date.asc`,{headers});if(!res.ok){const t=await res.text(); if(res.status===404||t.includes('PGRST')) throw new Error('DATABASE_NOT_INITIALIZED'); throw new Error(t);}bookings=await res.json()}catch(err){console.error(err);show(err.message==='DATABASE_NOT_INITIALIZED'?'Database is not initialized yet. Please ask an admin to run the setup script.':'Could not load live availability.')}finally{loading=false;render()}}
-form.addEventListener('submit',async e=>{e.preventDefault();if(!configured){show('Supabase is not configured yet.');return}const submit=form.querySelector('button[type="submit"],button:not([type])');submit.disabled=true;submit.textContent='Reserving…';const proj=(document.getElementById('project').value||'').trim();const noteText=note.value.trim();
-if(/^Prepared Speech/.test(role.value)&&!proj){show('Please enter the full Pathways project name for a prepared speech.');submit.disabled=false;submit.textContent='Reserve';return;}
-const combinedNote=[proj,noteText].filter(Boolean).join(' — ');const payload={p_meeting_date:meeting.value,p_reservation_type:role.value,p_member_name:name.value.trim(),p_contact:contact.value.trim(),p_note:combinedNote};try{const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),12000);const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/reserve_slot`,{method:'POST',headers,body:JSON.stringify(payload),signal:ctrl.signal});clearTimeout(to);const body=await res.text();if(!res.ok){if(res.status===409||body.toLowerCase().includes('already'))show('That slot has just been taken. Please choose another.');else throw new Error(body);return}modal.close();form.reset();active=meetings.findIndex(x=>x.date===payload.p_meeting_date);show('Reserved. See you at the meeting!');loadBookings()}catch(err){console.error(err);show(err.name==='AbortError'?'Network is slow — please try again.':'Reservation failed. Please try again.')}finally{submit.disabled=false;submit.textContent='Reserve'}})
+form.addEventListener('submit',async e=>{
+  e.preventDefault();if(!configured){show('Supabase is not configured yet.');return}
+  const proj=(document.getElementById('project').value||'').trim();const noteText=note.value.trim();
+  if(/^Prepared Speech/.test(role.value)&&!proj){show('Please enter the full Pathways project name for a prepared speech.');return;}
+  const combinedNote=[proj,noteText].filter(Boolean).join(' — ');
+  const payload={p_meeting_date:meeting.value,p_reservation_type:role.value,p_member_name:name.value.trim(),p_contact:contact.value.trim(),p_note:combinedNote};
+  if(slotFilled(mergedFor(payload.p_meeting_date)[payload.p_reservation_type])){show('That slot is already taken. Please pick another.');return;}
+  // OPTIMISTIC: close & show the booking instantly, then save in the background.
+  const optimistic={meeting_date:payload.p_meeting_date,reservation_type:payload.p_reservation_type,member_name:payload.p_member_name,note:combinedNote,status:'confirmed',confirmed:false};
+  modal.close();form.reset();active=meetings.findIndex(x=>x.date===payload.p_meeting_date);
+  bookings.push(optimistic);render();show('Reserving…');
+  try{
+    const ctrl=new AbortController();const to=setTimeout(()=>ctrl.abort(),12000);
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/rpc/reserve_slot`,{method:'POST',headers,body:JSON.stringify(payload),signal:ctrl.signal});clearTimeout(to);
+    const body=await res.text();
+    if(!res.ok){bookings=bookings.filter(b=>b!==optimistic);
+      if(res.status===409||body.toLowerCase().includes('already')){show('That slot was just taken — please pick another.');await loadBookings();}
+      else{render();throw new Error(body);}
+      return;}
+    await loadBookings();show('Reserved. See you at the meeting!');
+  }catch(err){console.error(err);bookings=bookings.filter(b=>b!==optimistic);render();
+    show(err.name==='AbortError'?'Network is slow — please check your connection and try again.':'Reservation failed. Please try again.');}
+})
 function downloadICS(i){const m=meetings[i],d=m.date.replaceAll('-','');const content=`BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART;TZID=Asia/Singapore:${d}T193000\nDTEND;TZID=Asia/Singapore:${d}T215500\nSUMMARY:NUS Alumni Toastmasters · ${m.theme}\nDESCRIPTION:ToastFlow monthly meeting. Prepared speeches and meeting roles.\nLOCATION:${venueFor(m.date).full}\nEND:VEVENT\nEND:VCALENDAR`;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:'text/calendar'}));a.download=`ToastFlow-${m.date}.ics`;a.click();URL.revokeObjectURL(a.href)}
 async function shareMeeting(i){const m=meetings[i];const d=new Date(m.date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const v=venueFor(m.date);const text=`NUS Alumni Toastmasters — ${m.theme}\n📅 ${d} · ${MEETING_INFO.time}\n📍 ${v.full}${v.directions?`\nDirections: ${v.directions}`:''}\n${location.href}`;try{if(navigator.share){await navigator.share({title:`NUSA Toastmasters · ${m.theme}`,text});}else{await navigator.clipboard.writeText(text);show('Meeting details copied — paste to share with a friend.');}}catch(e){/* user cancelled */}}
 function show(t){toast.textContent=t;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3600)}
