@@ -245,20 +245,17 @@ function build(){
   document.getElementById('agenda').innerHTML=A_ROWS.map(r=>
     `<tr class="${r.cls}"><td class="col-t">${r.t}</td><td>${r.item}</td><td class="col-p who">${r.p}</td></tr>`).join('');
 
-  // page 2 — project objectives (match speech projects to the catalogue if possible)
-  const cat=data.projects||[];
-  const pname=o=>String(o.name||o.project||'');
-  const findObj=title=>{
-    if(!title)return null;const t=title.toLowerCase();
-    return cat.find(o=>{const n=pname(o).toLowerCase();return n.length>4&&t.includes(n);})
-        || cat.find(o=>{const n=pname(o).toLowerCase();return n.length>4&&n.includes(t.replace(/^[a-z]{2,3}\s*l?\d?[^:]*:\s*/i,'').trim());});
-  };
-  // Objective is linked to the project (from the speech's chosen project) or, failing that,
-  // the speaker's current Pathway.
-  const objRows=speeches.filter(s=>s.name&&(s.proj||s.pathway)).map(s=>{
-    const o=findObj(s.proj)||findObj(s.pathway);
-    const label=s.full||s.proj||s.pathway;
-    return `<tr><td class="c1">${esc(label)}</td><td>${o&&o.objective?esc(o.objective):''}</td><td class="c3">${o&&o.timing?esc(o.timing):''}</td></tr>`});
+  // page 2 — project objectives, looked up by the bare project name (strip path + "Lx:")
+  const OBJ=data.objectives||{};
+  const bareProject=s=>{s=String(s||'');const m=s.match(/L[1-5][^:]*:\s*(.+)$/);return (m?m[1]:s).trim();};
+  const lookupObj=full=>{const bp=bareProject(full);if(!bp)return null;
+    if(OBJ[bp])return OBJ[bp];
+    const k=Object.keys(OBJ).find(k=>k.length>4&&bp.toLowerCase()===k.toLowerCase())
+         || Object.keys(OBJ).find(k=>k.length>5&&bp.toLowerCase().includes(k.toLowerCase()));
+    return k?OBJ[k]:null;};
+  const objRows=speeches.filter(s=>s.name&&s.full).map(s=>{
+    const o=lookupObj(s.full);
+    return `<tr><td class="c1">${esc(s.full)}</td><td>${o&&o.objective?esc(o.objective):''}</td><td class="c3">${o&&o.timing?esc(o.timing):''}</td></tr>`});
   document.getElementById('objectives').innerHTML=objRows.length?objRows.join('')
     :'<tr><td class="c1 open">Prepared-speech projects</td><td class="open">Objectives appear here once speeches list their Pathways projects.</td><td class="c3"></td></tr>';
 }

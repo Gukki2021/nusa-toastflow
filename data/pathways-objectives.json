@@ -1,0 +1,249 @@
+{
+ "_source": "Toastmasters 8078 Competencies by Path + club purpose statements",
+ "objectives": {
+  "Active Listening": {
+   "objective": "Apply listening skills to increase comprehension and connection. Acknowledge the need for active listening.",
+   "timing": "5 –7 min"
+  },
+  "Building a Social Media Presence": {
+   "objective": "Determine how best to use social media. Create and maintain an online profile to promote yourself or an organization.",
+   "timing": "5 –7 min"
+  },
+  "Communicate Change": {
+   "objective": "Gather and organize evidence to support the need for adopting the change. Craft your findings into communications that create logical and emotional arguments for change.",
+   "timing": "5 –7 min"
+  },
+  "Connect with Storytelling": {
+   "objective": "Apply storytelling techniques and descriptive skills to make the presentation relatable and interesting. Understand the elements of a good story.",
+   "timing": "5 –7 min"
+  },
+  "Connect with Your Audience": {
+   "objective": "Use knowledge of audience characteristics to tailor your message. Identify the ways in which audiences differ.",
+   "timing": "5 –7 min"
+  },
+  "Create a Podcast": {
+   "objective": "Identify personal interests and use them as subject matter for a podcast. Assemble interesting content into a cohesive program.",
+   "timing": "5 –7 min"
+  },
+  "Creating Effective Visual Aids": {
+   "objective": "Demonstrate effective application of media and visual aids. Create effective visual aids to enhance presentations.",
+   "timing": "5 –7 min"
+  },
+  "Deliver Social Speeches": {
+   "objective": "Compose a speech appropriate for a social occasion. Recognize the characteristics of a toast, a eulogy, an acceptance speech, and a speech to praise an individual or group.",
+   "timing": "5 –7 min"
+  },
+  "Deliver Your Message with Humor": {
+   "objective": "Construct a well-developed, humorous speech that reflects an understanding of the audience and audience demographics. Deliver a keynote-length speech that incorporates humor.",
+   "timing": "5 –7 min"
+  },
+  "Develop Your Vision": {
+   "objective": "Develop a vision for your professional or personal life. Organize the proposed vision into several achievable tasks.",
+   "timing": "5 –7 min"
+  },
+  "Develop a Communication Plan": {
+   "objective": "Formulate a central message around which to develop your communication plan. Identify the target audience for your message.",
+   "timing": "5 –7 min"
+  },
+  "Effective Body Language": {
+   "objective": "Understand how body language expresses emotion and attitude. Recognize the body language used when speaking publicly.",
+   "timing": "5 –7 min"
+  },
+  "Engage Your Audience with Humor": {
+   "objective": "Write a well-organized speech. Develop a clear message and support with humorous stories.",
+   "timing": "5 –7 min"
+  },
+  "Ethical Leadership": {
+   "objective": "Identify the key elements of ethical leadership. Demonstrate an understanding of ethical leadership.",
+   "timing": "5 –7 min"
+  },
+  "Evaluation and Feedback": {
+   "objective": "Deliver tactful and constructive feedback. Use positive language when delivering feedback.",
+   "timing": "5 –7 min"
+  },
+  "Focus on the Positive": {
+   "objective": "Reflect upon negative thoughts that may disrupt happiness and productivity. Acknowledge the need for active listening.",
+   "timing": "5 –7 min"
+  },
+  "Get to the Point": {
+   "objective": "Deliver a clear, concise message with a well-defined purpose.",
+   "timing": "5 –7 min"
+  },
+  "High Performance Leadership": {
+   "objective": "Build a team by identifying skills and competencies necessary to complete project tasks. Motivate team members throughout the project, from inception to completion.",
+   "timing": "5 –7 min"
+  },
+  "Ice Breaker": {
+   "objective": "Introduce yourself to the club and learn the basic structure of a public speech.",
+   "timing": "4 –6 min"
+  },
+  "Improvement Through Positive Coaching": {
+   "objective": "Recognize the positive impact your actions can have on others. Nurture relationships with the people you coach.",
+   "timing": "5 –7 min"
+  },
+  "Inspire Your Audience": {
+   "objective": "Present a speech in an enthusiastic and inspiring fashion. Demonstrate an understanding of the value of gaining audience trust.",
+   "timing": "5 –7 min"
+  },
+  "Introduction to Toastmasters Mentoring": {
+   "objective": "Define how Toastmasters envisions mentoring and share an aspect of a previous experience as a protégé.",
+   "timing": "5 –7 min"
+  },
+  "Introduction to Vocal Variety and Body Language": {
+   "objective": "Practise using vocal variety and body language to enhance a speech.",
+   "timing": "5 –7 min"
+  },
+  "Know Your Sense of Humor": {
+   "objective": "Understand your sense of humor. Recognize the elements of a humorous story.",
+   "timing": "5 –7 min"
+  },
+  "Lead in Any Situation": {
+   "objective": "Understand why leadership is situational. Identify situational leadership styles.",
+   "timing": "5 –7 min"
+  },
+  "Leading Your Team": {
+   "objective": "Identify pertinent and relevant information to communicate to a group. Successfully complete a project with the help of a small group.",
+   "timing": "5 –7 min"
+  },
+  "Leading in Difficult Situations": {
+   "objective": "Analyze a situation to understand the reasons for challenges. Apply strategies for coping with a challenge.",
+   "timing": "5 –7 min"
+  },
+  "Leading in Your Volunteer Organization": {
+   "objective": "Exhibit an understanding of the skills required to lead in a volunteer organization. Demonstrate an understanding of the importance of recognition and reward in motivating volunteers.",
+   "timing": "5 –7 min"
+  },
+  "Lessons Learned": {
+   "objective": "Identify the topics for discussion with your team following a milestone or completion of a project. Encourage an environment of contribution and voicing opinions.",
+   "timing": "5 –7 min"
+  },
+  "Make Connections Through Networking": {
+   "objective": "Present yourself as friendly and engaging. Engage and interact with people to network effectively.",
+   "timing": "5 –7 min"
+  },
+  "Manage Change": {
+   "objective": "Establish a plan for implementing change. Develop a communication plan for reaching all stakeholders affected by the change.",
+   "timing": "5 –7 min"
+  },
+  "Manage Online Meetings": {
+   "objective": "Facilitate a webinar or online meeting via communication software. Interact skillfully with web tools in order to assist participants.",
+   "timing": "5 –7 min"
+  },
+  "Manage Projects Successfully": {
+   "objective": "Recognize your strengths and areas for growth as a project manager. Develop rapport with stakeholders.",
+   "timing": "5 –7 min"
+  },
+  "Manage Successful Events": {
+   "objective": "Acknowledge the responsibilities and realities of serving as the primary point of contact for a coordinated team effort. Demonstrate preparedness for the inevitable, unexpected nature of coordinating an event.",
+   "timing": "5 –7 min"
+  },
+  "Managing Time": {
+   "objective": "Identify and use a variety of time management techniques. Employ time management strategies in speeches.",
+   "timing": "5 –7 min"
+  },
+  "Managing a Difficult Audience": {
+   "objective": "Demonstrate the proper action for each type of difficult audience member. Defuse tense of uncomfortable situations with an audience.",
+   "timing": "5 –7 min"
+  },
+  "Moderate a Panel Discussion": {
+   "objective": "Practice effective moderation techniques. Identify panel members appropriate to the subject matter.",
+   "timing": "5 –7 min"
+  },
+  "Motivate Others": {
+   "objective": "Identify different ways individuals can be motivated. Demonstrate the ability to strengthen and nurture relationships with others.",
+   "timing": "5 –7 min"
+  },
+  "Negotiate the Best Outcome": {
+   "objective": "Foster agreement between parties from their current state to a new state. Understand how different negotiation styles are applied.",
+   "timing": "5 –7 min"
+  },
+  "Organise Your Speech": {
+   "objective": "Select an appropriate outline; make your message clear with supporting material; use appropriate transitions; create a strong opening and conclusion.",
+   "timing": "5 –7 min"
+  },
+  "Persuasive Speaking": {
+   "objective": "Understand methods for researching and supporting your viewpoint. Identify the most appropriate type of persuasive speech for your topic.",
+   "timing": "5 –7 min"
+  },
+  "Planning and Implementing": {
+   "objective": "Integrate clear, concise goals into your plan. Establish a process for meeting milestones during the implementation of your plan.",
+   "timing": "5 –7 min"
+  },
+  "Prepare for an Interview": {
+   "objective": "Convey your best qualities in an interview. Assess yourself fairly and nonjudgmentally.",
+   "timing": "5 –7 min"
+  },
+  "Prepare to Speak Professionally": {
+   "objective": "Define the attributes of a professional speaker. Determine your area of expertise.",
+   "timing": "5 –7 min"
+  },
+  "Present a Proposal": {
+   "objective": "Select key information to present in a proposal. Organize information in an easy-to-follow format for an audience.",
+   "timing": "5 –7 min"
+  },
+  "Public Relations Strategies": {
+   "objective": "Formulate a public relations strategy. Display an understanding of how to use various public relations tactics to communicate your message.",
+   "timing": "5 –7 min"
+  },
+  "Question-and-Answer Session": {
+   "objective": "Answer questions and provide information clearly, concisely, and with confidence. Build impromptu speaking skills.",
+   "timing": "5 –7 min"
+  },
+  "Reaching Consensus": {
+   "objective": "Recognize the importance of including all group members in the decision- making process. Demonstrate a commitment to the process of incorporating feedback and ideas from all stakeholders.",
+   "timing": "5 –7 min"
+  },
+  "Researching and Presenting": {
+   "objective": "Research and present an unfamiliar topic. Organize the speech clearly to maximize audience understanding.",
+   "timing": "5 –7 min"
+  },
+  "Successful Collaboration": {
+   "objective": "Understand the benefit of collaboration. Recognize the personal strengths you bring to a collaborative group Place value on the strengths of other members of the group.",
+   "timing": "5 –7 min"
+  },
+  "Team Building": {
+   "objective": "Create an environment that supports team success. Understand and communicate the benefits of working with a team.",
+   "timing": "5 –7 min"
+  },
+  "The Power of Humor in an Impromptu Speech": {
+   "objective": "Develop a method for giving impromptu speeches and practise adapting rehearsed stories during a presentation.",
+   "timing": "Two x 2-3 min"
+  },
+  "Understanding Conflict Resolution": {
+   "objective": "Identify and explain conflict resolution techniques. Place value on other points of view.",
+   "timing": "5 –7 min"
+  },
+  "Understanding Emotional Intelligence": {
+   "objective": "Learn the primary elements of emotional intelligence. Assess your emotions honestly.",
+   "timing": "5 –7 min"
+  },
+  "Understanding Vocal Variety": {
+   "objective": "Recognize the impact of vocal variety on audience members’ reception of a presentation. Identify changes in pitch, tone, volume, and pace when listening to a speaker.",
+   "timing": "5 –7 min"
+  },
+  "Understanding Your Communication Style": {
+   "objective": "Identify your communication style, recognise your strengths and blind spots, and learn to adapt to different people and situations.",
+   "timing": "5 –7 min"
+  },
+  "Understanding Your Leadership Style": {
+   "objective": "Understand different leadership attributes and styles. Identify your own leadership behaviors and style.",
+   "timing": "5 –7 min"
+  },
+  "Using Descriptive Language": {
+   "objective": "Recognize the difference between literal and figurative language. Identify the best use of literal and figurative language when presenting to an audience.",
+   "timing": "5 –7 min"
+  },
+  "Using Presentation Software": {
+   "objective": "Identify topics that could benefit from the use of presentation software. Recognize and describe best practices for designing engaging and informative slides.",
+   "timing": "5 –7 min"
+  },
+  "Write a Compelling Blog": {
+   "objective": "Demonstrate an understanding of the basic writing structure for blog posts. Develop well-written material for posting on your personal blog.",
+   "timing": "5 –7 min"
+  },
+  "Writing a Speech with Purpose": {
+   "objective": "Learn or review basic methods for writing a speech with a defined purpose and present a well-organized speech on any topic.",
+   "timing": "5 –7 min"
+  }
+ }
+}

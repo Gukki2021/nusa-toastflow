@@ -80,6 +80,7 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 <label>Meeting<select id="adminMeeting" onchange="ROW_PATH={};renderAdmin()"></select></label>
 <label>Meeting title <span style="font-weight:400;color:var(--muted)">— e.g. Chapter Meeting, Club Officers Installation…</span><span style="display:flex;gap:8px"><input id="themeInput" placeholder="Chapter Meeting" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveTheme()">Save title</button></span></label>
 <label>Venue <span style="font-weight:400;color:var(--muted)">— shown on the site &amp; programming sheet</span><span style="display:flex;gap:8px"><input id="venueInput" placeholder="e.g. SMU … Classroom 2.2 (or leave for 'To be confirmed')" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveVenue()">Save venue</button></span></label>
+<label>Ice Breaker / SAA <span style="font-weight:400;color:var(--muted)">— the 7:30 opener on the programming sheet</span><span style="display:flex;gap:8px"><input id="saaInput" placeholder="e.g. Xavier (leave blank to use the appointment sheet)" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveSaa()">Save SAA</button></span></label>
 <div class="admin-summary" id="adminSummary"></div>
 <div class="admin-tools">
   <button type="button" class="btn primary" onclick="generateSheet()">📄 Generate Programming Sheet</button>
@@ -95,8 +96,8 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 </form></dialog>
 <div class="toast" id="toast"></div>
 
-<script src="scripts/recommend.js?v=13"></script>
-<script src="scripts/appointments.js?v=13"></script>
+<script src="scripts/recommend.js?v=14"></script>
+<script src="scripts/appointments.js?v=14"></script>
 <script>
 const SUPABASE_URL=document.querySelector('meta[name="supabase-url"]').content;
 const SUPABASE_ANON_KEY=document.querySelector('meta[name="supabase-anon-key"]').content;
@@ -121,15 +122,18 @@ function venueFor(date){
   return VENUES[date]||{short:'To be confirmed',full:'Venue to be confirmed',directions:''};
 }
 let THEME_OVERRIDES={}; // {date: theme text} maintained in the admin
+let SAA_OVERRIDES={};   // {date: SAA / Ice Breaker holder} maintained in the admin
 function themeFor(date){return THEME_OVERRIDES[date]||(meetings.find(m=>m.date===date)||{}).theme||'Chapter Meeting';}
-async function loadVenues(){if(!configured)return;try{const res=await fetch(`${SUPABASE_URL}/rest/v1/public_meeting_info?select=meeting_date,venue,theme`,{headers});if(res.ok){VENUE_OVERRIDES={};THEME_OVERRIDES={};(await res.json()).forEach(r=>{if(r.venue)VENUE_OVERRIDES[r.meeting_date]=r.venue;if(r.theme)THEME_OVERRIDES[r.meeting_date]=r.theme;});}}catch(e){}}
+async function loadVenues(){if(!configured)return;try{const res=await fetch(`${SUPABASE_URL}/rest/v1/public_meeting_info?select=meeting_date,venue,theme,saa`,{headers});if(res.ok){VENUE_OVERRIDES={};THEME_OVERRIDES={};SAA_OVERRIDES={};(await res.json()).forEach(r=>{if(r.venue)VENUE_OVERRIDES[r.meeting_date]=r.venue;if(r.theme)THEME_OVERRIDES[r.meeting_date]=r.theme;if(r.saa)SAA_OVERRIDES[r.meeting_date]=r.saa;});}}catch(e){}}
 function saveVenue(){const el=document.getElementById('venueInput');if(!el)return;const v=el.value.trim();adminRpc('admin_set_venue',{p_meeting_date:currentAdminDate(),p_venue:v},'Venue saved.').then(()=>{VENUE_OVERRIDES[currentAdminDate()]=v;render();});}
 function saveTheme(){const el=document.getElementById('themeInput');if(!el)return;const v=el.value.trim()||'Chapter Meeting';adminRpc('admin_set_theme',{p_meeting_date:currentAdminDate(),p_theme:v},'Meeting title saved.').then(()=>{THEME_OVERRIDES[currentAdminDate()]=v;render();});}
+function saveSaa(){const el=document.getElementById('saaInput');if(!el)return;const v=el.value.trim();adminRpc('admin_set_saa',{p_meeting_date:currentAdminDate(),p_saa:v},'Ice Breaker / SAA saved.').then(()=>{if(v)SAA_OVERRIDES[currentAdminDate()]=v;else delete SAA_OVERRIDES[currentAdminDate()];render();});}
 let active=0,selectedRole='Prepared Speech 1',bookings=[],loading=false;
 let MEMBERS=[],HISTORY=[],PROJECTS=[],PATHWAYS={paths:[],projects:[]},MEMBER_PATHWAYS=[],PATHOF={};
 let APPTS=null; // parsed Meeting Appointment Holders sheet (from published CSV)
 let WILLING=[]; // member willingness registrations (public_willingness)
 let PATHS_DB={paths:{},electives:{}}; // two-level Pathways DB (path → level → projects)
+let PATHS_OBJ={}; // { projectName: {objective, timing} } from official sources
 // list of path names for the "Pathway" dropdown
 function pathList(){return Object.keys(PATHS_DB.paths||{});}
 // map a member's Base Camp current path to a DB path key (fuzzy)
@@ -165,6 +169,7 @@ async function loadData(){
     MEMBERS=m;HISTORY=h;PROJECTS=p;PATHWAYS=pw;
     // two-level Pathways project database (path → level → projects)
     try{PATHS_DB=await fetch('data/pathways-by-path.json').then(r=>r.ok?r.json():{paths:{},electives:{}});}catch(_){PATHS_DB={paths:{},electives:{}};}
+    try{PATHS_OBJ=(await fetch('data/pathways-objectives.json').then(r=>r.ok?r.json():{objectives:{}})).objectives||{};}catch(_){PATHS_OBJ={};}
     // member -> current Pathway database (from Base Camp dashboard export)
     MEMBER_PATHWAYS=await loadJSON(['data/member-pathways.json','data/member-pathways.public.json'],[]);
     PATHOF={};MEMBER_PATHWAYS.forEach(x=>{PATHOF[x.name.toLowerCase()]={path:x.currentPath,cred:x.credential};});
@@ -194,7 +199,7 @@ function willingNamesFor(date,role){return willingFor(date).filter(w=>(w.willing
 // Merge the two input sources for a meeting. Online reservations (Supabase) take
 // priority; the appointment sheet fills any role not reserved online.
 function apptFor(date){return (APPTS&&APPTS.byDate&&APPTS.byDate[date])||{}}
-function saaFor(date){return (APPTS&&APPTS.rawByDate&&APPTS.rawByDate[date]&&APPTS.rawByDate[date]['SAA'])||''}
+function saaFor(date){return SAA_OVERRIDES[date]||(APPTS&&APPTS.rawByDate&&APPTS.rawByDate[date]&&APPTS.rawByDate[date]['SAA'])||''}
 // hold types (planning placeholders, shown only in admin — never as detail to the public)
 function isExternal(name,note){return /\[EXTERNAL/i.test(note||'')||/^external\b/i.test(name||'')}
 function isSoftBlock(note){return /\[SOFTBLOCK\]/i.test(note||'')}
@@ -358,6 +363,7 @@ function computeRecs(date){
 function renderAdmin(){if(!document.getElementById('adminTable'))return;const date=currentAdminDate();const rows=rowsForAdmin();const recs=computeRecs(date);
 const vi=document.getElementById('venueInput');if(vi&&document.activeElement!==vi){const vf=venueFor(date);vi.value=(vf.full==='Venue to be confirmed')?'':vf.full;}
 const ti=document.getElementById('themeInput');if(ti&&document.activeElement!==ti){ti.value=themeFor(date);}
+const si=document.getElementById('saaInput');if(si&&document.activeElement!==si){si.value=SAA_OVERRIDES[date]||'';}
 const filled=rows.filter(r=>r.member_name).length;const speeches=rows.filter(r=>r.role.startsWith('Prepared Speech')&&r.member_name).length;const evaluators=rows.filter(r=>r.role.startsWith('Speech Evaluator')&&r.member_name).length;
 adminSummary.innerHTML=`<div class="metric"><small>Roles filled</small><strong>${filled}/${roleNames.length}</strong></div><div class="metric"><small>Prepared speeches</small><strong>${speeches}/4</strong></div><div class="metric"><small>Speech evaluators</small><strong>${evaluators}/${Math.max(speeches,1)}</strong></div>`;
 adminTable.innerHTML=`<table class="admin-table"><thead><tr><th style="width:15%">Role / Slot</th><th style="width:23%">Member <span class="why">(pick / dbl-click)</span></th><th style="width:16%">Pathway</th><th style="width:20%">Project</th><th style="width:9%">Status</th><th style="width:17%">Exco actions</th></tr></thead><tbody>${rows.map(r=>{
@@ -469,14 +475,14 @@ function generateSheet(){
       const parts=(x.note||'').split(' — ');let projRaw=(parts[0]||'').trim();const title=parts.slice(1).join(' — ').trim();
       const pp=pathOf(x.name);const path=pp&&pp.path?pp.path.replace(/\s*\(Simplified Chinese\)/i,'').trim():'';
       if(!projRaw){const lp=latestProjectOf(x.name);if(lp)projRaw=lp;}   // fall back to the track sheet's latest project
-      let full=projRaw||path;                                            // else the member's current Pathway
-      if(path&&projRaw&&!projRaw.toLowerCase().includes(path.toLowerCase().slice(0,8)))full=path+' '+projRaw;
-      a.projectRaw=projRaw;a.project=full;a.title=title;a.pathway=path;
+      const existing=pathFromNote(projRaw);                              // does the note already name a path?
+      let full = existing ? projRaw : (path&&projRaw ? path+' '+projRaw : (projRaw||path));
+      a.projectRaw=projRaw;a.project=full;a.title=title;a.pathway=existing||path;
     }
     assignments[r]=a;
   }
   const cat=(PATHWAYS.projects&&PATHWAYS.projects.length?PATHWAYS.projects:PROJECTS);
-  const payload={date,theme:themeFor(m.date),meta:{theme:themeFor(m.date),saa:saaFor(date),venue:venueFor(date).full,directions:venueFor(date).directions,time:MEETING_INFO.time},assignments,projects:cat};
+  const payload={date,theme:themeFor(m.date),meta:{theme:themeFor(m.date),saa:saaFor(date),venue:venueFor(date).full,directions:venueFor(date).directions,time:MEETING_INFO.time},assignments,projects:cat,objectives:PATHS_OBJ};
   localStorage.setItem('toastflow_sheet',JSON.stringify(payload));
   window.open('programming-sheet.html','_blank');
 }
