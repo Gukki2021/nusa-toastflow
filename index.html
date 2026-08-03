@@ -80,7 +80,6 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 <label>Meeting<select id="adminMeeting" onchange="ROW_PATH={};renderAdmin()"></select></label>
 <label>Meeting title <span style="font-weight:400;color:var(--muted)">— e.g. Chapter Meeting, Club Officers Installation…</span><span style="display:flex;gap:8px"><input id="themeInput" placeholder="Chapter Meeting" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveTheme()">Save title</button></span></label>
 <label>Venue <span style="font-weight:400;color:var(--muted)">— shown on the site &amp; programming sheet</span><span style="display:flex;gap:8px"><input id="venueInput" placeholder="e.g. SMU … Classroom 2.2 (or leave for 'To be confirmed')" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveVenue()">Save venue</button></span></label>
-<label>Ice Breaker / SAA <span style="font-weight:400;color:var(--muted)">— the 7:30 opener on the programming sheet</span><span style="display:flex;gap:8px"><input id="saaInput" placeholder="e.g. Xavier (leave blank to use the appointment sheet)" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveSaa()">Save SAA</button></span></label>
 <div class="admin-summary" id="adminSummary"></div>
 <div class="admin-tools">
   <button type="button" class="btn primary" onclick="generateSheet()">📄 Generate Programming Sheet</button>
@@ -91,13 +90,14 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 </div>
 <div id="rosterBox" style="display:none;margin:8px 0 4px"></div>
 <div id="willBox" style="display:none;margin:8px 0 4px"></div>
+<label style="margin-top:4px">Ice Breaker / SAA <span style="font-weight:400;color:var(--muted)">— the 7:30 opener (first role on the programming sheet)</span><span style="display:flex;gap:8px"><input id="saaInput" placeholder="e.g. Xavier (leave blank to use the appointment sheet)" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveSaa()">Save SAA</button></span></label>
 <div id="adminTable"></div>
 <div class="hint">Recommendations are computed from the historical Program Plan (rotation fairness, role freshness &amp; Pathways level). They are suggestions — you decide. "Generate Programming Sheet" opens a print-ready sheet pre-filled with confirmed reservations.</div>
 </form></dialog>
 <div class="toast" id="toast"></div>
 
-<script src="scripts/recommend.js?v=14"></script>
-<script src="scripts/appointments.js?v=14"></script>
+<script src="scripts/recommend.js?v=15"></script>
+<script src="scripts/appointments.js?v=15"></script>
 <script>
 const SUPABASE_URL=document.querySelector('meta[name="supabase-url"]').content;
 const SUPABASE_ANON_KEY=document.querySelector('meta[name="supabase-anon-key"]').content;
@@ -482,7 +482,8 @@ function generateSheet(){
     assignments[r]=a;
   }
   const cat=(PATHWAYS.projects&&PATHWAYS.projects.length?PATHWAYS.projects:PROJECTS);
-  const payload={date,theme:themeFor(m.date),meta:{theme:themeFor(m.date),saa:saaFor(date),venue:venueFor(date).full,directions:venueFor(date).directions,time:MEETING_INFO.time},assignments,projects:cat,objectives:PATHS_OBJ};
+  const creds=MEMBERS.map(x=>({name:x.name,cred:(x.credentials||'').trim()})).filter(x=>x.cred);
+  const payload={date,theme:themeFor(m.date),meta:{theme:themeFor(m.date),saa:saaFor(date),venue:venueFor(date).full,directions:venueFor(date).directions,time:MEETING_INFO.time},assignments,projects:cat,objectives:PATHS_OBJ,creds};
   localStorage.setItem('toastflow_sheet',JSON.stringify(payload));
   window.open('programming-sheet.html','_blank');
 }

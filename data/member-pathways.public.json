@@ -112,6 +112,19 @@
   "currentPath": "Persuasive Influence"
  },
  {
+  "name": "Kwong Fook Lau",
+  "credential": "ATMB, CL",
+  "pathsInProgress": [
+   {
+    "path": "Presentation Mastery",
+    "levels": [],
+    "done": 0,
+    "total": 0
+   }
+  ],
+  "currentPath": "Presentation Mastery"
+ },
+ {
   "name": "Sabrina Xu",
   "credential": "PI3",
   "pathsInProgress": [

@@ -168,7 +168,18 @@ const DEFAULT_EXCO=[
 ];
 
 function esc(s){return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
-function who(name){return name?esc(name):'<span class="open">— open —</span>'}
+// name -> Toastmasters credential (e.g. "ATMB, CL"), matched to the roster by shared name tokens
+let CREDS=[];
+function credFor(name){
+  if(!name||!CREDS.length)return '';
+  const nt=String(name).toLowerCase().split(/\s+/).filter(t=>t.length>1);
+  let best='',bs=0;
+  for(const c of CREDS){const ct=String(c.name).toLowerCase().split(/\s+/);const s=ct.filter(t=>nt.includes(t)).length;if(s>bs){bs=s;best=c.cred;}}
+  return bs>=2?best:'';
+}
+// append the credential once, unless the name already carries it
+function withCred(name){const c=credFor(name);return c&&!new RegExp(c.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i').test(name)?esc(name)+', '+esc(c):esc(name);}
+function who(name){return name?withCred(name):'<span class="open">— open —</span>'}
 
 // ---- exports: Word (.doc with embedded images) + shareable link ----
 async function exportWord(){
@@ -196,6 +207,7 @@ function build(){
   let payload=params.get('d')?decodePayload(params.get('d')):null;   // shared link takes priority
   if(!payload){try{payload=JSON.parse(localStorage.getItem('toastflow_sheet')||'null')}catch(e){}}
   const data=payload||{};CURRENT_PAYLOAD=payload;
+  CREDS=data.creds||[];                  // [{name, cred}] — for appending designations after names
   const A=data.assignments||{};          // {role:{name,note}}
   const date=data.date||params.get('date')||'';
   document.getElementById('src').textContent=payload?'· live data':'· blank template';
@@ -210,7 +222,7 @@ function build(){
   // ExCo list
   const exco=(data.exco&&data.exco.length?data.exco:DEFAULT_EXCO);
   document.getElementById('excoList').innerHTML=exco.map(([r,n])=>
-    `<div class="role">${esc(r)}</div><div class="name">${esc(n)||'&nbsp;'}</div>`).join('');
+    `<div class="role">${esc(r)}</div><div class="name">${n?withCred(n):'&nbsp;'}</div>`).join('');
   const excoName=r=>{const e=exco.find(x=>x[0].replace(/[+*()]/g,'').trim().toLowerCase()===r.toLowerCase());return e?e[1]:''};
   const saa=(data.meta&&data.meta.saa)||excoName('Sergeant at Arms');
 
@@ -241,7 +253,7 @@ function build(){
   push('9:30','Ah Counter Report (5min)',who(nm('Ah-Counter')));
   push('9:35','Language Evaluation (10 min)',who(nm('Language Evaluator')));
   push('9:45',"Awards Presentation &amp; President’s Closing Address",who(excoName('President')));
-  push('9:55','Meeting Adjourned','');
+  push('9:55','Meeting Adjourned','All');
   document.getElementById('agenda').innerHTML=A_ROWS.map(r=>
     `<tr class="${r.cls}"><td class="col-t">${r.t}</td><td>${r.item}</td><td class="col-p who">${r.p}</td></tr>`).join('');
 
