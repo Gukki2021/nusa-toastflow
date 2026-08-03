@@ -92,19 +92,24 @@ def make_poster(inp, out_path):
     f_body   = font("Arial Bold.ttf", 36)
     f_small  = font("Arial.ttf", 28)
 
-    y = PAD
-    # kicker
-    d.text((PAD, y), "NUS ALUMNI TOASTMASTERS CLUB", font=f_kicker, fill=CREAM)
-    y += 52
-    # meeting headline
-    title = inp.get("meeting_title", "Chapter Meeting 2026").upper()
-    y = draw_block(d, PAD, y, title, f_title, CREAM, W - 2 * PAD, leading=0.98)
-    y += 34
-    d.text((PAD, y), "Come hear me speak — scan to register free.",
-           font=f_sub, fill=WHITE)
-    y += 78
+    banner = inp.get("banner_path")
+    banner_led = bool(banner and os.path.exists(os.path.join(HERE, banner)))
 
-    # ---- white card ----
+    y = PAD
+    tagline = inp.get("tagline", "Come hear me speak — scan to register free.")
+    if banner_led:
+        # the branded banner carries the club identity, so lead with a CTA only
+        d.text((PAD, y), "YOU'RE INVITED", font=f_kicker, fill=CREAM); y += 52
+        d.text((PAD, y), tagline, font=f_sub, fill=WHITE); y += 82
+    else:
+        d.text((PAD, y), "NUS ALUMNI TOASTMASTERS CLUB", font=f_kicker, fill=CREAM)
+        y += 52
+        title = inp.get("meeting_title", "Chapter Meeting 2026").upper()
+        y = draw_block(d, PAD, y, title, f_title, CREAM, W - 2 * PAD, leading=0.98)
+        y += 34
+        d.text((PAD, y), tagline, font=f_sub, fill=WHITE)
+        y += 78
+
     # ---- white card on its own layer, sized to fit its content ----
     card_top = y
     card_w = W - 2 * PAD
@@ -115,11 +120,11 @@ def make_poster(inp, out_path):
     cx = pad
     cy = pad
 
-    # optional banner photo band
-    banner = inp.get("banner_path")
-    if banner and os.path.exists(os.path.join(HERE, banner)):
+    # branded banner as the header (aspect preserved)
+    if banner_led:
         band = Image.open(os.path.join(HERE, banner)).convert("RGB")
-        bw, bh = inner_w, int(inner_w * 0.42)
+        bw = inner_w
+        bh = int(bw * band.height / band.width)
         band = band.resize((bw, bh))
         mask = Image.new("L", (bw, bh), 0)
         ImageDraw.Draw(mask).rounded_rectangle((0, 0, bw, bh), radius=24, fill=255)
@@ -161,27 +166,34 @@ def make_poster(inp, out_path):
             font=f_small, fill=MUTED)
     cy = max(ty, cy + qr_px + 12 + 36) + 34
 
-    # footer: club logos + motto
-    cd.line((cx, cy, cx + inner_w, cy), fill=(230, 224, 212), width=2)
-    cy += 26
-    logo_h = 64
-    lx = cx
-    for name in ("tm-logo.png", "nus-logo.png"):
-        p = os.path.join(HERE, "assets", name)
-        if os.path.exists(p):
-            lg = Image.open(p).convert("RGBA")
-            lw = int(lg.width * (logo_h / lg.height))
-            lg = lg.resize((lw, logo_h))
-            card.paste(lg, (lx, cy), lg)
-            lx += lw + 28
-    cd.text((cx + inner_w, cy + logo_h - 30), "“To Live and To Grow”",
-            font=f_small, fill=MUTED, anchor="rs")
-    cy += logo_h + pad
+    if not banner_led:
+        # footer: club logos + motto (only when there's no branded banner up top)
+        cd.line((cx, cy, cx + inner_w, cy), fill=(230, 224, 212), width=2)
+        cy += 26
+        logo_h = 64
+        lx = cx
+        for name in ("tm-logo.png", "nus-logo.png"):
+            p = os.path.join(HERE, "assets", name)
+            if os.path.exists(p):
+                lg = Image.open(p).convert("RGBA")
+                lw = int(lg.width * (logo_h / lg.height))
+                lg = lg.resize((lw, logo_h))
+                card.paste(lg, (lx, cy), lg)
+                lx += lw + 28
+        cd.text((cx + inner_w, cy + logo_h - 30), "“To Live and To Grow”",
+                font=f_small, fill=MUTED, anchor="rs")
+        cy += logo_h + pad
+    else:
+        # banner already carries the motto/logos — just close the card
+        cy += pad - 8
 
     # crop the card to its content height, round the corners, composite onto the poster
     card = card.crop((0, 0, card_w, cy))
     mask = Image.new("L", card.size, 0)
     ImageDraw.Draw(mask).rounded_rectangle((0, 0, card_w, cy), radius=40, fill=255)
+    # when a banner leads, vertically balance the card in the remaining space
+    if banner_led:
+        card_top = max(card_top, (H - cy) // 2)
     img.paste(card, (PAD, card_top), mask)
 
     img.save(out_path, "PNG")
