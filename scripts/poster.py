@@ -1,0 +1,208 @@
+#!/usr/bin/env python3
+"""
+ToastFlow speaker poster generator — a 3:4 (mobile) share card a member can send
+to friends so they scan the QR and register on Eventbrite to come hear the speech.
+
+    python scripts/poster.py                     # renders a sample with placeholder data
+    python scripts/poster.py inputs.json out.png # renders from a JSON of inputs
+
+Inputs (all optional except speaker_name + speech_title):
+    speaker_name    "Wee Meng Ler"
+    speech_title    "Finding My Voice"
+    pathway         "Presentation Mastery · Level 1"      (small line under the title)
+    meeting_title   "Chapter Meeting 2026"
+    date_text       "Fri 14 Aug 2026 · 7:00 PM"
+    venue           "SMU School of Economics, Singapore"
+    eventbrite_url  "https://nus-alumni-toastmasters-club-chapter-meeting.eventbrite.com"
+    banner_path     "assets/<group-photo>.png"            (optional photo band; omitted if missing)
+    output          "poster.png"
+
+Design notes: 1080x1440 canvas, Toastmasters orange, cream headline, a white
+card holding the Eventbrite QR + when/where, and a first-person speaker hook.
+"""
+import sys, os, json, textwrap
+from PIL import Image, ImageDraw, ImageFont
+import qrcode
+
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+FONTS = "/System/Library/Fonts/Supplemental"
+
+# palette (sampled from the reference share card)
+ORANGE = (238, 79, 35)
+CREAM  = (233, 241, 199)
+WHITE  = (255, 255, 255)
+CARD   = (251, 249, 242)
+INK    = (28, 36, 64)
+MUTED  = (109, 115, 130)
+RED    = (181, 47, 59)
+
+W, H = 1080, 1440
+PAD = 72
+
+
+def font(name, size):
+    return ImageFont.truetype(os.path.join(FONTS, name), size)
+
+
+def wrap(draw, text, fnt, max_w):
+    """Greedy word-wrap to a pixel width; returns a list of lines."""
+    words, lines, cur = text.split(), [], ""
+    for w in words:
+        trial = (cur + " " + w).strip()
+        if draw.textlength(trial, font=fnt) <= max_w:
+            cur = trial
+        else:
+            if cur:
+                lines.append(cur)
+            cur = w
+    if cur:
+        lines.append(cur)
+    return lines
+
+
+def draw_block(draw, x, y, text, fnt, fill, max_w, leading=1.12):
+    for line in wrap(draw, text, fnt, max_w):
+        draw.text((x, y), line, font=fnt, fill=fill)
+        y += int(fnt.size * leading)
+    return y
+
+
+def rounded(img, box, radius, fill):
+    ImageDraw.Draw(img).rounded_rectangle(box, radius=radius, fill=fill)
+
+
+def make_qr(url, px):
+    qr = qrcode.QRCode(border=1, box_size=10,
+                       error_correction=qrcode.constants.ERROR_CORRECT_M)
+    qr.add_data(url)
+    qr.make(fit=True)
+    im = qr.make_image(fill_color=(28, 36, 64), back_color="white").convert("RGB")
+    return im.resize((px, px), Image.NEAREST)
+
+
+def make_poster(inp, out_path):
+    img = Image.new("RGB", (W, H), ORANGE)
+    d = ImageDraw.Draw(img)
+
+    f_kicker = font("Arial Bold.ttf", 30)
+    f_title  = font("Arial Black.ttf", 92)
+    f_sub    = font("Arial Bold.ttf", 34)
+    f_hook   = font("Arial Bold.ttf", 46)
+    f_speak  = font("Arial Black.ttf", 60)
+    f_body   = font("Arial Bold.ttf", 36)
+    f_small  = font("Arial.ttf", 28)
+
+    y = PAD
+    # kicker
+    d.text((PAD, y), "NUS ALUMNI TOASTMASTERS CLUB", font=f_kicker, fill=CREAM)
+    y += 52
+    # meeting headline
+    title = inp.get("meeting_title", "Chapter Meeting 2026").upper()
+    y = draw_block(d, PAD, y, title, f_title, CREAM, W - 2 * PAD, leading=0.98)
+    y += 34
+    d.text((PAD, y), "Come hear me speak — scan to register free.",
+           font=f_sub, fill=WHITE)
+    y += 78
+
+    # ---- white card ----
+    # ---- white card on its own layer, sized to fit its content ----
+    card_top = y
+    card_w = W - 2 * PAD
+    pad = 44
+    inner_w = card_w - 2 * pad
+    card = Image.new("RGB", (card_w, 2200), CARD)
+    cd = ImageDraw.Draw(card)
+    cx = pad
+    cy = pad
+
+    # optional banner photo band
+    banner = inp.get("banner_path")
+    if banner and os.path.exists(os.path.join(HERE, banner)):
+        band = Image.open(os.path.join(HERE, banner)).convert("RGB")
+        bw, bh = inner_w, int(inner_w * 0.42)
+        band = band.resize((bw, bh))
+        mask = Image.new("L", (bw, bh), 0)
+        ImageDraw.Draw(mask).rounded_rectangle((0, 0, bw, bh), radius=24, fill=255)
+        card.paste(band, (cx, cy), mask)
+        cy += bh + 34
+
+    # speaker hook
+    cd.text((cx, cy), "I'll be speaking on", font=f_hook, fill=RED)
+    cy += 60
+    cy = draw_block(cd, cx, cy, "“%s”" % inp.get("speech_title", "My Speech Title"),
+                    f_speak, INK, inner_w, leading=1.02)
+    cy += 8
+    cy = draw_block(cd, cx, cy, "— %s" % inp.get("speaker_name", "Speaker Name"),
+                    f_body, INK, inner_w)
+    cy += 6
+    if inp.get("pathway"):
+        cy = draw_block(cd, cx, cy, inp["pathway"], f_small, MUTED, inner_w)
+    cy += 22
+
+    # divider
+    cd.line((cx, cy, cx + inner_w, cy), fill=(230, 224, 212), width=2)
+    cy += 34
+
+    # QR (left) + when/where (right)
+    qr_px = 240
+    url = inp.get("eventbrite_url",
+                  "https://nus-alumni-toastmasters-club-chapter-meeting.eventbrite.com")
+    card.paste(make_qr(url, qr_px), (cx, cy))
+    tx = cx + qr_px + 40
+    tw = inner_w - qr_px - 40
+    ty = cy + 6
+    cd.text((tx, ty), "WHEN", font=f_small, fill=RED); ty += 38
+    ty = draw_block(cd, tx, ty, inp.get("date_text", "Fri 14 Aug 2026 · 7:00 PM"),
+                    f_body, INK, tw); ty += 18
+    cd.text((tx, ty), "WHERE", font=f_small, fill=RED); ty += 38
+    ty = draw_block(cd, tx, ty, inp.get("venue", "SMU School of Economics, Singapore"),
+                    f_body, INK, tw)
+    cd.text((cx, cy + qr_px + 12), "Scan to register on Eventbrite",
+            font=f_small, fill=MUTED)
+    cy = max(ty, cy + qr_px + 12 + 36) + 34
+
+    # footer: club logos + motto
+    cd.line((cx, cy, cx + inner_w, cy), fill=(230, 224, 212), width=2)
+    cy += 26
+    logo_h = 64
+    lx = cx
+    for name in ("tm-logo.png", "nus-logo.png"):
+        p = os.path.join(HERE, "assets", name)
+        if os.path.exists(p):
+            lg = Image.open(p).convert("RGBA")
+            lw = int(lg.width * (logo_h / lg.height))
+            lg = lg.resize((lw, logo_h))
+            card.paste(lg, (lx, cy), lg)
+            lx += lw + 28
+    cd.text((cx + inner_w, cy + logo_h - 30), "“To Live and To Grow”",
+            font=f_small, fill=MUTED, anchor="rs")
+    cy += logo_h + pad
+
+    # crop the card to its content height, round the corners, composite onto the poster
+    card = card.crop((0, 0, card_w, cy))
+    mask = Image.new("L", card.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, card_w, cy), radius=40, fill=255)
+    img.paste(card, (PAD, card_top), mask)
+
+    img.save(out_path, "PNG")
+    print("wrote", out_path, img.size)
+    return out_path
+
+
+SAMPLE = {
+    "speaker_name": "Wee Meng Ler, ATMB, CL",
+    "speech_title": "Finding My Voice",
+    "pathway": "Presentation Mastery · Level 1: Ice Breaker",
+    "meeting_title": "Chapter Meeting 2026",
+    "date_text": "Fri 14 Aug 2026 · 7:00 PM",
+    "venue": "SMU School of Economics, Singapore",
+    "eventbrite_url": "https://nus-alumni-toastmasters-club-chapter-meeting.eventbrite.com",
+    "banner_path": None,
+}
+
+if __name__ == "__main__":
+    if len(sys.argv) >= 3:
+        inp = json.load(open(sys.argv[1], encoding="utf-8"))
+        make_poster(inp, sys.argv[2])
+    else:
+        make_poster(SAMPLE, os.path.join(HERE, "scripts", "poster-sample.png"))
