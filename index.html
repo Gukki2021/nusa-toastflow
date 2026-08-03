@@ -66,7 +66,7 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 <body>
 <header class="top"><div class="brand"><div class="mark">TM</div><div><strong>ToastFlow · NUS Alumni Toastmasters</strong><small>Club meeting &amp; role planner</small></div></div><div style="display:flex;gap:8px"><a class="btn ghost" href="reference.html" style="text-decoration:none">Pathways</a><button class="btn ghost" onclick="openAdmin()">Admin</button><button class="btn primary" onclick="openBooking()">Reserve a Slot</button></div></header>
 
-<section class="hero"><div class="eyebrow">2026 PROGRAMMING SHEET</div><h1>Choose your date.<br><em>Step up and speak.</em></h1><p>Our club meets on the second Friday of every month. Members can reserve a Prepared Speech or take an open meeting role without creating an account — with smart, fair role suggestions working behind the scenes.</p><div class="actions" style="margin-top:8px"><button class="btn primary" onclick="openBooking()">Reserve a Speech or Role</button><a class="btn ghost" href="https://nus-alumni-toastmasters-club-chapter-meeting.eventbrite.com" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Register to attend →</a></div><div class="notice">📅 Upcoming: 14 Aug · 11 Sep · 9 Oct · 13 Nov · 11 Dec 2026</div></section>
+<section class="hero"><div class="eyebrow">2026 PROGRAMMING SHEET</div><h1>Choose your date.<br><em>Step up and speak.</em></h1><p>Our club meets on the second Friday of every month. Members can reserve a Prepared Speech or take an open meeting role without creating an account — with smart, fair role suggestions working behind the scenes.</p><div class="actions" style="margin-top:8px"><button class="btn primary" onclick="openBooking()">Reserve a Speech or Role</button><button class="btn ghost" onclick="shareRegister()">Share to a friend to register →</button></div><div class="notice">📅 Upcoming: 14 Aug · 11 Sep · 9 Oct · 13 Nov · 11 Dec 2026</div></section>
 
 <section class="section"><div class="section-head"><div><div class="eyebrow">UPCOMING MEETINGS</div><h2>From now to year-end.</h2></div><div class="month-tabs" id="tabs"></div></div>
 <div class="grid"><article class="card" id="meetingCard"></article>
@@ -98,9 +98,9 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 </form></dialog>
 <div class="toast" id="toast"></div>
 
-<script src="scripts/recommend.js?v=17"></script>
-<script src="scripts/appointments.js?v=17"></script>
-<script src="scripts/poster-card.js?v=17"></script>
+<script src="scripts/recommend.js?v=18"></script>
+<script src="scripts/appointments.js?v=18"></script>
+<script src="scripts/poster-card.js?v=18"></script>
 <script>
 const SUPABASE_URL=document.querySelector('meta[name="supabase-url"]').content;
 const SUPABASE_ANON_KEY=document.querySelector('meta[name="supabase-anon-key"]').content;
@@ -208,7 +208,10 @@ function willingNamesFor(date,role){return willingFor(date).filter(w=>(w.willing
 // Merge the two input sources for a meeting. Online reservations (Supabase) take
 // priority; the appointment sheet fills any role not reserved online.
 function apptFor(date){return (APPTS&&APPTS.byDate&&APPTS.byDate[date])||{}}
-function saaFor(date){return SAA_OVERRIDES[date]||(APPTS&&APPTS.rawByDate&&APPTS.rawByDate[date]&&APPTS.rawByDate[date]['SAA'])||''}
+function saaFor(date){const r=mergedFor(date)['Sergeant at Arms'];return SAA_OVERRIDES[date]||(slotFilled(r)?r.name:'')||(APPTS&&APPTS.rawByDate&&APPTS.rawByDate[date]&&APPTS.rawByDate[date]['SAA'])||''}
+const EVENTBRITE_URL='https://nus-alumni-toastmasters-club-chapter-meeting.eventbrite.com';
+// Share the Eventbrite registration link so a member can invite a friend to attend.
+async function shareRegister(){const m=meetings[active];const d=new Date(m.date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const text=`Come to the NUS Alumni Toastmasters ${themeFor(m.date)} — ${d}, ${MEETING_INFO.time} at ${venueFor(m.date).full}. Register free:`;try{if(navigator.share){await navigator.share({title:'NUS Alumni Toastmasters — register',text,url:EVENTBRITE_URL});}else{await navigator.clipboard.writeText(text+' '+EVENTBRITE_URL);show('Registration link copied — send it to a friend.');}}catch(e){/* user cancelled */}}
 // hold types (planning placeholders, shown only in admin — never as detail to the public)
 function isExternal(name,note){return /\[EXTERNAL/i.test(note||'')||/^external\b/i.test(name||'')}
 function isSoftBlock(note){return /\[SOFTBLOCK\]/i.test(note||'')}

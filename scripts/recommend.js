@@ -30,7 +30,7 @@
     'Prepared Speech 1', 'Prepared Speech 2', 'Prepared Speech 3', 'Prepared Speech 4',
     'Toastmaster of the Evening', 'Table Topics Master', 'General Evaluator',
     'Speech Evaluator 1', 'Speech Evaluator 2', 'Speech Evaluator 3', 'Speech Evaluator 4',
-    'Timer', 'Ah-Counter', 'Language Evaluator'
+    'Timer', 'Ah-Counter', 'Language Evaluator', 'Sergeant at Arms'
   ];
 
   // Maps the historical sheet's role labels -> canonical booking roles.
