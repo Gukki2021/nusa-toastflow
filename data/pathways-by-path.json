@@ -1,0 +1,201 @@
+{
+ "_source": "Toastmasters 8078 Competencies by Path (required) + Navigator elective pool",
+ "electives": {
+  "Level 3": [
+   "Deliver Social Speeches",
+   "Focus on the Positive",
+   "Using Presentation Software",
+   "Inspire Your Audience",
+   "Connect with Storytelling",
+   "Prepare for an Interview",
+   "Creating Effective Visual Aids",
+   "Understanding Vocal Variety",
+   "Using Descriptive Language",
+   "Effective Body Language",
+   "Connect with Your Audience",
+   "Active Listening",
+   "Make Connections Through Networking",
+   "Researching and Presenting"
+  ],
+  "Level 4": [
+   "Building a Social Media Presence",
+   "Create a Podcast",
+   "Manage Online Meetings",
+   "Manage Projects Successfully",
+   "Managing a Difficult Audience",
+   "Public Relations Strategies",
+   "Question-and-Answer Session",
+   "Write a Compelling Blog"
+  ],
+  "Level 5": [
+   "Ethical Leadership",
+   "High Performance Leadership",
+   "Leading in Your Volunteer Organization"
+  ]
+ },
+ "paths": {
+  "Presentation Mastery": {
+   "Level 1": [
+    "Ice Breaker",
+    "Writing a Speech with Purpose",
+    "Introduction to Vocal Variety and Body Language",
+    "Evaluation and Feedback"
+   ],
+   "Level 2": [
+    "Understanding Your Communication Style",
+    "Effective Body Language",
+    "Introduction to Toastmasters Mentoring"
+   ],
+   "Level 3": [
+    "Persuasive Speaking"
+   ],
+   "Level 4": [
+    "Managing a Difficult Audience"
+   ],
+   "Level 5": [
+    "Prepare to Speak Professionally",
+    "Reflect on Your Path"
+   ]
+  },
+  "Persuasive Influence": {
+   "Level 1": [
+    "Ice Breaker",
+    "Writing a Speech with Purpose",
+    "Introduction to Vocal Variety and Body Language",
+    "Evaluation and Feedback"
+   ],
+   "Level 2": [
+    "Active Listening",
+    "Understanding Your Leadership Style",
+    "Introduction to Toastmasters Mentoring"
+   ],
+   "Level 3": [
+    "Understanding Conflict Resolution"
+   ],
+   "Level 4": [
+    "Leading in Difficult Situations"
+   ],
+   "Level 5": [
+    "High Performance Leadership",
+    "Reflect on Your Path"
+   ]
+  },
+  "Engaging Humor": {
+   "Level 1": [
+    "Ice Breaker",
+    "Writing a Speech with Purpose",
+    "Introduction to Vocal Variety and Body Language",
+    "Evaluation and Feedback"
+   ],
+   "Level 2": [
+    "Connect with Your Audience",
+    "Know Your Sense of Humor",
+    "Introduction to Toastmasters Mentoring"
+   ],
+   "Level 3": [
+    "Engage Your Audience with Humor"
+   ],
+   "Level 4": [
+    "The Power of Humor in an Impromptu Speech"
+   ],
+   "Level 5": [
+    "Deliver Your Message with Humor",
+    "Reflect on Your Path"
+   ]
+  },
+  "Motivational Strategies": {
+   "Level 1": [
+    "Ice Breaker",
+    "Writing a Speech with Purpose",
+    "Introduction to Vocal Variety and Body Language",
+    "Evaluation and Feedback"
+   ],
+   "Level 2": [
+    "Active Listening",
+    "Understanding Your Communication Style",
+    "Introduction to Toastmasters Mentoring"
+   ],
+   "Level 3": [
+    "Understanding Emotional Intelligence"
+   ],
+   "Level 4": [
+    "Motivate Others"
+   ],
+   "Level 5": [
+    "Team Building",
+    "Reflect on Your Path"
+   ]
+  },
+  "Visionary Communication": {
+   "Level 1": [
+    "Ice Breaker",
+    "Writing a Speech with Purpose",
+    "Introduction to Vocal Variety and Body Language",
+    "Evaluation and Feedback"
+   ],
+   "Level 2": [
+    "Understanding Your Leadership Style",
+    "Understanding Your Communication Style",
+    "Introduction to Toastmasters Mentoring"
+   ],
+   "Level 3": [
+    "Develop a Communication Plan"
+   ],
+   "Level 4": [
+    "Communicate Change"
+   ],
+   "Level 5": [
+    "Develop Your Vision",
+    "Reflect on Your Path"
+   ]
+  },
+  "Dynamic Leadership": {
+   "Level 1": [
+    "Ice Breaker",
+    "Writing a Speech with Purpose",
+    "Introduction to Vocal Variety and Body Language",
+    "Evaluation and Feedback"
+   ],
+   "Level 2": [
+    "Understanding Your Leadership Style",
+    "Understanding Your Communication Style",
+    "Introduction to Toastmasters Mentoring"
+   ],
+   "Level 3": [
+    "Negotiate the Best Outcome"
+   ],
+   "Level 4": [
+    "Manage Change"
+   ],
+   "Level 5": [
+    "Lead in Any Situation",
+    "Reflect on Your Path"
+   ]
+  },
+  "The Communication Series: Entertaining Speaker + Storytelling": {
+   "Level 1": [
+    "Ice Breaker",
+    "Writing a Speech with Purpose",
+    "Introduction to Vocal Variety and Body Language",
+    "Organise Your Speech",
+    "Get to the Point"
+   ],
+   "Level 2": [
+    "Make Them Laugh",
+    "Know Your Sense of Humor",
+    "Introduction to Toastmasters Mentoring"
+   ],
+   "Level 3": [
+    "Storytelling",
+    "Inspire Your Audience"
+   ],
+   "Level 4": [
+    "The Entertaining Speech"
+   ],
+   "Level 5": [
+    "Master Your Style",
+    "Reflect on Your Path"
+   ]
+  }
+ }
+}
