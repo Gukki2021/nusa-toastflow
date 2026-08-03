@@ -6,19 +6,20 @@ to friends so they scan the QR and register on Eventbrite to come hear the speec
     python scripts/poster.py                     # renders a sample with placeholder data
     python scripts/poster.py inputs.json out.png # renders from a JSON of inputs
 
-Inputs (all optional except speaker_name + speech_title):
-    speaker_name    "Wee Meng Ler"
-    speech_title    "Finding My Voice"
-    pathway         "Presentation Mastery · Level 1"      (small line under the title)
-    meeting_title   "Chapter Meeting 2026"
-    date_text       "Fri 14 Aug 2026 · 7:00 PM"
+Inputs (all optional except speaker_name):
+    speaker_name    "Wee Meng Ler, ATMB, CL"
+    speaker_label   "Featured Speaker"                    (fixed heading above the name)
+    pathway         "Presentation Mastery · Level 1"      (small line under the name)
+    tagline         "Come hear me speak — scan to register free."
+    date_text       "Fri 14 Aug 2026 · 7:00 – 9:50 PM"    (include the end time)
     venue           "SMU School of Economics, Singapore"
     eventbrite_url  "https://nus-alumni-toastmasters-club-chapter-meeting.eventbrite.com"
-    banner_path     "assets/<group-photo>.png"            (optional photo band; omitted if missing)
-    output          "poster.png"
+    banner_path     "assets/chapter-meeting-banner.png"   (branded header; leads the card when present)
+    meeting_title   "Chapter Meeting 2026"                (only used if no banner)
 
-Design notes: 1080x1440 canvas, Toastmasters orange, cream headline, a white
-card holding the Eventbrite QR + when/where, and a first-person speaker hook.
+Design notes: 1080x1440 canvas, Toastmasters Loyal Blue background. When a
+branded banner is supplied it leads a cream card holding the speaker's name,
+the Eventbrite QR and when/where; the banner already carries the club identity.
 """
 import sys, os, json, textwrap
 from PIL import Image, ImageDraw, ImageFont
@@ -27,14 +28,15 @@ import qrcode
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FONTS = "/System/Library/Fonts/Supplemental"
 
-# palette (sampled from the reference share card)
-ORANGE = (238, 79, 35)
+# palette — Toastmasters brand colours
+BG     = (0, 65, 101)     # Loyal Blue (poster background)
+YELLOW = (242, 223, 116)  # Happy Yellow (kicker accent)
+MAROON = (119, 36, 50)    # True Maroon (section accents)
 CREAM  = (233, 241, 199)
 WHITE  = (255, 255, 255)
 CARD   = (251, 249, 242)
 INK    = (28, 36, 64)
 MUTED  = (109, 115, 130)
-RED    = (181, 47, 59)
 
 W, H = 1080, 1440
 PAD = 72
@@ -60,7 +62,7 @@ def wrap(draw, text, fnt, max_w):
     return lines
 
 
-def draw_block(draw, x, y, text, fnt, fill, max_w, leading=1.12):
+def draw_block(draw, x, y, text, fnt, fill, max_w, leading=1.22):
     for line in wrap(draw, text, fnt, max_w):
         draw.text((x, y), line, font=fnt, fill=fill)
         y += int(fnt.size * leading)
@@ -81,7 +83,7 @@ def make_qr(url, px):
 
 
 def make_poster(inp, out_path):
-    img = Image.new("RGB", (W, H), ORANGE)
+    img = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(img)
 
     f_kicker = font("Arial Bold.ttf", 30)
@@ -99,7 +101,7 @@ def make_poster(inp, out_path):
     tagline = inp.get("tagline", "Come hear me speak — scan to register free.")
     if banner_led:
         # the branded banner carries the club identity, so lead with a CTA only
-        d.text((PAD, y), "YOU'RE INVITED", font=f_kicker, fill=CREAM); y += 52
+        d.text((PAD, y), "YOU'RE INVITED", font=f_kicker, fill=YELLOW); y += 52
         d.text((PAD, y), tagline, font=f_sub, fill=WHITE); y += 82
     else:
         d.text((PAD, y), "NUS ALUMNI TOASTMASTERS CLUB", font=f_kicker, fill=CREAM)
@@ -129,42 +131,39 @@ def make_poster(inp, out_path):
         mask = Image.new("L", (bw, bh), 0)
         ImageDraw.Draw(mask).rounded_rectangle((0, 0, bw, bh), radius=24, fill=255)
         card.paste(band, (cx, cy), mask)
-        cy += bh + 34
+        cy += bh + 48
 
-    # speaker hook
-    cd.text((cx, cy), "I'll be speaking on", font=f_hook, fill=RED)
-    cy += 60
-    cy = draw_block(cd, cx, cy, "“%s”" % inp.get("speech_title", "My Speech Title"),
-                    f_speak, INK, inner_w, leading=1.02)
-    cy += 8
-    cy = draw_block(cd, cx, cy, "— %s" % inp.get("speaker_name", "Speaker Name"),
-                    f_body, INK, inner_w)
-    cy += 6
+    # speaker — a fixed label + the person's name (no speech title)
+    cd.text((cx, cy), inp.get("speaker_label", "Featured Speaker"), font=f_hook, fill=MAROON)
+    cy += 72
+    cy = draw_block(cd, cx, cy, inp.get("speaker_name", "Speaker Name"),
+                    f_speak, INK, inner_w, leading=1.14)
+    cy += 14
     if inp.get("pathway"):
         cy = draw_block(cd, cx, cy, inp["pathway"], f_small, MUTED, inner_w)
-    cy += 22
+    cy += 34
 
     # divider
     cd.line((cx, cy, cx + inner_w, cy), fill=(230, 224, 212), width=2)
-    cy += 34
+    cy += 44
 
     # QR (left) + when/where (right)
     qr_px = 240
     url = inp.get("eventbrite_url",
                   "https://nus-alumni-toastmasters-club-chapter-meeting.eventbrite.com")
     card.paste(make_qr(url, qr_px), (cx, cy))
-    tx = cx + qr_px + 40
-    tw = inner_w - qr_px - 40
+    tx = cx + qr_px + 44
+    tw = inner_w - qr_px - 44
     ty = cy + 6
-    cd.text((tx, ty), "WHEN", font=f_small, fill=RED); ty += 38
-    ty = draw_block(cd, tx, ty, inp.get("date_text", "Fri 14 Aug 2026 · 7:00 PM"),
-                    f_body, INK, tw); ty += 18
-    cd.text((tx, ty), "WHERE", font=f_small, fill=RED); ty += 38
+    cd.text((tx, ty), "WHEN", font=f_small, fill=MAROON); ty += 44
+    ty = draw_block(cd, tx, ty, inp.get("date_text", "Fri 14 Aug 2026 · 7:00 – 9:50 PM"),
+                    f_body, INK, tw, leading=1.24); ty += 26
+    cd.text((tx, ty), "WHERE", font=f_small, fill=MAROON); ty += 44
     ty = draw_block(cd, tx, ty, inp.get("venue", "SMU School of Economics, Singapore"),
-                    f_body, INK, tw)
-    cd.text((cx, cy + qr_px + 12), "Scan to register on Eventbrite",
+                    f_body, INK, tw, leading=1.24)
+    cd.text((cx, cy + qr_px + 16), "Scan to register on Eventbrite",
             font=f_small, fill=MUTED)
-    cy = max(ty, cy + qr_px + 12 + 36) + 34
+    cy = max(ty, cy + qr_px + 16 + 36) + 40
 
     if not banner_led:
         # footer: club logos + motto (only when there's no branded banner up top)
@@ -206,7 +205,7 @@ SAMPLE = {
     "speech_title": "Finding My Voice",
     "pathway": "Presentation Mastery · Level 1: Ice Breaker",
     "meeting_title": "Chapter Meeting 2026",
-    "date_text": "Fri 14 Aug 2026 · 7:00 PM",
+    "date_text": "Fri 14 Aug 2026 · 7:00 – 9:50 PM",
     "venue": "SMU School of Economics, Singapore",
     "eventbrite_url": "https://nus-alumni-toastmasters-club-chapter-meeting.eventbrite.com",
     "banner_path": None,

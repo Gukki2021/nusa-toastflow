@@ -12,7 +12,7 @@
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--paper);color:var(--ink)}
 button,input,select,textarea{font:inherit}button{cursor:pointer}
 .top{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px 6vw;background:rgba(255,253,250,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:center;gap:12px}.mark{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--red);color:#fff;font-weight:800}
+.brand{display:flex;align-items:center;gap:12px}.mark{flex:0 0 42px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--red);color:#fff;font-weight:800}
 .brand strong,.brand small{display:block}.brand small{color:var(--muted);font-size:11px}
 .btn{border:0;border-radius:999px;padding:11px 18px;font-weight:750}.primary{background:var(--red);color:#fff}.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
 .hero{padding:78px 7vw 54px;background:radial-gradient(circle at 80% 15%,rgba(215,173,89,.18),transparent 28%),linear-gradient(135deg,#fbf7ef,#fffdfa)}
@@ -34,6 +34,8 @@ h1,h2{font-family:Georgia,serif;line-height:1.05}h1{font-size:clamp(46px,7vw,82p
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
 .roles{display:grid;gap:10px}.role{display:flex;justify-content:space-between;align-items:center;padding:14px;border:1px solid var(--line);border-radius:14px}
 .role span{font-weight:700}.role button{border:0;border-radius:999px;padding:8px 12px;background:var(--cream);font-weight:750}
+.slot-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.mini{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:750;color:var(--ink)}.mini:hover{background:var(--cream)}.mini:disabled{opacity:.4}
 .footer-note{padding:16px 26px;background:var(--cream);font-size:12px;color:var(--muted)}
 dialog{border:0;border-radius:24px;padding:0;width:min(520px,calc(100% - 24px));box-shadow:0 24px 70px rgba(0,0,0,.25)}
 dialog#adminModal{width:min(960px,calc(100% - 24px))}
@@ -64,7 +66,7 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 <body>
 <header class="top"><div class="brand"><div class="mark">TM</div><div><strong>ToastFlow · NUS Alumni Toastmasters</strong><small>Club meeting &amp; role planner</small></div></div><div style="display:flex;gap:8px"><a class="btn ghost" href="reference.html" style="text-decoration:none">Pathways</a><button class="btn ghost" onclick="openAdmin()">Admin</button><button class="btn primary" onclick="openBooking()">Reserve a Slot</button></div></header>
 
-<section class="hero"><div class="eyebrow">2026 PROGRAMMING SHEET</div><h1>Choose your date.<br><em>Step up and speak.</em></h1><p>Our club meets on the second Friday of every month. Members can reserve a Prepared Speech or take an open meeting role without creating an account — with smart, fair role suggestions working behind the scenes.</p><div class="notice">📅 Upcoming: 14 Aug · 11 Sep · 9 Oct · 13 Nov · 11 Dec 2026</div></section>
+<section class="hero"><div class="eyebrow">2026 PROGRAMMING SHEET</div><h1>Choose your date.<br><em>Step up and speak.</em></h1><p>Our club meets on the second Friday of every month. Members can reserve a Prepared Speech or take an open meeting role without creating an account — with smart, fair role suggestions working behind the scenes.</p><div class="actions" style="margin-top:8px"><button class="btn primary" onclick="openBooking()">Reserve a Speech or Role</button><a class="btn ghost" href="https://nus-alumni-toastmasters-club-chapter-meeting.eventbrite.com" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Register to attend →</a></div><div class="notice">📅 Upcoming: 14 Aug · 11 Sep · 9 Oct · 13 Nov · 11 Dec 2026</div></section>
 
 <section class="section"><div class="section-head"><div><div class="eyebrow">UPCOMING MEETINGS</div><h2>From now to year-end.</h2></div><div class="month-tabs" id="tabs"></div></div>
 <div class="grid"><article class="card" id="meetingCard"></article>
@@ -96,8 +98,9 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 </form></dialog>
 <div class="toast" id="toast"></div>
 
-<script src="scripts/recommend.js?v=16"></script>
-<script src="scripts/appointments.js?v=16"></script>
+<script src="scripts/recommend.js?v=17"></script>
+<script src="scripts/appointments.js?v=17"></script>
+<script src="scripts/poster-card.js?v=17"></script>
 <script>
 const SUPABASE_URL=document.querySelector('meta[name="supabase-url"]').content;
 const SUPABASE_ANON_KEY=document.querySelector('meta[name="supabase-anon-key"]').content;
@@ -112,6 +115,10 @@ const meetings=[
 const roleNames=ToastFlow.ROLES;
 // roles the club doesn't run publicly — hidden from the public homepage & booking form (still managed in admin)
 const PUBLIC_HIDE=['General Evaluator'];
+// members reserve by role name only, not a numbered slot — "Prepared Speech 2" → "Prepared Speech".
+function genericRole(r){return String(r).replace(/\s*\d+$/,'');}
+function concreteSlots(g){return roleNames.filter(r=>genericRole(r)===g&&!PUBLIC_HIDE.includes(r));}
+function publicRoleList(){const out=[],seen={};roleNames.filter(r=>!PUBLIC_HIDE.includes(r)).forEach(r=>{const g=genericRole(r);if(!seen[g]){seen[g]=1;out.push(g);}});return out;}
 const MEETING_INFO={time:'7:30–9:50 PM'};
 // Venue is per-meeting. Only 14 Aug is confirmed; Sep–Dec rooms are still TBC.
 const SMU_DIRECTIONS='https://academy.smu.edu.sg/getting-smu/smu-school-economics-school-computing-information-systems-2';
@@ -241,14 +248,23 @@ function mergedFor(date){
   return out;
 }
 function renderTabs(){tabs.innerHTML=meetings.map((m,i)=>`<button class="${i===active?'active':''}" onclick="active=${i};render()">${m.month}</button>`).join('')}
-function render(){renderTabs();const m=meetings[active],mg=mergedFor(m.date);const speechSlots=[1,2,3,4].map(n=>{const x=mg[`Prepared Speech ${n}`];const filled=slotFilled(x),hold=x&&x.hold;return `<div class="slot ${filled?'booked':''}"><div><strong>${filled?(hold?'Reserved':escapeHtml(x.name)):`Prepared Speech ${n}`}</strong><small>${filled?(hold?'Reserved':escapeHtml(x.note||'Reserved')):'Available for booking'}</small></div><span class="open">${filled?'BOOKED':'OPEN'}</span></div>`}).join('');meetingCard.innerHTML=`<div class="meeting-head"><div class="date"><strong>${m.day}</strong><span>${m.label} 2026</span></div><div><h3>${themeFor(m.date)}</h3><p>Friday · ${MEETING_INFO.time} · ${venueFor(m.date).short}</p></div></div><div class="body"><div class="meta"><span>📅 ${new Date(m.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</span><span>🕜 ${MEETING_INFO.time}</span><span>📍 ${venueFor(m.date).full}${venueFor(m.date).directions?` · <a href="${venueFor(m.date).directions}" target="_blank" rel="noopener">Directions</a>`:''}</span></div><div class="slots">${loading?'<p>Refreshing live availability…</p>':speechSlots}</div><div class="actions"><button class="btn primary" onclick="openNextSpeech()">Reserve a Speech</button><button class="btn ghost" onclick="downloadICS(${active})">Add to Calendar</button><button class="btn ghost" onclick="addToGoogleCalendar(${active})">Google Calendar</button><button class="btn ghost" onclick="shareMeeting(${active})">Share</button><button class="btn ghost" onclick="loadBookings()">Refresh</button></div></div><div class="footer-note">${configured?'Live shared availability powered by Supabase.':'Supabase setup required before public reservations can be saved.'}</div>`;renderRoles();populateForm()}
-function renderRoles(){const m=meetings[active],mg=mergedFor(m.date);roles.innerHTML=roleNames.slice(4).filter(r=>!PUBLIC_HIDE.includes(r)).map(r=>{const x=mg[r];const filled=slotFilled(x),hold=x&&x.hold;return `<div class="role" ${hold?'style="opacity:.75"':''}><span>${filled?(hold?`${r} · <em>Reserved</em>`:`${r} · ${escapeHtml(x.name)}`):r}</span><button ${filled?'disabled':''} onclick="openBooking('${r}')">${filled?(hold?'Reserved':'Taken'):'Take role'}</button></div>`}).join('')}
-function populateForm(){meeting.innerHTML=meetings.map((m,i)=>`<option value="${m.date}" ${i===active?'selected':''}>${m.month} ${m.day}, 2026</option>`).join('');role.innerHTML=roleNames.filter(r=>!PUBLIC_HIDE.includes(r)).map(r=>`<option>${r}</option>`).join('');role.value=selectedRole;
+function render(){renderTabs();const m=meetings[active],mg=mergedFor(m.date);const speechSlots=[1,2,3,4].map(n=>{const role=`Prepared Speech ${n}`;const x=mg[role];const filled=slotFilled(x),hold=x&&x.hold;const acts=(filled&&!hold)?`<div class="slot-actions"><button class="mini" onclick="sharePoster('${role}')">📤 Share</button><button class="mini" onclick="downloadPoster('${role}')">⬇ Poster (free)</button><button class="mini" onclick="downloadICS(${active})">📅 Calendar</button></div>`:'';return `<div class="slot ${filled?'booked':''}"><div style="flex:1;min-width:0"><strong>${filled?(hold?'Reserved':escapeHtml(x.name)):'Prepared Speech'}</strong><small>${filled?(hold?'Reserved':escapeHtml(x.note||'Reserved')):'Available for booking'}</small>${acts}</div><span class="open">${filled?'BOOKED':'OPEN'}</span></div>`}).join('');meetingCard.innerHTML=`<div class="meeting-head"><div class="date"><strong>${m.day}</strong><span>${m.label} 2026</span></div><div><h3>${themeFor(m.date)}</h3><p>Friday · ${MEETING_INFO.time} · ${venueFor(m.date).short}</p></div></div><div class="body"><div class="meta"><span>📅 ${new Date(m.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</span><span>🕜 ${MEETING_INFO.time}</span><span>📍 ${venueFor(m.date).full}${venueFor(m.date).directions?` · <a href="${venueFor(m.date).directions}" target="_blank" rel="noopener">Directions</a>`:''}</span></div><div class="slots">${loading?'<p>Refreshing live availability…</p>':speechSlots}</div><div class="actions"><button class="btn primary" onclick="openNextSpeech()">Reserve a Speech</button><button class="btn ghost" onclick="downloadICS(${active})">Add to Calendar</button><button class="btn ghost" onclick="addToGoogleCalendar(${active})">Google Calendar</button><button class="btn ghost" onclick="shareMeeting(${active})">Share</button><button class="btn ghost" onclick="loadBookings()">Refresh</button></div></div><div class="footer-note">${configured?'Live shared availability powered by Supabase.':'Supabase setup required before public reservations can be saved.'}</div>`;renderRoles();populateForm()}
+function renderRoles(){const m=meetings[active],mg=mergedFor(m.date);
+  const groups=publicRoleList().filter(g=>g!=='Prepared Speech');   // prepared speeches live in the slots panel
+  roles.innerHTML=groups.map(g=>{const slots=concreteSlots(g);
+    if(slots.length>1){                                            // grouped role (e.g. Speech Evaluator) — no numbers shown
+      const open=slots.filter(r=>!slotFilled(mg[r])).length;const taken=slots.length-open;
+      return `<div class="role"><span>${g} <span class="why" style="font-weight:600">(${taken}/${slots.length} taken)</span></span><button ${open?'':'disabled'} onclick="openBooking('${g}')">${open?'Take role':'Full'}</button></div>`;
+    }
+    const r=slots[0],x=mg[r],filled=slotFilled(x),hold=x&&x.hold;
+    return `<div class="role" ${hold?'style="opacity:.75"':''}><span>${filled?(hold?`${r} · <em>Reserved</em>`:`${r} · ${escapeHtml(x.name)}`):r}</span><button ${filled?'disabled':''} onclick="openBooking('${r}')">${filled?(hold?'Reserved':'Taken'):'Take role'}</button></div>`;
+  }).join('')}
+function populateForm(){meeting.innerHTML=meetings.map((m,i)=>`<option value="${m.date}" ${i===active?'selected':''}>${m.month} ${m.day}, 2026</option>`).join('');role.innerHTML=publicRoleList().map(r=>`<option>${r}</option>`).join('');role.value=genericRole(selectedRole);
   const pp=document.getElementById('projectPath');if(pp){pp.innerHTML='<option value="">— select your path —</option>'+pathList().map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');}
   fillProjectSelect();}
 function fillProjectSelect(){const pp=document.getElementById('projectPath'),pj=document.getElementById('project');if(!pj)return;pj.innerHTML=pp&&pp.value?projectOptions(pp.value,''):'<option value="">— pick your path first —</option>';}
-function openNextSpeech(){const mg=mergedFor(meetings[active].date);const next=[1,2,3,4].map(n=>`Prepared Speech ${n}`).find(r=>!slotFilled(mg[r]));if(!next){show('All prepared speech slots are currently booked.');return}openBooking(next)}
-function openBooking(r='Prepared Speech 1'){if(!configured){show('Supabase is not configured yet.');return}selectedRole=r;populateForm();modal.showModal()}
+function openNextSpeech(){const mg=mergedFor(meetings[active].date);const next=[1,2,3,4].map(n=>`Prepared Speech ${n}`).find(r=>!slotFilled(mg[r]));if(!next){show('All prepared speech slots are currently booked.');return}openBooking('Prepared Speech')}
+function openBooking(r='Prepared Speech'){if(!configured){show('Supabase is not configured yet.');return}selectedRole=genericRole(r);populateForm();modal.showModal()}
 async function loadBookings(){if(!configured){render();return}loading=true;render();try{const res=await fetch(`${SUPABASE_URL}/rest/v1/public_reservations?select=meeting_date,reservation_type,member_name,note,status,confirmed&status=eq.confirmed&order=meeting_date.asc`,{headers});if(!res.ok){const t=await res.text(); if(res.status===404||t.includes('PGRST')) throw new Error('DATABASE_NOT_INITIALIZED'); throw new Error(t);}bookings=await res.json()}catch(err){console.error(err);show(err.message==='DATABASE_NOT_INITIALIZED'?'Database is not initialized yet. Please ask an admin to run the setup script.':'Could not load live availability.')}finally{loading=false;render()}}
 form.addEventListener('submit',async e=>{
   e.preventDefault();if(!configured){show('Supabase is not configured yet.');return}
@@ -258,7 +274,10 @@ form.addEventListener('submit',async e=>{
   const combinedNote=[proj,noteText].filter(Boolean).join(' — ');
   const memberName=(document.getElementById('name').value||'').trim();
   if(!memberName){show('Please enter your name.');return;}
-  const payload={p_meeting_date:meeting.value,p_reservation_type:role.value,p_member_name:memberName,p_contact:contact.value.trim(),p_note:combinedNote};
+  // resolve the generic role to the next open numbered slot (kept internal, arranged in admin)
+  const chosen=role.value;const grp=concreteSlots(chosen);let concrete=chosen;
+  if(grp.length>1){const mgx=mergedFor(meeting.value);concrete=grp.find(r=>!slotFilled(mgx[r]));if(!concrete){show(`All “${chosen}” slots are taken — please pick another role.`);return;}}
+  const payload={p_meeting_date:meeting.value,p_reservation_type:concrete,p_member_name:memberName,p_contact:contact.value.trim(),p_note:combinedNote};
   if(slotFilled(mergedFor(payload.p_meeting_date)[payload.p_reservation_type])){show('That slot is already taken. Please pick another.');return;}
   // OPTIMISTIC: close & show the booking instantly, then save in the background.
   const optimistic={meeting_date:payload.p_meeting_date,reservation_type:payload.p_reservation_type,member_name:payload.p_member_name,note:combinedNote,status:'confirmed',confirmed:false};
@@ -287,6 +306,20 @@ function addToGoogleCalendar(i){const m=meetings[i],d=m.date.replaceAll('-','');
     +'&ctz=Asia/Singapore';
   window.open(url,'_blank','noopener');}
 async function shareMeeting(i){const m=meetings[i];const d=new Date(m.date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});const v=venueFor(m.date);const text=`NUS Alumni Toastmasters — ${themeFor(m.date)}\n📅 ${d} · ${MEETING_INFO.time}\n📍 ${v.full}${v.directions?`\nDirections: ${v.directions}`:''}\n${location.href}`;try{if(navigator.share){await navigator.share({title:`NUSA Toastmasters · ${themeFor(m.date)}`,text});}else{await navigator.clipboard.writeText(text);show('Meeting details copied — paste to share with a friend.');}}catch(e){/* user cancelled */}}
+// ---- speaker share poster (client-side, scripts/poster-card.js) ----
+function speakerPosterOpts(role){
+  const date=meetings[active].date;const x=mergedFor(date)[role]||{};
+  const name=x.name||'';const path=pathFromNote(x.note)||dbPathFor(name);
+  const proj=projValueFromNote?projValueFromNote(x.note,path):'';
+  const pathway=[path,proj].filter(Boolean).join(' · ');
+  const d=new Date(date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  return {speaker_name:name,pathway,date_text:`${d} · ${MEETING_INFO.time}`,venue:venueFor(date).full,
+          speaker_label:'Featured Speaker',tagline:'Come hear me speak — scan to register free.'};
+}
+function sharePoster(role){if(!window.ToastFlowPoster){show('Poster tool not loaded.');return;}show('Preparing poster…');
+  ToastFlowPoster.share(speakerPosterOpts(role)).then(r=>show(r==='downloaded'?'Poster downloaded — attach it to share.':'Poster ready to share.')).catch(e=>{console.error(e);show('Could not create the poster.');});}
+function downloadPoster(role){if(!window.ToastFlowPoster){show('Poster tool not loaded.');return;}show('Preparing poster…');
+  ToastFlowPoster.download(speakerPosterOpts(role)).then(()=>show('Poster downloaded (free).')).catch(e=>{console.error(e);show('Could not create the poster.');});}
 function show(t){toast.textContent=t;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),3600)}
 function escapeHtml(v=''){return v.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 
@@ -395,8 +428,20 @@ adminTable.innerHTML=`<table class="admin-table"><thead><tr><th style="width:15%
   }
   const status=r.member_name?(r.confirmed?'<b class="ok">Confirmed</b>':r.hold?'Held':'Filled'):'<b class="gap">Open</b>';
   const actionSel=`<select class="role-select" data-role="${escapeHtml(r.role)}" onchange="adminAction(this.dataset.role,this.value);this.selectedIndex=0"><option value="">— action… —</option><option value="confirm">Confirm (lock)</option><option value="amend">Amend (unlock)</option><option value="remove">Remove / clear</option></select>`;
-  return `<tr><td>${escapeHtml(r.role)}</td><td>${memberCell}</td><td>${pathCell}</td><td>${projCell}</td><td>${status}</td><td>${actionSel}</td></tr>`;
+  const roleCell=`${escapeHtml(r.role)}${isSpeech?`<div class="slot-actions" style="margin-top:6px"><button class="mini" title="Move earlier" onclick="moveSpeech(${rq},-1)">↑</button><button class="mini" title="Move later" onclick="moveSpeech(${rq},1)">↓</button></div>`:''}`;
+  return `<tr><td>${roleCell}</td><td>${memberCell}</td><td>${pathCell}</td><td>${projCell}</td><td>${status}</td><td>${actionSel}</td></tr>`;
 }).join('')}</tbody></table>`}
+// Reorder prepared speeches (e.g. lower-level speakers first) by swapping two slots' holders.
+async function moveSpeech(role,dir){
+  const n=+String(role).replace(/\D+/g,'');const m=n+dir;if(m<1||m>4)return;
+  if(!excoPass()){show('Enter the exco passcode first.');return;}
+  const date=currentAdminDate();const mg=mergedFor(date);
+  const A=mg['Prepared Speech '+n]||{},B=mg['Prepared Speech '+m]||{};
+  const setSlot=(k,src,msg)=>(slotFilled(src)&&src.name)
+    ? adminRpc('admin_set_holder',{p_meeting_date:date,p_reservation_type:'Prepared Speech '+k,p_member_name:src.name,p_note:src.note||''},msg)
+    : adminRpc('admin_release_slot',{p_meeting_date:date,p_reservation_type:'Prepared Speech '+k},msg);
+  await setSlot(n,B,'Reordering…');await setSlot(m,A,`Swapped speech ${n} ↔ ${m}.`);
+}
 
 // ---------- EXCO ADMIN ACTIONS (passcode-gated Supabase RPCs) ----------
 async function adminRpc(fn,body,okMsg){
