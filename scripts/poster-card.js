@@ -8,12 +8,20 @@
   var BG = '#004165', YELLOW = '#F2DF74', MAROON = '#772432', WHITE = '#ffffff',
       CARD = '#FBF9F2', INK = '#1C2440', MUTED = '#6D7382', LINE = '#E6E0D4';
 
-  var banner = new Image(); banner.src = 'assets/chapter-meeting-banner.png';
-  var qr = new Image(); qr.src = 'assets/eventbrite-qr.png';
-
+  // Lazy-load the assets only when a poster is first generated — keeps the ~2 MB
+  // banner off the homepage's initial load.
+  var banner = new Image(), qr = new Image(), assetsRequested = false;
   function imgReady(im) {
     return (im.complete && im.naturalWidth) ? Promise.resolve()
       : new Promise(function (res) { im.onload = res; im.onerror = res; });
+  }
+  function ensureAssets() {
+    if (!assetsRequested) {
+      assetsRequested = true;
+      banner.src = 'assets/chapter-meeting-banner.png';
+      qr.src = 'assets/eventbrite-qr.png';
+    }
+    return Promise.all([imgReady(banner), imgReady(qr)]);
   }
 
   function wrap(ctx, text, maxW) {
@@ -44,7 +52,7 @@
   // opts: {speaker_name, pathway, tagline, speaker_label, date_text, venue}
   function render(opts) {
     opts = opts || {};
-    return Promise.all([imgReady(banner), imgReady(qr)]).then(function () {
+    return ensureAssets().then(function () {
       var c = document.createElement('canvas'); c.width = W; c.height = H;
       var ctx = c.getContext('2d');
       ctx.textBaseline = 'top';
@@ -57,7 +65,7 @@
       ctx.fillStyle = YELLOW; ctx.font = '700 30px Arial';
       ctx.fillText("YOU'RE INVITED", PAD, y); y += 52;
       ctx.fillStyle = WHITE; ctx.font = '700 34px Arial';
-      ctx.fillText(opts.tagline || 'Come hear me speak — scan to register free.', PAD, y);
+      ctx.fillText(opts.tagline || 'NUS Alumni Toastmasters Chapter Meeting', PAD, y);
       y += 82;
       var cardTop = y;
 
@@ -91,16 +99,18 @@
       var qpx = 240;
       if (qr.naturalWidth > 0) cx.drawImage(qr, x, cy, qpx, qpx);
       var tx = x + qpx + 44, ty = cy + 6; cx._maxW = innerW - qpx - 44;
-      cx.fillStyle = MAROON; cx.font = '400 28px Arial'; cx.fillText('WHEN', tx, ty); ty += 44;
+      cx.fillStyle = MAROON; cx.font = '400 28px Arial'; cx.fillText('WHEN', tx, ty); ty += 42;
       cx.fillStyle = INK; cx.font = '700 36px Arial';
-      ty = block(cx, tx, ty, opts.date_text || '', 36, 1.24); ty += 26;
-      cx.fillStyle = MAROON; cx.font = '400 28px Arial'; cx.fillText('WHERE', tx, ty); ty += 44;
-      cx.fillStyle = INK; cx.font = '700 36px Arial';
-      ty = block(cx, tx, ty, opts.venue || '', 36, 1.24);
+      ty = block(cx, tx, ty, opts.date_text || '', 36, 1.22); ty += 22;
+      cx.fillStyle = MAROON; cx.font = '400 28px Arial'; cx.fillText('WHERE', tx, ty); ty += 42;
+      cx.fillStyle = INK; cx.font = '700 28px Arial';       // smaller so a long venue never overlaps
+      ty = block(cx, tx, ty, opts.venue || '', 28, 1.24);
       cx._maxW = innerW;
+      // "scan" line sits below BOTH columns
+      cy = Math.max(ty, cy + qpx) + 22;
       cx.fillStyle = MUTED; cx.font = '400 28px Arial';
-      cx.fillText('Scan to register on Eventbrite', x, cy + qpx + 16);
-      cy = Math.max(ty, cy + qpx + 16 + 36) + 40;
+      cx.fillText('Scan to register on Eventbrite', x, cy);
+      cy += 40;
       cy += pad - 8;
 
       if (cardTop < (H - cy) / 2) cardTop = Math.round((H - cy) / 2);

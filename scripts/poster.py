@@ -92,13 +92,14 @@ def make_poster(inp, out_path):
     f_hook   = font("Arial Bold.ttf", 46)
     f_speak  = font("Arial Black.ttf", 60)
     f_body   = font("Arial Bold.ttf", 36)
+    f_venue  = font("Arial Bold.ttf", 28)
     f_small  = font("Arial.ttf", 28)
 
     banner = inp.get("banner_path")
     banner_led = bool(banner and os.path.exists(os.path.join(HERE, banner)))
 
     y = PAD
-    tagline = inp.get("tagline", "Come hear me speak — scan to register free.")
+    tagline = inp.get("tagline", "NUS Alumni Toastmasters Chapter Meeting")
     if banner_led:
         # the branded banner carries the club identity, so lead with a CTA only
         d.text((PAD, y), "YOU'RE INVITED", font=f_kicker, fill=YELLOW); y += 52
@@ -155,15 +156,16 @@ def make_poster(inp, out_path):
     tx = cx + qr_px + 44
     tw = inner_w - qr_px - 44
     ty = cy + 6
-    cd.text((tx, ty), "WHEN", font=f_small, fill=MAROON); ty += 44
-    ty = draw_block(cd, tx, ty, inp.get("date_text", "Fri 14 Aug 2026 · 7:00 – 9:50 PM"),
-                    f_body, INK, tw, leading=1.24); ty += 26
-    cd.text((tx, ty), "WHERE", font=f_small, fill=MAROON); ty += 44
+    cd.text((tx, ty), "WHEN", font=f_small, fill=MAROON); ty += 42
+    ty = draw_block(cd, tx, ty, inp.get("date_text", "Fri 14 Aug 2026 · 7:30 – 9:50 PM"),
+                    f_body, INK, tw, leading=1.22); ty += 22
+    cd.text((tx, ty), "WHERE", font=f_small, fill=MAROON); ty += 42
     ty = draw_block(cd, tx, ty, inp.get("venue", "SMU School of Economics, Singapore"),
-                    f_body, INK, tw, leading=1.24)
-    cd.text((cx, cy + qr_px + 16), "Scan to register on Eventbrite",
-            font=f_small, fill=MUTED)
-    cy = max(ty, cy + qr_px + 16 + 36) + 40
+                    f_venue, INK, tw, leading=1.24)
+    # "scan" line sits below BOTH columns so it never overlaps a long venue
+    cy = max(ty, cy + qr_px) + 22
+    cd.text((cx, cy), "Scan to register on Eventbrite", font=f_small, fill=MUTED)
+    cy += 40
 
     if not banner_led:
         # footer: club logos + motto (only when there's no branded banner up top)
@@ -201,14 +203,12 @@ def make_poster(inp, out_path):
 
 
 SAMPLE = {
-    "speaker_name": "Wee Meng Ler, ATMB, CL",
-    "speech_title": "Finding My Voice",
-    "pathway": "Presentation Mastery · Level 1: Ice Breaker",
-    "meeting_title": "Chapter Meeting 2026",
-    "date_text": "Fri 14 Aug 2026 · 7:00 – 9:50 PM",
-    "venue": "SMU School of Economics, Singapore",
+    "speaker_name": "Sandy W. Goh",
+    "pathway": "The Communication Series: Entertaining Speaker + Storytelling · L1: Get to the Point",
+    "date_text": "Fri, 14 Aug 2026 · 7:30 – 9:50 PM",
+    "venue": "Singapore Management University, School of Economics / School of Information Systems 2, Classroom 2.2",
     "eventbrite_url": "https://nus-alumni-toastmasters-club-chapter-meeting.eventbrite.com",
-    "banner_path": None,
+    "banner_path": "assets/chapter-meeting-banner.png",
 }
 
 if __name__ == "__main__":
