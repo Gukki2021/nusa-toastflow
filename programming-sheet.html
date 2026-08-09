@@ -64,6 +64,7 @@ table.awards td{border:1px solid #000;padding:10px 8px 20px;font-weight:bold;wid
 table.obj{width:100%;border-collapse:collapse;margin:5px 0 10px}
 table.obj td{border:1px solid #000;padding:5px 8px;vertical-align:top}
 table.obj .c1{width:30%}table.obj .c3{width:22%}
+table.obj .evallink{margin-top:4px}table.obj .evallink a{font-size:11px;color:#b52f3b;text-decoration:none;font-weight:700}
 .p2 .loc b{font-weight:bold}
 .p2 .map{width:100%;max-width:640px;max-height:300px;height:auto;object-fit:contain;object-position:left top;margin-top:5px;border:1px solid #999}
 .section-gap{height:12px}
@@ -257,17 +258,18 @@ function build(){
   document.getElementById('agenda').innerHTML=A_ROWS.map(r=>
     `<tr class="${r.cls}"><td class="col-t">${r.t}</td><td>${r.item}</td><td class="col-p who">${r.p}</td></tr>`).join('');
 
-  // page 2 — project objectives, looked up by the bare project name (strip path + "Lx:")
-  const OBJ=data.objectives||{};
+  // page 2 — official project purpose + evaluation form, matched by bare project name
+  const OBJ=data.objectives||{}, EVAL=data.evalForms||{};
+  const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
   const bareProject=s=>{s=String(s||'');const m=s.match(/L[1-5][^:]*:\s*(.+)$/);return (m?m[1]:s).trim();};
-  const lookupObj=full=>{const bp=bareProject(full);if(!bp)return null;
-    if(OBJ[bp])return OBJ[bp];
-    const k=Object.keys(OBJ).find(k=>k.length>4&&bp.toLowerCase()===k.toLowerCase())
-         || Object.keys(OBJ).find(k=>k.length>5&&bp.toLowerCase().includes(k.toLowerCase()));
-    return k?OBJ[k]:null;};
+  const indexBy=map=>{const o={};Object.keys(map).forEach(k=>{o[norm(k)]=map[k];});return o;};
+  const OBJi=indexBy(OBJ), EVALi=indexBy(EVAL);
+  const look=(full,raw,byNorm)=>{const bp=bareProject(full);if(!bp)return null;
+    return raw[bp]||byNorm[norm(bp)]||null;};
   const objRows=speeches.filter(s=>s.name&&s.full).map(s=>{
-    const o=lookupObj(s.full);
-    return `<tr><td class="c1">${esc(s.full)}</td><td>${o&&o.objective?esc(o.objective):''}</td><td class="c3">${o&&o.timing?esc(o.timing):''}</td></tr>`});
+    const o=look(s.full,OBJ,OBJi)||{}, f=look(s.full,EVAL,EVALi);
+    const link=f&&f.url?`<div class="evallink"><a href="${esc(f.url)}" target="_blank" rel="noopener">⬇ Evaluation form</a></div>`:'';
+    return `<tr><td class="c1">${esc(s.full)}${link}</td><td>${o.objective?esc(o.objective):''}</td><td class="c3">${o.timing?esc(o.timing):''}</td></tr>`});
   document.getElementById('objectives').innerHTML=objRows.length?objRows.join('')
     :'<tr><td class="c1 open">Prepared-speech projects</td><td class="open">Objectives appear here once speeches list their Pathways projects.</td><td class="c3"></td></tr>';
 }

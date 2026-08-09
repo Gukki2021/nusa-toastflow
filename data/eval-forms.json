@@ -1,0 +1,241 @@
+{
+ "_source": "Toastmasters Pathways evaluation forms (public mirror)",
+ "forms": {
+  "Active Listening": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Active-Listening.pdf",
+   "length": "5–7 min"
+  },
+  "Building a Social Media Presence": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Building-a-Social-Media-Presence.pdf",
+   "length": "5–7 min"
+  },
+  "Communicate Change": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Communicate-Change.pdf",
+   "length": "5–7 min"
+  },
+  "Connect with Storytelling": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Connect-with-Storytelling.pdf",
+   "length": "5–7 min"
+  },
+  "Connect with Your Audience": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Connect-with-your-Audience.pdf",
+   "length": "5–7 min"
+  },
+  "Create a Podcast": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Create-a-Podcast.pdf",
+   "length": ""
+  },
+  "Creating Effective Visual Aids": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Creating-Effective-Visual-Aids.pdf",
+   "length": "5–7 min"
+  },
+  "Cross-Cultural Understanding": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Cross-Cultural-Understanding.pdf",
+   "length": "5–7 min"
+  },
+  "Deliver Social Speeches": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Deliver-Social-Speeches.pdf",
+   "length": "3–4 min"
+  },
+  "Deliver Your Message with Humor": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Deliver-Your-Message-with-Humor.pdf",
+   "length": "18–22 min"
+  },
+  "Develop a Communication Plan": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Develop-a-Communications-Plan.pdf",
+   "length": "5–7 min"
+  },
+  "Develop Your Vision": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Develop-Your-Vision.pdf",
+   "length": "5–7 min"
+  },
+  "Effective Body Language": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Effective-Body-Language.pdf",
+   "length": "5–7 min"
+  },
+  "Engage Your Audience with Humor": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Engage-Your-Audience-with-Humor.pdf",
+   "length": "5–7 min"
+  },
+  "Ethical Leadership": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Ethical-Leadership.pdf",
+   "length": ""
+  },
+  "Evaluation and Feedback": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Evaluation-and-Feedback-First-Speech.pdf",
+   "length": "5–7 min"
+  },
+  "Focus on the Positive": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Focus-on-the-Positive.pdf",
+   "length": "2–3 min"
+  },
+  "High Performance Leadership": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/High-Performance-Leadership.pdf",
+   "length": "5–7 min"
+  },
+  "Ice Breaker": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Ice-Breaker.pdf",
+   "length": "4–6 min"
+  },
+  "Improvement Through Positive Coaching": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Improvement-Through-Positive-Coaching.pdf",
+   "length": "5–7 min"
+  },
+  "Inspire Your Audience": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Inspire-Your-Audience.pdf",
+   "length": "5–7 min"
+  },
+  "Introduction to Toastmasters Mentoring": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Introduction-to-Toastmasters-Mentoring.pdf",
+   "length": "5–7 min"
+  },
+  "Introduction to Vocal Variety and Body Language": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2022/04/Introduction-to-Vocal-Variety-and-Body-Language-1.pdf",
+   "length": "5–7 min"
+  },
+  "Lead in Any Situation": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Lead-in-Any-Situation.pdf",
+   "length": "8–10 min"
+  },
+  "Leading in Difficult Situations": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Leading-in-Difficult-Situations.pdf",
+   "length": ""
+  },
+  "Leading in Your Volunteer Organization": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Leading-in-Your-Volunteer-Organization.pdf",
+   "length": "5–7 min"
+  },
+  "Leading Your Team": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Leading-Your-Team.pdf",
+   "length": "5–7 min"
+  },
+  "Lessons Learned": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Lessons-Learned.pdf",
+   "length": "5–7 min"
+  },
+  "Make Connections Through Networking": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Making-Connections-Through-Networking.pdf",
+   "length": "5–7 min"
+  },
+  "Manage Change": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Manage-Change.pdf",
+   "length": "5–7 min"
+  },
+  "Managing a Difficult Audience": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Manage-a-Difficult-Audience.pdf",
+   "length": "10–15 min"
+  },
+  "Manage Online Meetings": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Manage-Online-Meetings.pdf",
+   "length": "20–25 min"
+  },
+  "Manage Projects Successfully": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Manage-Projects-Successfully.pdf",
+   "length": "2–3 min"
+  },
+  "Manage Successful Events": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Manage-Successful-Events.pdf",
+   "length": "5–7 min"
+  },
+  "Managing Time": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Managing-Time.pdf",
+   "length": "5–7 min"
+  },
+  "Moderate a Panel Discussion": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Moderate-a-Panel-Discussion.pdf",
+   "length": "20–40 min"
+  },
+  "Motivate Others": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Motivate-Others.pdf",
+   "length": "5–7 min"
+  },
+  "Negotiate the Best Outcome": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Negotiate-the-Best-Outcome.pdf",
+   "length": "5–7 min"
+  },
+  "Persuasive Speaking": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Persuasive-Speaking.pdf",
+   "length": "5–7 min"
+  },
+  "Planning and Implementing": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Planning-and-Implementing.pdf",
+   "length": ""
+  },
+  "Prepare for an Interview": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Prepare-for-an-Interview.pdf",
+   "length": "5–7 min"
+  },
+  "Prepare to Speak Professionally": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Prepare-to-Speak-Professionally.pdf",
+   "length": "18–22 min"
+  },
+  "Present a Proposal": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Present-a-Proposal.pdf",
+   "length": "5–7 min"
+  },
+  "Public Relations Strategies": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Public-Relations-Strategies.pdf",
+   "length": "5–7 min"
+  },
+  "Question-and-Answer Session": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Question-and-Answer-Session.pdf",
+   "length": "15–20 min"
+  },
+  "Reaching Consensus": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Reaching-Consensus-Assignment-Option-1-2.pdf",
+   "length": ""
+  },
+  "Researching and Presenting": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Researching-and-Presenting.pdf",
+   "length": "5–7 min"
+  },
+  "Successful Collaboration": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Successful-Collaboration.pdf",
+   "length": "5–7 min"
+  },
+  "Team Building": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Team-Building.pdf",
+   "length": "2–3 min"
+  },
+  "The Power of Humor in an Impromptu Speech": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/The-Power-of-Humor-In-an-Impromptu-Speech.pdf",
+   "length": ""
+  },
+  "Understanding Conflict Resolution": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Understanding-Conflict-Resolution.pdf",
+   "length": "5–7 min"
+  },
+  "Understanding Emotional Intelligence": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Understanding-Emotional-Intelligence.pdf",
+   "length": "5–7 min"
+  },
+  "Understanding Vocal Variety": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Understanding-Vocal-Variety.pdf",
+   "length": "5–7 min"
+  },
+  "Understanding Your Communication Style": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Understanding-Your-Communication-Style.pdf",
+   "length": "5–7 min"
+  },
+  "Understanding Your Leadership Style": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Understanding-Your-Leadership-Style.pdf",
+   "length": "5–7 min"
+  },
+  "Using Descriptive Language": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Using-Descriptive-Language.pdf",
+   "length": "5–7 min"
+  },
+  "Using Presentation Software": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Using-Presentation-Software.pdf",
+   "length": "5–7 min"
+  },
+  "Write a Compelling Blog": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2021/04/Write-a-Compelling-Blog.pdf",
+   "length": "2–3 min"
+  },
+  "Writing a Speech with Purpose": {
+   "url": "https://westpinestoastmasters.toastmost.org/wp-content/uploads/sites/292/2022/04/Writing-a-Speech-With-Purpose.pdf",
+   "length": "5–7 min"
+  }
+ }
+}

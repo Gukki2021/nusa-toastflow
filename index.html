@@ -98,9 +98,9 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 </form></dialog>
 <div class="toast" id="toast"></div>
 
-<script src="scripts/recommend.js?v=19"></script>
-<script src="scripts/appointments.js?v=19"></script>
-<script src="scripts/poster-card.js?v=19"></script>
+<script src="scripts/recommend.js?v=20"></script>
+<script src="scripts/appointments.js?v=20"></script>
+<script src="scripts/poster-card.js?v=20"></script>
 <script>
 const SUPABASE_URL=document.querySelector('meta[name="supabase-url"]').content;
 const SUPABASE_ANON_KEY=document.querySelector('meta[name="supabase-anon-key"]').content;
@@ -143,6 +143,7 @@ let APPTS=null; // parsed Meeting Appointment Holders sheet (from published CSV)
 let WILLING=[]; // member willingness registrations (public_willingness)
 let PATHS_DB={paths:{},electives:{}}; // two-level Pathways DB (path → level → projects)
 let PATHS_OBJ={}; // { projectName: {objective, timing} } from official sources
+let EVAL_FORMS={}; // { projectName: {url, length} } — official evaluation-form download links
 // list of path names for the "Pathway" dropdown
 function pathList(){return Object.keys(PATHS_DB.paths||{});}
 // map a member's Base Camp current path to a DB path key (fuzzy)
@@ -179,6 +180,7 @@ async function loadData(){
     // two-level Pathways project database (path → level → projects)
     try{PATHS_DB=await fetch('data/pathways-by-path.json').then(r=>r.ok?r.json():{paths:{},electives:{}});}catch(_){PATHS_DB={paths:{},electives:{}};}
     try{PATHS_OBJ=(await fetch('data/pathways-objectives.json').then(r=>r.ok?r.json():{objectives:{}})).objectives||{};}catch(_){PATHS_OBJ={};}
+    try{EVAL_FORMS=(await fetch('data/eval-forms.json').then(r=>r.ok?r.json():{forms:{}})).forms||{};}catch(_){EVAL_FORMS={};}
     // member -> current Pathway database (from Base Camp dashboard export)
     MEMBER_PATHWAYS=await loadJSON(['data/member-pathways.json','data/member-pathways.public.json'],[]);
     PATHOF={};MEMBER_PATHWAYS.forEach(x=>{PATHOF[x.name.toLowerCase()]={path:x.currentPath,cred:x.credential};});
@@ -542,7 +544,7 @@ function generateSheet(){
   }
   const cat=(PATHWAYS.projects&&PATHWAYS.projects.length?PATHWAYS.projects:PROJECTS);
   const creds=MEMBERS.map(x=>({name:x.name,cred:(x.credentials||'').trim()})).filter(x=>x.cred);
-  const payload={date,theme:themeFor(m.date),meta:{theme:themeFor(m.date),saa:saaFor(date),venue:venueFor(date).full,directions:venueFor(date).directions,time:MEETING_INFO.time},assignments,projects:cat,objectives:PATHS_OBJ,creds};
+  const payload={date,theme:themeFor(m.date),meta:{theme:themeFor(m.date),saa:saaFor(date),venue:venueFor(date).full,directions:venueFor(date).directions,time:MEETING_INFO.time},assignments,projects:cat,objectives:PATHS_OBJ,evalForms:EVAL_FORMS,creds};
   localStorage.setItem('toastflow_sheet',JSON.stringify(payload));
   window.open('programming-sheet.html','_blank');
 }
