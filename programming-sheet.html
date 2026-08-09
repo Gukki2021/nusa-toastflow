@@ -13,6 +13,9 @@ body{margin:0;background:#54595f;color:#000;font-family:"Times New Roman",Times,
 .toolbar button{border:0;border-radius:8px;padding:9px 15px;font-weight:700;font-size:13px;cursor:pointer}
 .btn-print{background:#d7ad59;color:#241c05}.btn-ghost{background:rgba(255,255,255,.16);color:#fff}
 .sheet{background:#fff;width:210mm;min-height:296mm;margin:16px auto;padding:11mm 12mm;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+body.editing .sheet{outline:2px dashed #d7ad59;outline-offset:4px}
+body.editing .sheet [contenteditable] *:focus,body.editing .sheet:focus{background:#fff8e6}
+[contenteditable]:focus{outline:1px solid #d7ad59}
 a{color:var(--link)}
 
 /* header */
@@ -83,6 +86,7 @@ table.obj .evallink{margin-top:4px}table.obj .evallink a{font-size:11px;color:#b
   <strong>ToastFlow · Programming Sheet</strong>
   <span id="src" style="font-size:12px;opacity:.85"></span>
   <button class="btn-ghost" onclick="location.href='index.html'">← Back to planner</button>
+  <button class="btn-ghost" onclick="toggleEdit(this)">✏️ Edit text</button>
   <button class="btn-ghost" onclick="exportWord()">⬇ Word</button>
   <button class="btn-ghost" onclick="shareSheetLink()">🔗 Share link</button>
   <button class="btn-print" onclick="window.print()">🖨 Print / Save as PDF</button>
@@ -186,11 +190,38 @@ function who(name){return name?withCred(name):'<span class="open">— open —</
 async function exportWord(){
   const imgs=[...document.querySelectorAll('.sheet img')];const map={};
   await Promise.all(imgs.map(async img=>{try{const r=await fetch(img.src);const b=await r.blob();map[img.src]=await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.readAsDataURL(b);});}catch(e){}}));
-  const css=document.querySelector('style').innerHTML;let body='';
-  document.querySelectorAll('.sheet').forEach(s=>{const c=s.cloneNode(true);c.querySelectorAll('img').forEach(im=>{if(map[im.src])im.setAttribute('src',map[im.src]);});body+=c.outerHTML;});
-  const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>'+css+' body{background:#fff}</style></head><body>'+body+'</body></html>';
+  // Word can't render CSS grid — rebuild each grid container as a one-row table.
+  const gridToTable=(el,widths)=>{if(!el)return;const kids=[...el.children];const t=document.createElement('table');
+    t.setAttribute('width','100%');t.style.cssText='border-collapse:collapse;width:100%';t.setAttribute('border','0');
+    const tr=t.insertRow();kids.forEach((k,i)=>{const td=document.createElement('td');td.style.cssText='vertical-align:top;padding:0 6px';
+      if(widths&&widths[i])td.setAttribute('width',widths[i]);td.appendChild(k);tr.appendChild(td);});el.replaceWith(t);};
+  let body='';
+  document.querySelectorAll('.sheet').forEach((s,idx)=>{
+    const c=s.cloneNode(true);c.removeAttribute('contenteditable');
+    c.querySelectorAll('img').forEach(im=>{if(map[im.src])im.setAttribute('src',map[im.src]);});
+    gridToTable(c.querySelector('.hdr'),['150','','170']);
+    gridToTable(c.querySelector('.body'),['200','']);
+    body+=(idx?'<br clear="all" style="mso-special-character:line-break;page-break-before:always">':'')+c.outerHTML;
+  });
+  const css=document.querySelector('style').innerHTML;
+  // Word-specific page setup + neutralise grid rules the tables now replace
+  const wcss='@page Section1{size:210mm 297mm;margin:12mm}div.Section1{page:Section1}'
+    +'body{background:#fff}.toolbar{display:none}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}'
+    +'.hdr,.body{display:block}.title{text-align:center}.title h1{font-size:20pt;font-weight:bold;margin:0;line-height:1.1}'
+    +'.title .web{font-style:italic;font-size:10.5pt}.title .motto{font-weight:bold;font-style:italic;color:#8c1d40;font-size:12pt}'
+    +'td{vertical-align:top}td img{max-width:100%;height:auto}';
+  const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'
+    +'<head><meta charset="utf-8"><meta name="ProgId" content="Word.Document"><title>NUSA Programming Sheet</title>'
+    +'<style>'+css+wcss+'</style></head><body><div class="Section1">'+body+'</div></body></html>';
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+html],{type:'application/msword'}));
   a.download='NUSA-Programming-Sheet-'+((CURRENT_PAYLOAD&&CURRENT_PAYLOAD.date)||'draft')+'.doc';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+}
+// Toggle inline editing so the VPE can tweak any text before exporting.
+function toggleEdit(btn){
+  const on=!document.body.classList.contains('editing');
+  document.body.classList.toggle('editing',on);
+  document.querySelectorAll('.sheet').forEach(s=>s.contentEditable=on);
+  btn.textContent=on?'✓ Done editing':'✏️ Edit text';
 }
 async function shareSheetLink(){
   if(!CURRENT_PAYLOAD){alert('Open this sheet from the planner (Generate Programming Sheet) first, then Share.');return;}
@@ -242,7 +273,7 @@ function build(){
   push('7:30','Ice Breaker by SAA (1 min per pax)',who(saa));
   push('7:40','Introduction by Toastmaster of the Evening',who(nm('Toastmaster of the Evening')));
   push('7:45',"President's Opening Address",who(excoName('President')));
-  push('7:50','<b>Prepared Speeches</b> — Pathways Projects','','grp-first');
+  push('7:55','<b>Prepared Speeches</b> — Pathways Projects','','grp-first');
   spItems.forEach((it,i)=>push('',`${i+1}. ${it.proj}`,it.who,'grp-mid'));
   push('',"Timer’s Report",who(nm('Timer')),'grp-last');
   push('8:45','Break &amp; Refreshments (15 min)','All');
