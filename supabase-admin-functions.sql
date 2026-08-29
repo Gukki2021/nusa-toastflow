@@ -37,7 +37,7 @@ begin
     'Prepared Speech 1','Prepared Speech 2','Prepared Speech 3','Prepared Speech 4',
     'Toastmaster of the Evening','Table Topics Master','General Evaluator',
     'Speech Evaluator 1','Speech Evaluator 2','Speech Evaluator 3','Speech Evaluator 4',
-    'Timer','Ah-Counter','Language Evaluator'
+    'Timer','Ah-Counter','Language Evaluator','Sergeant at Arms'
   ) then
     raise exception 'Invalid reservation type' using errcode='22023';
   end if;
@@ -93,3 +93,84 @@ revoke all on function public.admin_release_slot(text,date,text) from public;
 grant execute on function public.admin_block_slot(text,date,text,text) to anon, authenticated;
 grant execute on function public.admin_set_holder(text,date,text,text,text) to anon, authenticated;
 grant execute on function public.admin_release_slot(text,date,text) to anon, authenticated;
+
+-- Verify the passcode before opening the dashboard.
+create or replace function public.admin_verify(p_passcode text)
+returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  perform public._check_passcode(p_passcode);
+  return jsonb_build_object('ok', true);
+end;
+$$;
+
+-- Lock/unlock an assignment while the VPE is arranging the programme.
+create or replace function public.admin_set_confirmed(
+  p_passcode text, p_meeting_date date, p_reservation_type text, p_confirmed boolean
+) returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  perform public._check_passcode(p_passcode);
+  perform public._valid_slot(p_meeting_date, p_reservation_type);
+  update public.reservations set confirmed = p_confirmed
+  where meeting_date = p_meeting_date and reservation_type = p_reservation_type;
+  return jsonb_build_object('ok', true);
+end;
+$$;
+
+-- Per-meeting details used by both the public page and generated sheet.
+create table if not exists public.meeting_info (
+  meeting_date date primary key,
+  venue text not null default '',
+  theme text not null default 'Chapter Meeting',
+  saa text not null default ''
+);
+alter table public.meeting_info enable row level security;
+revoke all on table public.meeting_info from anon, authenticated;
+grant select on table public.meeting_info to anon, authenticated;
+drop policy if exists "Public can read meeting details" on public.meeting_info;
+create policy "Public can read meeting details" on public.meeting_info
+for select to anon, authenticated using (true);
+
+create or replace view public.public_meeting_info
+with (security_invoker = true, security_barrier = true) as
+select meeting_date, venue, theme, saa from public.meeting_info;
+revoke all on public.public_meeting_info from public;
+grant select on public.public_meeting_info to anon, authenticated;
+
+create or replace function public._admin_set_meeting_field(
+  p_passcode text, p_meeting_date date, p_field text, p_value text
+) returns jsonb language plpgsql security definer set search_path = public as $$
+begin
+  perform public._check_passcode(p_passcode);
+  perform public._valid_slot(p_meeting_date, 'Timer');
+  insert into public.meeting_info(meeting_date) values (p_meeting_date)
+  on conflict (meeting_date) do nothing;
+  if p_field = 'venue' then update public.meeting_info set venue = coalesce(trim(p_value),'') where meeting_date = p_meeting_date;
+  elsif p_field = 'theme' then update public.meeting_info set theme = coalesce(nullif(trim(p_value),''),'Chapter Meeting') where meeting_date = p_meeting_date;
+  elsif p_field = 'saa' then update public.meeting_info set saa = coalesce(trim(p_value),'') where meeting_date = p_meeting_date;
+  else raise exception 'Invalid meeting field' using errcode='22023';
+  end if;
+  return jsonb_build_object('ok', true);
+end;
+$$;
+
+create or replace function public.admin_set_venue(p_passcode text, p_meeting_date date, p_venue text)
+returns jsonb language sql security definer set search_path = public
+as $$ select public._admin_set_meeting_field(p_passcode,p_meeting_date,'venue',p_venue) $$;
+create or replace function public.admin_set_theme(p_passcode text, p_meeting_date date, p_theme text)
+returns jsonb language sql security definer set search_path = public
+as $$ select public._admin_set_meeting_field(p_passcode,p_meeting_date,'theme',p_theme) $$;
+create or replace function public.admin_set_saa(p_passcode text, p_meeting_date date, p_saa text)
+returns jsonb language sql security definer set search_path = public
+as $$ select public._admin_set_meeting_field(p_passcode,p_meeting_date,'saa',p_saa) $$;
+
+revoke all on function public.admin_verify(text) from public;
+revoke all on function public.admin_set_confirmed(text,date,text,boolean) from public;
+revoke all on function public._admin_set_meeting_field(text,date,text,text) from public;
+revoke all on function public.admin_set_venue(text,date,text) from public;
+revoke all on function public.admin_set_theme(text,date,text) from public;
+revoke all on function public.admin_set_saa(text,date,text) from public;
+grant execute on function public.admin_verify(text) to anon, authenticated;
+grant execute on function public.admin_set_confirmed(text,date,text,boolean) to anon, authenticated;
+grant execute on function public.admin_set_venue(text,date,text) to anon, authenticated;
+grant execute on function public.admin_set_theme(text,date,text) to anon, authenticated;
+grant execute on function public.admin_set_saa(text,date,text) to anon, authenticated;

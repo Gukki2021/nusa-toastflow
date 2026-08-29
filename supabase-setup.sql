@@ -6,21 +6,28 @@ create table if not exists public.reservations (
   meeting_date date not null,
   reservation_type text not null,
   member_name text not null check (char_length(member_name) between 1 and 80),
-  contact text not null check (char_length(contact) between 3 and 160),
+  contact text not null default '' check (char_length(contact) <= 160),
   note text not null default '' check (char_length(note) <= 500),
   status text not null default 'confirmed' check (status in ('confirmed','cancelled')),
+  confirmed boolean not null default true,
   created_at timestamptz not null default now(),
   unique (meeting_date, reservation_type)
 );
 
 alter table public.reservations enable row level security;
 revoke all on table public.reservations from anon, authenticated;
+grant select (meeting_date, reservation_type, member_name, note, status, confirmed)
+  on public.reservations to anon, authenticated;
+drop policy if exists "Public can read confirmed reservation details" on public.reservations;
+create policy "Public can read confirmed reservation details"
+on public.reservations for select to anon, authenticated
+using (status = 'confirmed');
 
 -- Public-safe view: contact details and internal IDs are never exposed.
 create or replace view public.public_reservations
-with (security_barrier = true)
+with (security_invoker = true, security_barrier = true)
 as
-select meeting_date, reservation_type, member_name, note, status
+select meeting_date, reservation_type, member_name, note, status, confirmed
 from public.reservations
 where status = 'confirmed';
 
@@ -42,7 +49,12 @@ begin
   if p_meeting_date not in (date '2026-08-14',date '2026-09-11',date '2026-10-09',date '2026-11-13',date '2026-12-11') then
     raise exception 'Invalid meeting date' using errcode='22023';
   end if;
-  if p_reservation_type not in ('Prepared Speech 1','Prepared Speech 2','Prepared Speech 3','Prepared Speech 4','Toastmaster of the Day','Table Topics Master','General Evaluator','Speech Evaluator','Timer','Ah-Counter','Grammarian') then
+  if p_reservation_type not in (
+    'Prepared Speech 1','Prepared Speech 2','Prepared Speech 3','Prepared Speech 4',
+    'Toastmaster of the Evening','Table Topics Master','General Evaluator',
+    'Speech Evaluator 1','Speech Evaluator 2','Speech Evaluator 3','Speech Evaluator 4',
+    'Timer','Ah-Counter','Language Evaluator','Sergeant at Arms'
+  ) then
     raise exception 'Invalid reservation type' using errcode='22023';
   end if;
   insert into public.reservations(meeting_date,reservation_type,member_name,contact,note)

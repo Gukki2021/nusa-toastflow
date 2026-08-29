@@ -11,6 +11,8 @@ the VPE gets **smart, fair role suggestions** drawn from past meetings and can
 Built as static HTML/CSS/JS (no framework, no build step) with a **Supabase**
 backend for shared reservations. Deploys to **GitHub Pages**.
 
+Member-facing instructions: [`MEMBER_BOOKING_GUIDE.md`](MEMBER_BOOKING_GUIDE.md).
+
 ## Two input sources
 
 Each meeting's programming sheet is assembled by merging two sources:
@@ -131,7 +133,8 @@ branch is deployed.
 ## Supabase setup (one-time)
 
 1. Create a Supabase project.
-2. SQL Editor → run `supabase-setup.sql`.
+2. SQL Editor → run `supabase-setup.sql`, then `supabase-admin-functions.sql`,
+   then `supabase-willingness.sql` (in that order).
 3. Project Settings → API → copy the **Project URL** and **anon public** key
    into the `<meta>` tags at the top of `index.html`.
    (An older DB? run `supabase-role-migration.sql` to update role names.)
