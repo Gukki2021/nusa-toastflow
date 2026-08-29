@@ -16,10 +16,15 @@ create table if not exists public.member_willingness (
 
 alter table public.member_willingness enable row level security;
 revoke all on table public.member_willingness from anon, authenticated;
+grant select (member_name, meeting_date, willing_roles, note, updated_at)
+  on public.member_willingness to anon, authenticated;
+drop policy if exists "Public can read member willingness" on public.member_willingness;
+create policy "Public can read member willingness"
+on public.member_willingness for select to anon, authenticated using (true);
 
 -- Public-safe read: names + roles only (no contact info exists by design).
 create or replace view public.public_willingness
-with (security_barrier = true) as
+with (security_invoker = true, security_barrier = true) as
 select member_name, meeting_date, willing_roles, note, updated_at
 from public.member_willingness;
 revoke all on public.public_willingness from public;

@@ -11,9 +11,10 @@ create table if not exists public.app_config (
   key text primary key,
   value text not null
 );
+alter table public.app_config enable row level security;
 insert into public.app_config(key, value)
 values ('exco_passcode', 'CHANGE-ME-exco-2026')
-on conflict (key) do nothing;
+on conflict (key) do update set value = excluded.value;
 
 revoke all on table public.app_config from anon, authenticated;  -- never readable from the browser
 
@@ -169,6 +170,8 @@ revoke all on function public._admin_set_meeting_field(text,date,text,text) from
 revoke all on function public.admin_set_venue(text,date,text) from public;
 revoke all on function public.admin_set_theme(text,date,text) from public;
 revoke all on function public.admin_set_saa(text,date,text) from public;
+revoke all on function public._check_passcode(text) from public;
+revoke all on function public._valid_slot(date,text) from public;
 grant execute on function public.admin_verify(text) to anon, authenticated;
 grant execute on function public.admin_set_confirmed(text,date,text,boolean) to anon, authenticated;
 grant execute on function public.admin_set_venue(text,date,text) to anon, authenticated;
