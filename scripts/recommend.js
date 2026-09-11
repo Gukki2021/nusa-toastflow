@@ -37,12 +37,13 @@
   function canonicalRole(raw) {
     if (!raw) return null;
     const r = String(raw).trim().toLowerCase();
-    if (/^speech\s*([1-5])/.test(r)) {
-      const n = Math.min(4, +r.match(/^speech\s*([1-5])/)[1]);
+    if (/^speech\s*([1-4])\b/.test(r)) {
+      const n = +r.match(/^speech\s*([1-4])/)[1];
       return 'Prepared Speech ' + n;
     }
     if (/^evaluator\s*([1-4])/.test(r)) return 'Speech Evaluator ' + r.match(/^evaluator\s*([1-4])/)[1];
     if (r === 'tme') return 'Toastmaster of the Evening';
+    if (r === 'saa') return 'Sergeant at Arms';
     if (r === 'table topics') return 'Table Topics Master';
     if (r === 'timer') return 'Timer';
     if (r === 'ah counter' || r === 'ah-counter') return 'Ah-Counter';

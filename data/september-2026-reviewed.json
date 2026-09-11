@@ -1,0 +1,128 @@
+{
+  "source": "https://drive.google.com/file/d/18lylRf1_-ttqsf5SkivKhvk5yzI72lnc/view",
+  "sourceModifiedAt": "2026-09-05T16:37:47.970Z",
+  "reviewedAt": "2026-09-06",
+  "dateMapping": {
+    "meeting_date": "2026-09-11",
+    "readerHeader": "2026-11-09 00:00:00",
+    "reason": "September column between August and October; mapped to the user's requested September meeting and existing 11 September booking date. Reader swaps ambiguous day/month headers."
+  },
+  "themeCandidates": [
+    "Good Company, Great Journeys?",
+    "Learning Along the Journey?"
+  ],
+  "records": [
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Sergeant at Arms",
+      "member_name": "CHEN Qin",
+      "note": "",
+      "confirmed": true,
+      "source_name": "Chen Qin"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Toastmaster of the Evening",
+      "member_name": "Winona LIM",
+      "note": "",
+      "confirmed": true,
+      "source_name": "Winona LIM"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Timer",
+      "member_name": "GOH Shu Ching",
+      "note": "",
+      "confirmed": false,
+      "source_name": "Shuching?"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Table Topics Master",
+      "member_name": "XU Jiaqi",
+      "note": "",
+      "confirmed": true,
+      "source_name": "Jiaqi Xu"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Prepared Speech 1",
+      "member_name": "Sandy GOH",
+      "note": "The Communication Series: Entertaining Speaker + Storytelling L1 Project 4: How to Say It",
+      "confirmed": true,
+      "source_name": "Sandy GOH"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Prepared Speech 2",
+      "member_name": "Sabrina XU",
+      "note": "Level 4 The Success Club Series/Better Speaker Series",
+      "confirmed": true,
+      "source_name": "Sabrina XU"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Prepared Speech 3",
+      "member_name": "WEE Gee Shing",
+      "note": "Level 5 Successful Club Series - Evaluate to Motivate.",
+      "confirmed": true,
+      "source_name": "WEE Gee Shing"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Prepared Speech 4",
+      "member_name": "Sara LIM",
+      "note": "Level 1 Evaluation and Feedback First Speech",
+      "confirmed": true,
+      "source_name": "Sara LIM"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Speech Evaluator 1",
+      "member_name": "Vincent CHUA",
+      "note": "",
+      "confirmed": true,
+      "source_name": "Vincent CHUA(Cairnhill TMC)"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Speech Evaluator 2",
+      "member_name": "Marc WONG",
+      "note": "",
+      "confirmed": true,
+      "source_name": "Marc WONG (Anchorvale CC)"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Speech Evaluator 3",
+      "member_name": "LER Wee Meng",
+      "note": "",
+      "confirmed": true,
+      "source_name": "LER Wee Meng"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Speech Evaluator 4",
+      "member_name": "Jonta KOGA",
+      "note": "",
+      "confirmed": true,
+      "source_name": "Jonta Koga"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Ah-Counter",
+      "member_name": "TBC",
+      "note": "",
+      "confirmed": false,
+      "source_name": "?"
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Language Evaluator",
+      "member_name": "LAU Kwong Fook",
+      "note": "",
+      "confirmed": true,
+      "source_name": "Lau Kwong Fook"
+    }
+  ]
+}

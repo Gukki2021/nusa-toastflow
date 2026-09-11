@@ -1,0 +1,106 @@
+{
+  "source": "NUSA-Programming-Sheet-2026-09-11 Final.doc",
+  "reviewedAt": "2026-09-10",
+  "date": "2026-09-11",
+  "correction": "Sandy L2 in speech/objectives retained consistently in evaluator row; Word evaluator row still had L1.",
+  "records": [
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Sergeant at Arms",
+      "member_name": "CHEN Qin",
+      "note": "",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Toastmaster of the Evening",
+      "member_name": "Winona LIM",
+      "note": "",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Timer",
+      "member_name": "Jun TAY",
+      "note": "",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Table Topics Master",
+      "member_name": "XU Jiaqi",
+      "note": "",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Prepared Speech 1",
+      "member_name": "Sara LIM",
+      "note": "Presentation Mastery L1: Evaluation and Feedback First Speech",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Prepared Speech 2",
+      "member_name": "Sandy GOH",
+      "note": "The Communication Series: Entertaining Speaker + Storytelling L2 Project 4: How to Say It",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Prepared Speech 3",
+      "member_name": "Sabrina XU",
+      "note": "Persuasive Influence L4: Better Speaker Series - Beginning Your Speech",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Prepared Speech 4",
+      "member_name": "WEE Gee Shing",
+      "note": "Persuasive Influence L5: Successful Club Series - Evaluate to Motivate",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Speech Evaluator 1",
+      "member_name": "Jonta KOGA",
+      "note": "",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Speech Evaluator 2",
+      "member_name": "Vincent CHUA",
+      "note": "",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Speech Evaluator 3",
+      "member_name": "Marc WONG",
+      "note": "",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Speech Evaluator 4",
+      "member_name": "LER Wee Meng",
+      "note": "",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Ah-Counter",
+      "member_name": "Suren Haris ANWAR",
+      "note": "",
+      "confirmed": true
+    },
+    {
+      "meeting_date": "2026-09-11",
+      "reservation_type": "Language Evaluator",
+      "member_name": "LAU Kwong Fook",
+      "note": "",
+      "confirmed": true
+    }
+  ]
+}

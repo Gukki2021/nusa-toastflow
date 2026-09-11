@@ -20,3 +20,6 @@ ToastFlow-Programming-*.csv
 .DS_Store
 Thumbs.db
 node_modules/
+.private/
+tmp/
+output/

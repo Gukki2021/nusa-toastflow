@@ -13,16 +13,19 @@ body{margin:0;background:#54595f;color:#000;font-family:"Times New Roman",Times,
 .toolbar button{border:0;border-radius:8px;padding:9px 15px;font-weight:700;font-size:13px;cursor:pointer}
 .btn-print{background:#d7ad59;color:#241c05}.btn-ghost{background:rgba(255,255,255,.16);color:#fff}
 .sheet{background:#fff;width:210mm;min-height:296mm;margin:16px auto;padding:11mm 12mm;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+table.obj td{white-space:pre-line}
+.review-note{border:1px solid #9e7200;background:#fff8e6;padding:6px;margin:5px 0;font-size:9pt}
+.visitors{margin-top:10px;font-size:9pt}
 body.editing .sheet{outline:2px dashed #d7ad59;outline-offset:4px}
 body.editing .sheet [contenteditable] *:focus,body.editing .sheet:focus{background:#fff8e6}
 [contenteditable]:focus{outline:1px solid #d7ad59}
 a{color:var(--link)}
 
 /* header */
-.hdr{display:grid;grid-template-columns:150px 1fr 170px;align-items:center;gap:8px}
-.hdr img{max-width:100%;height:auto}
+.hdr{display:grid;grid-template-columns:140px 1fr 207px;align-items:center;gap:8px}
+.hdr img{max-width:100%;max-height:111px;height:auto;object-fit:contain}
 .hdr .title{text-align:center}
-.hdr .title h1{font-size:20pt;font-weight:bold;margin:0;line-height:1.1}
+.hdr .title h1{font-size:14pt;font-weight:bold;margin:0;line-height:1.1}
 .hdr .title .web{font-style:italic;font-size:10.5pt;margin-top:3px}
 .hdr .title .motto{font-weight:bold;font-style:italic;color:var(--maroon);font-size:12pt;margin-top:3px}
 .rule{border:0;border-top:1.5px solid #000;margin:6px 0 8px}
@@ -44,6 +47,8 @@ a{color:var(--link)}
 .ag-meta b{font-weight:bold}
 table.agenda{width:100%;border-collapse:collapse;table-layout:fixed}
 table.agenda td{border:1px solid #000;padding:2.5px 5px;vertical-align:top}
+table.agenda tr,table.awards{break-inside:avoid}
+.exco a{overflow-wrap:anywhere}
 .col-t{width:62px;white-space:nowrap}
 .col-p{width:38%;color:var(--navy);font-weight:700}
 /* grouped rows: keep the vertical column dividers, drop the horizontal lines between them */
@@ -61,15 +66,15 @@ table.awards{width:100%;border-collapse:collapse;margin-top:12px}
 table.awards td{border:1px solid #000;padding:10px 8px 20px;font-weight:bold;width:33.33%;vertical-align:top}
 
 /* page 2 */
-.p2 h2{font-weight:bold;text-decoration:underline;font-size:14pt;margin:0 0 6px}
-.p2 .menti{font-weight:bold;margin:9px 0 3px}
-.p2 .menti-qr{width:82px;height:82px}
+.p2 h2{font-weight:bold;text-decoration:underline;font-size:11pt;margin:0 0 6px}
+.p2 .menti{font-weight:normal;margin:9px 0 3px}
+.p2 .menti-qr{width:68px;height:68px}
 table.obj{width:100%;border-collapse:collapse;margin:5px 0 10px}
 table.obj td{border:1px solid #000;padding:5px 8px;vertical-align:top}
-table.obj .c1{width:30%}table.obj .c3{width:22%}
+table.obj .c1{width:32.48%}table.obj .c3{width:9.2%}
 table.obj .evallink{margin-top:4px}table.obj .evallink a{font-size:11px;color:#b52f3b;text-decoration:none;font-weight:700}
 .p2 .loc b{font-weight:bold}
-.p2 .map{width:100%;max-width:640px;max-height:300px;height:auto;object-fit:contain;object-position:left top;margin-top:5px;border:1px solid #999}
+.p2 .map{width:100%;max-width:483px;max-height:254px;height:auto;object-fit:contain;object-position:left top;margin-top:5px;border:1px solid #999}
 .section-gap{height:12px}
 
 @media print{
@@ -111,9 +116,10 @@ table.obj .evallink{margin-top:4px}table.obj .evallink a{font-size:11px;color:#b
       <h2>Executive Committee</h2>
       <div class="term">2026/ 2027</div>
       <div id="excoList"></div>
+      <div class="visitors" id="visitors"></div>
       <div class="contact"><b>Email</b>: <a href="mailto:nusatm@gmail.com">nusatm@gmail.com</a></div>
       <div><b>Facebook</b>: @nusalumnitm</div>
-      <div><b>Toastmasters Pathways:</b><br><a href="https://www.toastmasters.org/pathways-overview">https://www.toastmasters.org/pathways-overview</a></div>
+      <div><b>Toastmasters Pathways:</b><br><a href="https://www.toastmasters.org/pathways-overview">Pathways overview</a></div>
       <div class="paynow">Membership and guest fee - PayNow to NUSA TMC</div>
       <img class="qr" src="assets/paynow-qr.png" alt="PayNow QR">
       <div class="fine">Guest fee of $10 applies for walk-in guests.</div>
@@ -124,9 +130,10 @@ table.obj .evallink{margin-top:4px}table.obj .evallink a{font-size:11px;color:#b
       <div class="ag-top" id="agDate">Friday, __ ______ 20__</div>
       <div class="ag-meta">
         <div><b>Venue:</b> <span id="venue">Classroom 2.2, SMU, School of Economics/School of Information Systems 2,</span></div>
-        <div><b>Address:</b> 90 Stamford Rd, Singapore 178903</div>
+        <div><b>Address:</b> <span id="meetingAddress">To be confirmed</span></div>
         <div><b>Dress Code:</b> Business casual (no shorts or slippers)</div>
       </div>
+      <div id="reviewNote" class="review-note"></div>
       <table class="agenda"><tbody id="agenda"></tbody></table>
     </div>
   </div>
@@ -153,7 +160,7 @@ table.obj .evallink{margin-top:4px}table.obj .evallink a{font-size:11px;color:#b
   <table class="obj"><tbody id="objectives"></tbody></table>
 
   <div class="section-gap"></div>
-  <div class="loc">
+  <div class="loc" id="locationDetails">
     <h2>Location</h2>
     <div><b>Address</b>: SMU School of Economics/ School of Computing &amp; Information Systems 2</div>
     <div>90 Stamford Rd, Singapore 178903</div>
@@ -162,7 +169,10 @@ table.obj .evallink{margin-top:4px}table.obj .evallink a{font-size:11px;color:#b
   </div>
 </section>
 
-<script src="scripts/recommend.js"></script>
+<script src="scripts/people.js?v=21"></script>
+<script src="scripts/meeting-programmes.js?v=22"></script>
+<script src="scripts/programme.js?v=21"></script>
+<script src="scripts/recommend.js?v=21"></script>
 <script>
 // ExCo — semi-static; edit here or override via payload.exco
 const DEFAULT_EXCO=[
@@ -172,7 +182,8 @@ const DEFAULT_EXCO=[
   ['Treasurer','TU Yu'],['Immediate Past President','Sabrina Xu']
 ];
 
-function esc(s){return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function safeURL(s){return /^(?:https?:\/\/|assets\/)[^\s]*$/i.test(String(s||''))?String(s):'';}
 // name -> Toastmasters credential (e.g. "ATMB, CL"), matched to the roster by shared name tokens
 let CREDS=[];
 function credFor(name){
@@ -183,7 +194,7 @@ function credFor(name){
   return bs>=2?best:'';
 }
 // append the credential once, unless the name already carries it
-function withCred(name){const c=credFor(name);return c&&!new RegExp(c.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i').test(name)?esc(name)+', '+esc(c):esc(name);}
+function withCred(name){const guest=(CURRENT_PAYLOAD?.guests||[]).find(g=>ToastFlowPeople.canonical(g.name)===ToastFlowPeople.canonical(name));if(guest)return esc(guest.name+(guest.credentials?', '+guest.credentials:'')+'*');const p=ToastFlowPeople.find(name);if(p)return esc(ToastFlowPeople.label(name));return esc(ToastFlowPeople.clean(name));}
 function who(name){return name?withCred(name):'<span class="open">— open —</span>'}
 
 // ---- exports: Word (.doc with embedded images) + shareable link ----
@@ -199,7 +210,7 @@ async function exportWord(){
   document.querySelectorAll('.sheet').forEach((s,idx)=>{
     const c=s.cloneNode(true);c.removeAttribute('contenteditable');
     c.querySelectorAll('img').forEach(im=>{if(map[im.src])im.setAttribute('src',map[im.src]);});
-    gridToTable(c.querySelector('.hdr'),['150','','170']);
+    gridToTable(c.querySelector('.hdr'),['140','','207']);
     gridToTable(c.querySelector('.body'),['200','']);
     body+=(idx?'<br clear="all" style="mso-special-character:line-break;page-break-before:always">':'')+c.outerHTML;
   });
@@ -207,7 +218,7 @@ async function exportWord(){
   // Word-specific page setup + neutralise grid rules the tables now replace
   const wcss='@page Section1{size:210mm 297mm;margin:12mm}div.Section1{page:Section1}'
     +'body{background:#fff}.toolbar{display:none}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}'
-    +'.hdr,.body{display:block}.title{text-align:center}.title h1{font-size:20pt;font-weight:bold;margin:0;line-height:1.1}'
+    +'.hdr,.body{display:block}.title{text-align:center}.title h1{font-size:14pt;font-weight:bold;margin:0;line-height:1.1}'
     +'.title .web{font-style:italic;font-size:10.5pt}.title .motto{font-weight:bold;font-style:italic;color:#8c1d40;font-size:12pt}'
     +'td{vertical-align:top}td img{max-width:100%;height:auto}';
   const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'
@@ -224,15 +235,18 @@ function toggleEdit(btn){
   btn.textContent=on?'✓ Done editing':'✏️ Edit text';
 }
 async function shareSheetLink(){
+  if(sheetEdited){alert('Text edits are included in Word / Print exports. Use those exports for this edited version; generate a new sheet after updating the planner to share a data snapshot.');return;}
   if(!CURRENT_PAYLOAD){alert('Open this sheet from the planner (Generate Programming Sheet) first, then Share.');return;}
   const enc=btoa(unescape(encodeURIComponent(JSON.stringify(CURRENT_PAYLOAD))));
-  const url=location.origin+location.pathname+'?d='+enc;
+  const url=location.origin+location.pathname+'?d='+encodeURIComponent(enc);
   try{if(navigator.share){await navigator.share({title:'NUSA Programming Sheet',url});return;}}catch(e){/* user cancelled / not available → fall through */}
   try{await navigator.clipboard.writeText(url);alert('Share link copied to clipboard — anyone with it sees this sheet.');}
   catch(e){window.prompt('Copy this share link (⌘/Ctrl+C):',url);}   // clipboard blocked → show it to copy manually
 }
 
 let CURRENT_PAYLOAD=null;
+let sheetEdited=false;
+document.querySelectorAll('.sheet').forEach(s=>s.addEventListener('input',()=>{sheetEdited=true;}));
 function decodePayload(enc){try{return JSON.parse(decodeURIComponent(escape(atob(enc))))}catch(e){return null}}
 function build(){
   const params=new URLSearchParams(location.search);
@@ -242,65 +256,84 @@ function build(){
   CREDS=data.creds||[];                  // [{name, cred}] — for appending designations after names
   const A=data.assignments||{};          // {role:{name,note}}
   const date=data.date||params.get('date')||'';
-  document.getElementById('src').textContent=payload?'· live data':'· blank template';
+  const schedule=data.schedule||ToastFlowMeetings.get(date).schedule;
+  document.getElementById('src').textContent=payload?'· saved programme snapshot':'· blank template';
 
   // header date
   const d=date?new Date(date):null;
   document.getElementById('agDate').textContent=d
     ? d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})
     : 'Friday, __ ______ 20__';
-  if(data.meta&&data.meta.venue)document.getElementById('venue').textContent=data.meta.venue;
+  const venue=(data.meta&&data.meta.venue)||'Venue to be confirmed';
+  document.getElementById('venue').textContent=venue;
+  const isAugust=date==='2026-08-14';
+  const address=data.meta?.address||(isAugust?'90 Stamford Rd, Singapore 178903':'To be confirmed');
+  document.getElementById('meetingAddress').textContent=address;
+  if(!isAugust){
+    const directions=safeURL(data.meta?.directions),map=safeURL(data.meta?.map);
+    document.getElementById('locationDetails').innerHTML='<h2>Location</h2>'+(directions?'<div><b>Directions:</b> <a href="'+esc(directions)+'">'+esc(directions)+'</a></div>':'<div>Directions to be confirmed.</div>')+(map?'<img class="map" src="'+esc(map)+'" alt="Meeting location map">':'<div><b>Address:</b> '+esc(address)+'</div>');
+    document.querySelectorAll('.menti-qr').forEach((im,i)=>{const voting=data.voting?.[i]||{},src=safeURL(voting.image);im.hidden=!src;if(src)im.src=src;});
+    document.querySelectorAll('.menti').forEach((el,i)=>{const voting=data.voting?.[i]||{},url=safeURL(voting.url);if(url){const a=document.createElement('a');a.href=url;a.textContent=url;el.append(' ',a);}else if(!safeURL(voting.image))el.append(' TBC — set this meeting’s voting link.');});
+  }
+  const pending=Object.values(A).filter(a=>a.name&&a.confirmed!==true).length;
+  const openRoles=ToastFlow.ROLES.filter(r=>r!=='General Evaluator'&&!A[r]?.name).length;
+  document.getElementById('reviewNote').textContent='DRAFT — '+pending+' tentative assignment(s), '+openRoles+' open role(s). Review projects, timings, venue and voting codes before publishing.';
+  document.getElementById('reviewNote').hidden=!!(data.final&&!pending&&!openRoles&&!data.scheduleTentative&&data.meta?.address&&data.meta?.venue);
+  const guests=data.guests||[...new Set(Object.values(A).filter(a=>a.name).map(a=>ToastFlowPeople.find(a.name)).filter(p=>p?.visiting))];
+  document.getElementById('visitors').innerHTML='<b>* Visiting Toastmasters</b>'+guests.map(p=>'<div>'+esc(p.name)+(p.club?' — '+esc(p.club):'')+'</div>').join('');
 
   // ExCo list
   const exco=(data.exco&&data.exco.length?data.exco:DEFAULT_EXCO);
   document.getElementById('excoList').innerHTML=exco.map(([r,n])=>
     `<div class="role">${esc(r)}</div><div class="name">${n?withCred(n):'&nbsp;'}</div>`).join('');
   const excoName=r=>{const e=exco.find(x=>x[0].replace(/[+*()]/g,'').trim().toLowerCase()===r.toLowerCase());return e?e[1]:''};
-  const saa=(data.meta&&data.meta.saa)||excoName('Sergeant at Arms');
+  const saa=(data.meta&&data.meta.saa)||(A['Sergeant at Arms']||{}).name||'';
 
   const nm=r=>{const x=A[r]||{};return x.name||''};
+  const holder=r=>{const x=A[r]||{};return who(x.name)+(x.name&&x.name!=='TBC'&&x.confirmed!==true?' <span class="open">(TBC)</span>':'');};
   const note=r=>{const x=A[r]||{};return x.note||''};
 
   // prepared-speech project list (numbered) + speakers, mirrored in evaluations
   const speeches=[1,2,3,4].map(n=>{const x=A['Prepared Speech '+n]||{};return {name:x.name||'',proj:x.projectRaw||x.note||'',full:x.project||x.projectRaw||x.note||'',title:x.title||'',pathway:x.pathway||''};});
-  const spItems=speeches.map(s=>({proj:s.full?esc(s.full)+(s.title?` <span style="color:#666">— ${esc(s.title)}</span>`:''):'<span class="open">Pathways project —</span>',who:who(s.name)}));
-  const evItems=speeches.map((s,i)=>({proj:s.full?esc(s.full):'<span class="open">—</span>',who:who(nm('Speech Evaluator '+(i+1)))}));
+  const timing=s=>ToastFlowProgramme.lookup({...ToastFlowProgramme.objectives,...(data.objectives||{})},s.full)?.timing||'';
+  const spItems=speeches.map(s=>({proj:s.full?esc(s.full)+(timing(s)?' ('+esc(timing(s))+')':' <span class="open">(timing TBC)</span>')+(s.title?` <span style="color:#666">— ${esc(s.title)}</span>`:''):'<span class="open">Pathways project —</span>',who:holder('Prepared Speech '+(speeches.indexOf(s)+1))}));
+  const evItems=speeches.map((s,i)=>({proj:s.full?esc(s.full):'<span class="open">—</span>',who:holder('Speech Evaluator '+(i+1))}));
 
   // agenda rows — keep the club's 3-column Word structure (Time | Item | Person) WITH the
   // vertical dividers. A "group" (grp-first/grp-mid/grp-last) drops only the horizontal lines
   // between its rows, so each numbered project lines up with its speaker in the same row.
   const A_ROWS=[];const push=(t,item,p,cls)=>A_ROWS.push({t,item,p,cls:cls||''});
-  push('7:30','Ice Breaker by SAA (1 min per pax)',who(saa));
-  push('7:40','Introduction by Toastmaster of the Evening',who(nm('Toastmaster of the Evening')));
-  push('7:45',"President's Opening Address",who(excoName('President')));
-  push('7:55','<b>Prepared Speeches</b> — Pathways Projects','','grp-first');
+  push(schedule.saa,'Ice Breaker by SAA (1 min per pax)',A['Sergeant at Arms']?holder('Sergeant at Arms'):who(saa));
+  push(schedule.tme,'Introduction by Toastmaster of the Evening',holder('Toastmaster of the Evening'));
+  push(schedule.president,"President's Opening Address",who(excoName('President')));
+  push(schedule.speeches,'<b>Pathways Projects</b>','','grp-first');
   spItems.forEach((it,i)=>push('',`${i+1}. ${it.proj}`,it.who,'grp-mid'));
-  push('',"Timer’s Report",who(nm('Timer')),'grp-last');
-  push('8:45','Break &amp; Refreshments (15 min)','All');
-  push('9:00','Table Topics (15 min)',who(nm('Table Topics Master')),'grp-first');
-  push('',"Timer’s Report",who(nm('Timer')),'grp-last');
-  push('9:15','<b>Evaluations</b> (2-3 mins per pax)','','grp-first');
+  push('',"Timer’s Report",holder('Timer'),'grp-last');
+  push(schedule.break,'Break &amp; Refreshments ('+schedule.breakMinutes+' min)','All');
+  push(schedule.topics,'Table Topics ('+schedule.topicsMinutes+' min)',holder('Table Topics Master'),'grp-first');
+  push('',"Timer’s Report",holder('Timer'),'grp-last');
+  push(schedule.evaluations,'<b>Evaluations</b> (2–3 min per pax)','','grp-first');
   evItems.forEach((it,i)=>push('',`${i+1}. ${it.proj}`,it.who,'grp-mid'));
-  push('',"Timer’s Report",who(nm('Timer')),'grp-last');
-  push('9:30','Ah Counter Report (5min)',who(nm('Ah-Counter')));
-  push('9:35','Language Evaluation (10 min)',who(nm('Language Evaluator')));
-  push('9:45',"Awards Presentation &amp; President’s Closing Address",who(excoName('President')));
-  push('9:55','Meeting Adjourned','All');
+  push('',"Timer’s Report",holder('Timer'),'grp-last');
+  push(schedule.ah,'Ah Counter Report (5 min)',holder('Ah-Counter'));
+  push(schedule.language,'Language Evaluation (10 min)',holder('Language Evaluator'));
+  push(schedule.awards,"Awards Presentation &amp; President’s Closing Address",who(excoName('President')));
+  push(schedule.end,'Meeting Adjourned','All');
   document.getElementById('agenda').innerHTML=A_ROWS.map(r=>
     `<tr class="${r.cls}"><td class="col-t">${r.t}</td><td>${r.item}</td><td class="col-p who">${r.p}</td></tr>`).join('');
 
   // page 2 — official project purpose + evaluation form, matched by bare project name
-  const OBJ=data.objectives||{}, EVAL=data.evalForms||{};
+  const OBJ={...ToastFlowProgramme.objectives,...(data.objectives||{})}, EVAL=data.evalForms||{};
   const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
-  const bareProject=s=>{s=String(s||'');const m=s.match(/L[1-5][^:]*:\s*(.+)$/);return (m?m[1]:s).trim();};
+  const bareProject=ToastFlowProgramme.bare;
   const indexBy=map=>{const o={};Object.keys(map).forEach(k=>{o[norm(k)]=map[k];});return o;};
   const OBJi=indexBy(OBJ), EVALi=indexBy(EVAL);
   const look=(full,raw,byNorm)=>{const bp=bareProject(full);if(!bp)return null;
     return raw[bp]||byNorm[norm(bp)]||null;};
   const objRows=speeches.filter(s=>s.name&&s.full).map(s=>{
     const o=look(s.full,OBJ,OBJi)||{}, f=look(s.full,EVAL,EVALi);
-    const link=f&&f.url?`<div class="evallink"><a href="${esc(f.url)}" target="_blank" rel="noopener">⬇ Evaluation form</a></div>`:'';
-    return `<tr><td class="c1">${esc(s.full)}${link}</td><td>${o.objective?esc(o.objective):''}</td><td class="c3">${o.timing?esc(o.timing):''}</td></tr>`});
+    const link=f&&f.url?`<div class="evallink"><a href="${esc(f.url)}" target="_blank" rel="noopener">⬇ Evaluation form</a></div>`:o.source?`<div class="evallink"><a href="${esc(o.source)}" target="_blank" rel="noopener">Project reference</a></div>`:'';
+    return `<tr><td class="c1">${esc(s.full)}${link}</td><td>${o.objective?esc(o.objective):'Full project objectives to be confirmed'}</td><td class="c3">${o.timing?esc(o.timing):'TBC'}</td></tr>`});
   document.getElementById('objectives').innerHTML=objRows.length?objRows.join('')
     :'<tr><td class="c1 open">Prepared-speech projects</td><td class="open">Objectives appear here once speeches list their Pathways projects.</td><td class="c3"></td></tr>';
 }
