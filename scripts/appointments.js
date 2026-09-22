@@ -45,6 +45,12 @@
   function normDate(v) {
     if (!v) return null;
     v = String(v).trim();
+    if (/^\d{5}(?:\.\d+)?$/.test(v)) {
+      const serial = parseFloat(v);
+      const ms = Math.round((serial - 25569) * 86400 * 1000);
+      const dt = new Date(ms);
+      if (!isNaN(dt)) return dt.toISOString().slice(0, 10);
+    }
     let m = v.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);            // 2025-11-07
     if (m) return `${m[1]}-${(+m[2]).toString().padStart(2, '0')}-${(+m[3]).toString().padStart(2, '0')}`;
     m = v.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);                // 14/11/2025 (D/M/Y)
@@ -53,7 +59,14 @@
     return isNaN(d) ? null : d.toISOString().slice(0, 10);
   }
 
-  const canon = r => (TF.canonicalRole ? TF.canonicalRole(r) : null);
+  const getCanonFn = () => (
+    (TF && TF.canonicalRole) ? TF.canonicalRole :
+    (typeof globalThis !== 'undefined' && globalThis.ToastFlow && globalThis.ToastFlow.canonicalRole) ? globalThis.ToastFlow.canonicalRole :
+    (typeof window !== 'undefined' && window.ToastFlow && window.ToastFlow.canonicalRole) ? window.ToastFlow.canonicalRole :
+    (typeof root !== 'undefined' && root.ToastFlow && root.ToastFlow.canonicalRole) ? root.ToastFlow.canonicalRole :
+    null
+  );
+  const canon = r => { const fn = getCanonFn(); return fn ? fn(r) : null; };
 
   /**
    * Parse the wide appointment sheet.
@@ -89,11 +102,39 @@
     return { dates: cols.map(c => c.date), byDate, rawByDate, historyRows };
   }
 
-  async function fetchAppointments(csvUrl) {
-    if (!csvUrl) return null;
-    const res = await fetch(csvUrl, { redirect: 'follow' });
-    if (!res.ok) throw new Error('CSV fetch failed: ' + res.status);
-    return parseWide(parseCSV(await res.text()));
+  async function fetchAppointments(csvUrl, fallbackUrl = 'data/appointments-sheet.csv') {
+    async function tryFetch(url, timeoutMs = 2500) {
+      if (!url) return null;
+      const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      const to = ctrl ? setTimeout(() => ctrl.abort(), timeoutMs) : null;
+      try {
+        const res = await fetch(url, { redirect: 'follow', signal: ctrl ? ctrl.signal : undefined });
+        if (to) clearTimeout(to);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        return parseWide(parseCSV(text));
+      } catch (err) {
+        if (to) clearTimeout(to);
+        throw err;
+      }
+    }
+
+    if (csvUrl) {
+      try {
+        const data = await tryFetch(csvUrl, 2500);
+        if (data && data.dates && data.dates.length) return data;
+      } catch (e) {
+        console.warn('Primary appointments CSV fetch failed or timed out:', e.message, 'Trying fallback:', fallbackUrl);
+      }
+    }
+    if (fallbackUrl && fallbackUrl !== csvUrl) {
+      try {
+        return await tryFetch(fallbackUrl, 2500);
+      } catch (e) {
+        console.warn('Fallback appointments CSV failed:', e.message);
+      }
+    }
+    return null;
   }
 
   return { parseCSV, parseWide, fetchAppointments, normDate };

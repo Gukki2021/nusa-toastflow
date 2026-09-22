@@ -41,7 +41,9 @@
     {name:'LIVIO',credentials:'',aliases:['Livio'],club:'Bukit Timah CC',visiting:true},
     {name:'Jun TAY',credentials:'PM5',aliases:['Jun Tay'],club:'ACCA',visiting:true},
     {name:'Suren Haris ANWAR',credentials:'PM2',aliases:['Suren Haris Anwar'],club:'Katong CC',visiting:true},
-    {name:'Timothy LIN',credentials:'DTM',aliases:['Timothy Lin'],club:'Toastmasters',visiting:true}
+    {name:'Timothy LIN',credentials:'DTM',aliases:['Timothy Lin'],club:'Toastmasters',visiting:true},
+    {name:'Zhaoru LIN',credentials:'',aliases:['Zhaoru Lin'],club:'Lion Toastmasters',visiting:true,contact:'97779087'},
+    {name:'Shobha SINGH',credentials:'',aliases:['Shobha Singh'],club:'Mizuho TM',visiting:true,contact:'98377722'}
   ];
   const clean=s=>String(s||'').replace(/\([^)]*\)/g,'').replace(/[?*+]/g,'').replace(/,\s*(?:[A-Z]{2,5}\s*\d?|CL)\b.*$/i,'').replace(/\s+/g,' ').trim();
   const key=s=>clean(s).toLowerCase();

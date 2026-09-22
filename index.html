@@ -5,8 +5,9 @@
 <title>ToastFlow · NUS Alumni Toastmasters</title>
 <meta name="supabase-url" content="https://bizrpwkpcrzywihbecjb.supabase.co">
 <meta name="supabase-anon-key" content="sb_publishable_XLqftl3VT8aDFxhp8t70jQ_uDeK8HkW">
-<!-- Meeting Appointment Holders sheet (shared "anyone with link"), read as CSV by date. Leave blank to disable. -->
-<meta name="appointments-csv-url" content="https://docs.google.com/spreadsheets/d/1IOs1UZqDV0r5e08W3cuW2DAWTLx86FZIDuByiVvHKCc/export?format=csv&amp;gid=1368429787">
+<!-- Meeting Appointment Holders sheet (synchronized database), read as CSV by date. -->
+<meta name="appointments-csv-url" content="data/appointments-sheet.csv">
+<meta name="google-sheet-url" content="https://docs.google.com/spreadsheets/d/18lylRf1_-ttqsf5SkivKhvk5yzI72lnc/edit?usp=drive_web&amp;ouid=111159799636850392426&amp;dls=true">
 <style>
 :root{--navy:#18243f;--red:#b52f3b;--gold:#d7ad59;--cream:#f7f3eb;--paper:#fffdfa;--ink:#202638;--muted:#6d7382;--line:#e5ded2}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--paper);color:var(--ink)}
@@ -93,6 +94,7 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 <div class="admin-tools">
   <button type="button" class="btn primary" onclick="generateSheet()">📄 Generate Program Sheet</button>
   <button type="button" class="btn ghost" onclick="openVisitingModal()">👥 Visiting Toastmasters Pool</button>
+  <a href="https://docs.google.com/spreadsheets/d/18lylRf1_-ttqsf5SkivKhvk5yzI72lnc/edit?usp=drive_web&amp;ouid=111159799636850392426&amp;dls=true" target="_blank" rel="noopener" class="btn ghost" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px">📊 Google Sheet</a>
   <button type="button" class="btn ghost" onclick="exportCSV()">Export CSV</button>
   <button type="button" class="btn ghost" onclick="copySheetData()">Copy for Google Sheets</button>
   <button type="button" class="btn ghost" onclick="toggleRoster()">Roster &amp; Pathways</button>
@@ -106,7 +108,7 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 <div class="hint">Recommendations are computed from the historical Program Plan (rotation fairness, role freshness &amp; Pathways level). They are suggestions — you decide. "Generate Program Sheet" opens a print-ready sheet pre-filled with confirmed reservations.</div>
 </form></dialog>
 
-<dialog id="visitingModal"><form method="dialog"><button type="button" class="close" onclick="visitingModal.close()">×</button><div class="eyebrow">TALENT POOL</div><h2 style="font-size:38px;margin-bottom:6px">Visiting Toastmasters</h2><p style="color:var(--muted);margin-top:0">A directory of past visiting Toastmasters, home clubs, credentials, and roles served to help fill meeting appointments.</p>
+<dialog id="visitingModal"><form method="dialog"><button type="button" class="close" onclick="visitingModal.close()">×</button><div class="eyebrow">Visiting Toastmasters pool</div><h2 style="font-size:38px;margin-bottom:6px">Visiting Toastmasters</h2><p style="color:var(--muted);margin-top:0">A directory of past visiting Toastmasters, home clubs, credentials, and roles served to help fill meeting appointments.</p>
 <div style="display:flex;gap:10px;align-items:center;margin:16px 0 12px">
   <input id="visitingSearch" placeholder="Search by name, home club, or credential…" oninput="renderVisitingList()" style="margin-top:0;flex:1">
   <button type="button" class="btn ghost" style="padding:11px 16px;white-space:nowrap" onclick="toggleAddVisiting()">+ Add Visiting TM</button>
@@ -168,10 +170,51 @@ const meetings=[
 const roleNames=ToastFlow.ROLES;
 // roles the club doesn't run publicly — hidden from the public homepage & booking form (still managed in admin)
 const PUBLIC_HIDE=['General Evaluator'];
+
+// Speech slots flexibility: October 9, 2026 defaults to 3 speeches (special seminar/workshop); others default to 4.
+const DEFAULT_SPEECH_COUNTS = { '2026-10-09': 3 };
+let SPEECH_COUNT_OVERRIDES = {};
+try { SPEECH_COUNT_OVERRIDES = JSON.parse(localStorage.getItem('toastflow_speech_counts') || '{}'); } catch(e) {}
+
+function getSpeechSlotsCount(date) {
+  if (SPEECH_COUNT_OVERRIDES[date] !== undefined) return Number(SPEECH_COUNT_OVERRIDES[date]);
+  const prog = (typeof ToastFlowMeetings !== 'undefined') ? ToastFlowMeetings.get(date) : null;
+  if (prog && prog.speechSlots) return Number(prog.speechSlots);
+  if (DEFAULT_SPEECH_COUNTS[date] !== undefined) return Number(DEFAULT_SPEECH_COUNTS[date]);
+  return 4;
+}
+
+function setSpeechSlotsCount(date, count) {
+  count = Number(count) === 3 ? 3 : 4;
+  SPEECH_COUNT_OVERRIDES[date] = count;
+  try { localStorage.setItem('toastflow_speech_counts', JSON.stringify(SPEECH_COUNT_OVERRIDES)); } catch(e) {}
+  if (typeof ToastFlowMeetings !== 'undefined') {
+    const p = ToastFlowMeetings.get(date);
+    if (p) { p.speechSlots = count; ToastFlowMeetings.set(date, p); }
+  }
+  render();
+  renderAdmin();
+  show(`Speech count set to ${count} for ${date}.`);
+}
+
+function activeRolesForMeeting(date) {
+  const count = getSpeechSlotsCount(date);
+  if (count === 3) {
+    return roleNames.filter(r => r !== 'Prepared Speech 4' && r !== 'Speech Evaluator 4');
+  }
+  return roleNames;
+}
+
 // members reserve by role name only, not a numbered slot — "Prepared Speech 2" → "Prepared Speech".
 function genericRole(r){return String(r).replace(/\s*\d+$/,'');}
-function concreteSlots(g){return roleNames.filter(r=>genericRole(r)===g&&!PUBLIC_HIDE.includes(r));}
-function publicRoleList(){const out=[],seen={};roleNames.filter(r=>!PUBLIC_HIDE.includes(r)).forEach(r=>{const g=genericRole(r);if(!seen[g]){seen[g]=1;out.push(g);}});return out;}
+function concreteSlots(g, date = meetings[active]?.date){
+  const roles = date ? activeRolesForMeeting(date) : roleNames;
+  return roles.filter(r=>genericRole(r)===g&&!PUBLIC_HIDE.includes(r));
+}
+function publicRoleList(date = meetings[active]?.date){
+  const roles = date ? activeRolesForMeeting(date) : roleNames;
+  const out=[],seen={};roles.filter(r=>!PUBLIC_HIDE.includes(r)).forEach(r=>{const g=genericRole(r);if(!seen[g]){seen[g]=1;out.push(g);}});return out;
+}
 function meetingTime(date){const s=ToastFlowMeetings.get(date).schedule;return s.saa+'–'+s.end+' PM';}
 function calendarLocation(date){return [venueFor(date).full,ToastFlowMeetings.get(date).address].filter(Boolean).join(', ');}
 function meetingStart(date,utc=false){const [h,m]=ToastFlowMeetings.get(date).schedule.saa.split(':');return String(Number(h)%12+12-(utc?8:0)).padStart(2,'0')+m+'00';}
@@ -254,7 +297,9 @@ async function loadVisitingPool(){
     if(r.ok) VISITING_POOL=await r.json();
   }catch(e){console.warn('visiting pool not loaded',e);}
 }
-async function loadData(){
+let DATA_LOADED=false;
+async function loadData(force=false){
+  if(DATA_LOADED&&!force)return;
   try{
     const [m,h,p,pw]=await Promise.all([
       loadJSON(['data/members.json','data/members.public.json'],[]),
@@ -279,12 +324,13 @@ async function loadData(){
     ];
     const list=document.getElementById('pathwaysList');
     if(list)list.innerHTML=[...new Set(opts)].map(o=>`<option value="${o.replace(/"/g,'&quot;')}">`).join('');
+    DATA_LOADED=true;
   }catch(e){console.warn('recommendation data not available',e)}
   // Input source #2: the Meeting Appointment Holders Google Sheet (published as CSV).
   // Its columns cover all dates, so it feeds BOTH live appointments and recommendation history.
   if(APPTS_CSV_URL){
     try{
-      APPTS=await ToastFlow.fetchAppointments(APPTS_CSV_URL);
+      APPTS=await ToastFlow.fetchAppointments(APPTS_CSV_URL,'data/appointments-sheet.csv');
       if(APPTS&&APPTS.historyRows&&APPTS.historyRows.length)HISTORY=APPTS.historyRows; // live history wins over static file
     }catch(e){console.warn('appointment CSV not available',e)}
   }
@@ -329,19 +375,51 @@ function mergedFor(date){
   const ap=apptFor(date);
   for(const r in ap){
     const nm=ap[r].name;
-    if(isTentative(nm))out[r]={name:'',source:'sheet',open:true,tentative:nm};   // open for booking, TBC noted for admin
-    else out[r]={name:ToastFlowPeople.canonical(nm),note:'',source:'sheet',confirmed:true};
+    if(isTentative(nm))out[r]={name:'',source:'sheet',open:true,tentative:nm,sheetRaw:nm,rawRole:ap[r].rawRole};   // open for booking, TBC noted for admin
+    else out[r]={name:ToastFlowPeople.canonical(nm),note:'',source:'sheet',confirmed:true,sheetRaw:nm,rawRole:ap[r].rawRole};
   }
   bookingsFor(date).forEach(x=>{
     const prev=out[x.reservation_type];
-    out[x.reservation_type]={name:ToastFlowPeople.canonical(x.member_name),note:x.note||'',source:'online',confirmed:!!x.confirmed,
-      ext:isExternal(x.member_name,x.note),soft:isSoftBlock(x.note),hold:isHold(x.member_name,x.note),
-      conflict:(prev&&prev.name&&!prev.open&&ToastFlowPeople.canonical(prev.name)!==ToastFlowPeople.canonical(x.member_name))?prev.name:null};
+    const onlineCanon=ToastFlowPeople.canonical(x.member_name);
+    const sheetVal=(prev&&prev.name&&!prev.open)?prev.name:(prev&&prev.tentative?prev.tentative:(prev&&prev.sheetRaw?prev.sheetRaw:null));
+    const hasDiscrepancy=Boolean(sheetVal && onlineCanon && ToastFlowPeople.canonical(sheetVal) !== onlineCanon);
+    out[x.reservation_type]={
+      name:onlineCanon,
+      note:x.note||'',
+      source:'online',
+      confirmed:!!x.confirmed,
+      ext:isExternal(x.member_name,x.note),
+      soft:isSoftBlock(x.note),
+      hold:isHold(x.member_name,x.note),
+      conflict:hasDiscrepancy ? sheetVal : null,
+      discrepancy:hasDiscrepancy ? {
+        sheetName: sheetVal,
+        sheetRawRole: prev?.rawRole || x.reservation_type,
+        onlineName: x.member_name,
+        onlineNote: x.note || '',
+        active: 'online'
+      } : null
+    };
   });
   return out;
 }
 function renderTabs(){tabs.innerHTML=meetings.map((m,i)=>`<button class="${i===active?'active':''}" onclick="active=${i};render()">${m.month}</button>`).join('')}
-function render(){renderTabs();const m=meetings[active],mg=mergedFor(m.date);const speechSlots=[1,2,3,4].map(n=>{const role=`Prepared Speech ${n}`;const x=mg[role];const filled=slotFilled(x),hold=x&&x.hold;const acts=(filled&&!hold)?`<div class="slot-actions"><button class="mini" onclick="sharePoster('${role}')">📤 Share</button><button class="mini" onclick="downloadPoster('${role}')">⬇ Poster (free)</button><button class="mini" onclick="downloadICS(${active})">📅 Add to Calendar</button><button class="mini" onclick="addToGoogleCalendar(${active})">Google Calendar</button></div>`:'';return `<div class="slot ${filled?'booked':''}"><div style="flex:1;min-width:0"><strong>${filled?(hold?'Reserved':escapeHtml(x.name)):'Prepared Speech'}</strong><small>${filled?(hold?'Reserved':escapeHtml(x.note||'Reserved')):'Available for booking'}</small>${acts}</div><span class="open">${filled?(x.confirmed?'BOOKED':'TENTATIVE'):'OPEN'}</span></div>`}).join('');const backendNote=!configured?'Reservations are not configured yet.':backendReady?'Live shared availability is online.':'Reservations are temporarily unavailable — please contact the club VPE.';meetingCard.innerHTML=`<div class="meeting-head"><div class="date"><strong>${m.day}</strong><span>${m.label} 2026</span></div><div><h3>${themeFor(m.date)}</h3><p>Friday · ${meetingTime(m.date)} · ${venueFor(m.date).short}</p></div></div><div class="body"><div class="meta"><span>📅 ${new Date(m.date+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</span><span>🕜 ${meetingTime(m.date)}</span><span>📍 ${venueFor(m.date).full}${venueFor(m.date).directions?` · <a href="${venueFor(m.date).directions}" target="_blank" rel="noopener">Directions</a>`:''}</span></div><div class="slots">${loading?'<p>Refreshing live availability…</p>':speechSlots}</div><div class="actions"><button class="btn primary" ${backendReady?'':'disabled'} onclick="openNextSpeech()">Reserve a Speech</button><button class="btn ghost" onclick="shareMeeting(${active})">Share</button><button class="btn ghost" onclick="loadBookings()">Refresh</button></div></div><div class="footer-note">${backendNote}</div>`;renderRoles();populateForm()}
+function render(){
+  renderTabs();
+  const m=meetings[active],mg=mergedFor(m.date);
+  const maxSpeeches=getSpeechSlotsCount(m.date);
+  const speechSlots=Array.from({length:maxSpeeches},(_,i)=>i+1).map(n=>{
+    const role=`Prepared Speech ${n}`;
+    const x=mg[role];
+    const filled=slotFilled(x),hold=x&&x.hold;
+    const acts=(filled&&!hold)?`<div class="slot-actions"><button class="mini" onclick="sharePoster('${role}')">📤 Share</button><button class="mini" onclick="downloadPoster('${role}')">⬇ Poster (free)</button><button class="mini" onclick="downloadICS(${active})">📅 Add to Calendar</button><button class="mini" onclick="addToGoogleCalendar(${active})">Google Calendar</button></div>`:'';
+    return `<div class="slot ${filled?'booked':''}"><div style="flex:1;min-width:0"><strong>${filled?(hold?'Reserved':escapeHtml(x.name)):'Prepared Speech'}</strong><small>${filled?(hold?'Reserved':escapeHtml(x.note||'Reserved')):'Available for booking'}</small>${acts}</div><span class="open">${filled?(x.confirmed?'BOOKED':'TENTATIVE'):'OPEN'}</span></div>`;
+  }).join('');
+  const backendNote=!configured?'Reservations are not configured yet.':backendReady?'Live shared availability is online.':'Reservations are temporarily unavailable — please contact the club VPE.';
+  meetingCard.innerHTML=`<div class="meeting-head"><div class="date"><strong>${m.day}</strong><span>${m.label} 2026</span></div><div><h3>${themeFor(m.date)}</h3><p>Friday · ${meetingTime(m.date)} · ${venueFor(m.date).short}</p></div></div><div class="body"><div class="meta"><span>📅 ${new Date(m.date+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</span><span>🕜 ${meetingTime(m.date)}</span><span>📍 ${venueFor(m.date).full}${venueFor(m.date).directions?` · <a href="${venueFor(m.date).directions}" target="_blank" rel="noopener">Directions</a>`:''}</span></div><div class="slots">${loading?'<p>Refreshing live availability…</p>':speechSlots}</div><div class="actions"><button class="btn primary" ${backendReady?'':'disabled'} onclick="openNextSpeech()">Reserve a Speech</button><button class="btn ghost" onclick="shareMeeting(${active})">Share</button><button class="btn ghost" onclick="loadBookings()">Refresh</button></div></div><div class="footer-note">${backendNote}</div>`;
+  renderRoles();
+  populateForm();
+}
 const ROLE_META={
   'Toastmaster of the Evening':{
     desc:'Directs the meeting agenda, introduces speakers, and manages smooth timing and transitions.',
@@ -414,7 +492,7 @@ function renderVisitingList(){
   if(!tbody) return;
   tbody.innerHTML=filtered.map((v,i)=>`
     <tr>
-      <td><strong>${escapeHtml(v.name)}</strong>${v.contact?`<br><small style="color:var(--muted)">${escapeHtml(v.contact)}</small>`:''}</td>
+      <td><strong>${escapeHtml(v.name)}</strong>${v.contact?`<br><small style="color:var(--muted)">${/^\d+$/.test(v.contact.replace(/\s+/g,''))?`<a href="tel:${escapeHtml(v.contact)}" style="color:var(--navy);text-decoration:underline">📞 ${escapeHtml(v.contact)}</a>`:escapeHtml(v.contact)}</small>`:''}</td>
       <td>${escapeHtml(v.club||'—')}</td>
       <td>${v.credentials?`<span class="tag">${escapeHtml(v.credentials)}</span>`:'—'}</td>
       <td><span style="font-size:12px">${escapeHtml(v.pastRoles||'—')}</span>${v.notes?`<br><small style="color:var(--muted)">${escapeHtml(v.notes)}</small>`:''}</td>
@@ -456,7 +534,14 @@ function populateForm(){if(modal.open)return;meeting.innerHTML=meetings.map((m,i
   const pp=document.getElementById('projectPath');if(pp){pp.innerHTML='<option value="">— select your path —</option>'+pathList().map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');}
   fillProjectSelect();}
 function fillProjectSelect(){const pp=document.getElementById('projectPath'),pj=document.getElementById('project');if(!pj)return;pj.innerHTML=pp&&pp.value?projectOptions(pp.value,''):'<option value="">— pick your path first —</option>';}
-function openNextSpeech(){const mg=mergedFor(meetings[active].date);const next=[1,2,3,4].map(n=>`Prepared Speech ${n}`).find(r=>!slotFilled(mg[r]));if(!next){show('All prepared speech slots are currently booked.');return}openBooking('Prepared Speech')}
+function openNextSpeech(){
+  const date=meetings[active].date;
+  const maxSpeeches=getSpeechSlotsCount(date);
+  const mg=mergedFor(date);
+  const next=Array.from({length:maxSpeeches},(_,i)=>`Prepared Speech ${i+1}`).find(r=>!slotFilled(mg[r]));
+  if(!next){show('All prepared speech slots are currently booked.');return;}
+  openBooking('Prepared Speech');
+}
 function openBooking(r='Prepared Speech'){if(!backendReady){show('Reservations are temporarily unavailable. Please contact the club VPE.');return}selectedRole=genericRole(r);populateForm();modal.showModal()}
 async function loadBookings(){if(!configured){backendReady=false;render();return}loading=true;render();try{const res=await fetch(`${SUPABASE_URL}/rest/v1/public_reservations?select=meeting_date,reservation_type,member_name,note,status,confirmed&status=eq.confirmed&order=meeting_date.asc`,{headers});if(!res.ok){const t=await res.text(); if(res.status===404||t.includes('PGRST')) throw new Error('DATABASE_NOT_INITIALIZED'); throw new Error(t);}bookings=await res.json();backendReady=true}catch(err){backendReady=false;console.error(err);show(err.message==='DATABASE_NOT_INITIALIZED'?'Reservations are not initialized. Please contact the club VPE.':'Reservations are temporarily unavailable. Please contact the club VPE.')}finally{loading=false;render()}}
 form.addEventListener('submit',async e=>{
@@ -468,7 +553,7 @@ form.addEventListener('submit',async e=>{
   const memberName=ToastFlowPeople.canonical((document.getElementById('name').value||'').trim());
   if(!memberName){show('Please enter your name.');return;}
   // resolve the generic role to the next open numbered slot (kept internal, arranged in admin)
-  const chosen=role.value;const grp=concreteSlots(chosen);let concrete=chosen;
+  const chosen=role.value;const grp=concreteSlots(chosen, meeting.value);let concrete=chosen;
   if(grp.length>1){const mgx=mergedFor(meeting.value);concrete=grp.find(r=>!slotFilled(mgx[r]));if(!concrete){show(`All “${chosen}” slots are taken — please pick another role.`);return;}}
   const payload={p_meeting_date:meeting.value,p_reservation_type:concrete,p_member_name:memberName,p_contact:contact.value.trim(),p_note:combinedNote};
   if(slotFilled(mergedFor(payload.p_meeting_date)[payload.p_reservation_type])){show('That slot is already taken. Please pick another.');return;}
@@ -546,7 +631,13 @@ function openAdmin(){
   if(EXCO_PASS){showAdmin();return;}
   document.getElementById('loginErr').style.display='none';document.getElementById('loginPass').value='';loginModal.showModal();
 }
-function showAdmin(){adminMeeting.innerHTML=meetings.map((m,i)=>`<option value="${m.date}">${m.month} ${m.day}, 2026</option>`).join('');adminMeeting.value=meetings[active].date;renderAdmin();adminModal.showModal();}
+function showAdmin(){
+  adminMeeting.innerHTML=meetings.map((m,i)=>`<option value="${m.date}">${m.month} ${m.day}, 2026</option>`).join('');
+  adminMeeting.value=meetings[active].date;
+  renderAdmin();
+  adminModal.showModal();
+  Promise.all([loadVenues(),loadMeetingProgrammes(),loadBookings()]).then(renderAdmin).catch(()=>{});
+}
 document.getElementById('loginForm').addEventListener('submit',async e=>{
   e.preventDefault();const p=document.getElementById('loginPass').value.trim();if(!p)return;
   const btn=e.target.querySelector('button[type="submit"],button:not([type])');btn.disabled=true;btn.textContent='Checking…';
@@ -591,45 +682,126 @@ function renderWill(){
     w.map(x=>`<tr><td>${escapeHtml(x.member_name)}</td><td>${(x.willing_roles||[]).map(r=>`<span class="tag">${escapeHtml(r)}</span>`).join(' ')}</td><td>${escapeHtml(x.note||'—')}</td></tr>`).join('')}</tbody></table>`;
 }
 function toggleWill(){const b=document.getElementById('willBox');if(!b)return;b.style.display=b.style.display==='none'?'block':'none';if(b.style.display==='block')renderWill();}
-function rowsForAdmin(){const date=currentAdminDate();const mg=mergedFor(date);return roleNames.map(role=>{const x=mg[role]||{};return {role,member_name:slotFilled(x)?x.name:'',note:x.note||'',source:x.source||'',hold:!!x.hold,soft:!!x.soft,ext:!!x.ext,confirmed:!!x.confirmed,tentative:x.tentative||'',conflict:x.conflict||null}})}
+function rowsForAdmin(){
+  const date=currentAdminDate();
+  const mg=mergedFor(date);
+  const maxSpeeches=getSpeechSlotsCount(date);
+  return roleNames.map(role=>{
+    const isOmitted=(maxSpeeches===3&&(role==='Prepared Speech 4'||role==='Speech Evaluator 4'));
+    const x=mg[role]||{};
+    return {
+      role,
+      member_name:slotFilled(x)?x.name:'',
+      note:x.note||'',
+      source:x.source||'',
+      hold:!!x.hold,
+      soft:!!x.soft,
+      ext:!!x.ext,
+      confirmed:!!x.confirmed,
+      tentative:x.tentative||'',
+      conflict:x.conflict||null,
+      discrepancy:x.discrepancy||null,
+      omitted:isOmitted
+    };
+  });
+}
+const RECS_CACHE={};
 function computeRecs(date){
   if(!MEMBERS.length||!HISTORY.length)return {};
   const mg=mergedFor(date);
+  const takenNames=Object.values(mg).filter(slotFilled).map(x=>x.name).sort().join(',');
+  const cacheKey=date+'|'+takenNames;
+  if(RECS_CACHE[cacheKey])return RECS_CACHE[cacheKey];
+  const activeRoles=activeRolesForMeeting(date);
   const taken=Object.values(mg).filter(slotFilled).map(x=>x.name);
-  const openRoles=roleNames.filter(r=>!slotFilled(mg[r]));
-  const willing={};roleNames.forEach(r=>{willing[r]=willingNamesFor(date,r);});
-  return ToastFlow.recommendMeeting({members:MEMBERS,history:HISTORY,openRoles,taken,asOf:date,willing,limit:3});
+  const openRoles=activeRoles.filter(r=>!slotFilled(mg[r]));
+  const willing={};activeRoles.forEach(r=>{willing[r]=willingNamesFor(date,r);});
+  const res=ToastFlow.recommendMeeting({members:MEMBERS,history:HISTORY,openRoles,taken,asOf:date,willing,limit:3});
+  RECS_CACHE[cacheKey]=res;
+  return res;
 }
-function renderAdmin(){if(!document.getElementById('adminTable'))return;const date=currentAdminDate();const rows=rowsForAdmin();const recs=computeRecs(date);renderProgrammeEditor();
-const vi=document.getElementById('venueInput');if(vi&&document.activeElement!==vi){const vf=venueFor(date);vi.value=(vf.full==='Venue to be confirmed')?'':vf.full;}
-const ti=document.getElementById('themeInput');if(ti&&document.activeElement!==ti){ti.value=themeFor(date);}
-const si=document.getElementById('saaInput');if(si&&document.activeElement!==si){si.value=SAA_OVERRIDES[date]||'';}
-const filled=rows.filter(r=>r.member_name).length;const speeches=rows.filter(r=>r.role.startsWith('Prepared Speech')&&r.member_name).length;const evaluators=rows.filter(r=>r.role.startsWith('Speech Evaluator')&&r.member_name).length;
-adminSummary.innerHTML=`<div class="metric"><small>Roles filled</small><strong>${filled}/${roleNames.length}</strong></div><div class="metric"><small>Prepared speeches</small><strong>${speeches}/4</strong></div><div class="metric"><small>Speech evaluators</small><strong>${evaluators}/${Math.max(speeches,1)}</strong></div>`;
-adminTable.innerHTML=`<table class="admin-table"><thead><tr><th style="width:15%">Role / Slot</th><th style="width:23%">Member <span class="why">(pick / dbl-click)</span></th><th style="width:16%">Pathway</th><th style="width:20%">Project</th><th style="width:9%">Status</th><th style="width:17%">Exco actions</th></tr></thead><tbody>${rows.map(r=>{
-  const rq=JSON.stringify(r.role).replace(/"/g,'&quot;');
-  const isSpeech=/^Prepared Speech/.test(r.role);
-  const suggested=(recs[r.role]||[]).map(c=>c.member.name);
-  const tag=r.member_name?(r.confirmed?'CONFIRMED':r.ext?'EXTERNAL':r.soft?'SOFT-BLOCK':r.source==='online'?'ONLINE':'SHEET'):'';
-  const srcTag=tag?`<span class="tag"${r.confirmed?' style="background:#dff0e4;color:#1c7a3f"':''}>${tag}</span>`:'';
-  const conflictNote=r.conflict?`<div class="why" style="color:var(--red)">⚠ sheet had ${escapeHtml(r.conflict)} — online kept</div>`:'';
-  const nameLine=`<div class="editable" ondblclick="inlineEdit(this,${rq},'name')" title="Double-click to edit name"><b>${r.member_name?escapeHtml(r.member_name):'<span class="why">— none —</span>'}</b> ${srcTag}</div>`;
-  const memberCell=`<div>${nameLine}${conflictNote}${roleSelect(r.role,'',suggested)}</div>`;
-  let pathCell='<span class="why">—</span>',projCell='<span class="why">—</span>';
-  if(isSpeech){
-    const curPath=ROW_PATH[r.role]||pathFromNote(r.note)||(r.note?'':dbPathFor(r.member_name));
-    const curProj=projValueFromNote(r.note,curPath);
-    pathCell=`<select class="role-select" data-role="${escapeHtml(r.role)}" onchange="adminSetPath(this.dataset.role,this.value)"><option value="">— path —</option>${pathList().map(p=>`<option value="${escapeHtml(p)}"${p===curPath?' selected':''}>${escapeHtml(p.replace('The Communication Series: ','Comm.Series: '))}</option>`).join('')}</select>`;
-    projCell=`<select class="role-select" data-role="${escapeHtml(r.role)}" onchange="adminAssignProject(this.dataset.role,this.value)">${projectOptions(curPath,curProj)}</select>`;
-  }
-  const status=r.member_name?(r.confirmed?'<b class="ok">Confirmed</b>':'<b class="gap">Tentative</b>'):'<b class="gap">Open</b>';
-  const actionSel=`<select class="role-select" data-role="${escapeHtml(r.role)}" onchange="adminAction(this.dataset.role,this.value);this.selectedIndex=0"><option value="">— action… —</option><option value="confirm">Confirm (lock)</option><option value="amend">Amend (unlock)</option><option value="remove">Remove / clear</option></select>`;
-  const roleCell=`${escapeHtml(r.role)}${isSpeech?`<div class="slot-actions" style="margin-top:6px"><button class="mini" title="Move earlier" onclick="moveSpeech(${rq},-1)">↑</button><button class="mini" title="Move later" onclick="moveSpeech(${rq},1)">↓</button></div>`:''}`;
-  return `<tr><td>${roleCell}</td><td>${memberCell}</td><td>${pathCell}</td><td>${projCell}</td><td>${status}</td><td>${actionSel}</td></tr>`;
-}).join('')}</tbody></table>`}
+function renderAdmin(){
+  if(!document.getElementById('adminTable'))return;
+  const date=currentAdminDate();
+  const maxSpeeches=getSpeechSlotsCount(date);
+  const rows=rowsForAdmin();
+  const recs=computeRecs(date);
+  renderProgrammeEditor();
+  const vi=document.getElementById('venueInput');if(vi&&document.activeElement!==vi){const vf=venueFor(date);vi.value=(vf.full==='Venue to be confirmed')?'':vf.full;}
+  const ti=document.getElementById('themeInput');if(ti&&document.activeElement!==ti){ti.value=themeFor(date);}
+  const si=document.getElementById('saaInput');if(si&&document.activeElement!==si){si.value=SAA_OVERRIDES[date]||'';}
+  const activeRows=rows.filter(r=>!r.omitted);
+  const filled=activeRows.filter(r=>r.member_name).length;
+  const speeches=activeRows.filter(r=>r.role.startsWith('Prepared Speech')&&r.member_name).length;
+  const evaluators=activeRows.filter(r=>r.role.startsWith('Speech Evaluator')&&r.member_name).length;
+  const discrepancies=activeRows.filter(r=>r.discrepancy);
+
+  adminSummary.innerHTML=`
+    <div class="metric"><small>Roles filled</small><strong>${filled}/${activeRows.length}</strong></div>
+    <div class="metric"><small>Prepared speeches</small><strong>${speeches}/${maxSpeeches}</strong></div>
+    <div class="metric"><small>Speech evaluators</small><strong>${evaluators}/${Math.max(speeches,1)}</strong></div>
+    <div class="metric" style="display:flex;flex-direction:column;justify-content:center;gap:4px">
+      <small>Speeches this meeting</small>
+      <div style="display:flex;gap:4px">
+        <button type="button" class="mini" style="${maxSpeeches===3?'background:var(--navy);color:#fff':''}" onclick="setSpeechSlotsCount('${date}', 3)">3 Speeches</button>
+        <button type="button" class="mini" style="${maxSpeeches===4?'background:var(--navy);color:#fff':''}" onclick="setSpeechSlotsCount('${date}', 4)">4 Speeches</button>
+      </div>
+    </div>
+  `;
+
+  const discBanner=discrepancies.length?`
+    <div style="background:#fffbe6;border:1px solid #ffe58f;color:#873800;border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:13px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div>
+        <strong>⚠️ Google Sheet Sync Discrepancy (${discrepancies.length})</strong>: 
+        Information in Google Sheet <i>Meeting Appointment Holders</i> differs from online reservations. Online updates are prioritized (latest updated date).
+      </div>
+      <a href="https://docs.google.com/spreadsheets/d/18lylRf1_-ttqsf5SkivKhvk5yzI72lnc/edit?usp=drive_web&ouid=111159799636850392426&dls=true" target="_blank" rel="noopener" class="mini" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;background:#fff;border-color:#ffe58f">📊 Open Google Sheet</a>
+    </div>
+  `:'';
+
+  adminTable.innerHTML=discBanner+`<table class="admin-table"><thead><tr><th style="width:16%">Role / Slot</th><th style="width:24%">Member <span class="why">(pick / dbl-click)</span></th><th style="width:15%">Pathway</th><th style="width:20%">Project</th><th style="width:9%">Status</th><th style="width:16%">Exco actions</th></tr></thead><tbody>${rows.map(r=>{
+    const rq=JSON.stringify(r.role).replace(/"/g,'&quot;');
+    if(r.omitted){
+      return `<tr style="background:#faf8f5;opacity:.65">
+        <td><span style="text-decoration:line-through;color:var(--muted)">${escapeHtml(r.role)}</span></td>
+        <td colspan="4" style="font-size:12px;color:var(--muted);font-style:italic">Omitted for this meeting (3 speech schedule active)</td>
+        <td><button type="button" class="mini" onclick="setSpeechSlotsCount('${date}', 4)">➕ Enable</button></td>
+      </tr>`;
+    }
+    const isSpeech=/^Prepared Speech/.test(r.role);
+    const suggested=(recs[r.role]||[]).map(c=>c.member.name);
+    const tag=r.member_name?(r.confirmed?'CONFIRMED':r.ext?'EXTERNAL':r.soft?'SOFT-BLOCK':r.source==='online'?'ONLINE':'SHEET'):'';
+    const srcTag=tag?`<span class="tag"${r.confirmed?' style="background:#dff0e4;color:#1c7a3f"':''}>${tag}</span>`:'';
+    const discBox=r.discrepancy?`
+      <div style="background:#fff2f0;border:1px solid #ffccc7;color:#cf1322;padding:6px 10px;border-radius:8px;font-size:11.5px;margin-top:6px">
+        <div><b>⚠️ Discrepancy:</b> Sheet has <i>“${escapeHtml(r.discrepancy.sheetName)}”</i> · Online has <i>“${escapeHtml(r.discrepancy.onlineName)}”</i></div>
+        <div style="color:#267651;font-weight:700;margin-top:2px">✓ Prioritizing Online (latest updated date)</div>
+        <div style="margin-top:5px;display:flex;gap:6px">
+          <button type="button" class="mini" style="font-size:10.5px;padding:2px 8px;background:#fff" onclick="resolveDiscrepancy(${rq},'online')">Keep Online</button>
+          <button type="button" class="mini" style="font-size:10.5px;padding:2px 8px;background:#fff" onclick="resolveDiscrepancy(${rq},'sheet')">Use Sheet</button>
+        </div>
+      </div>
+    `:(r.conflict?`<div class="why" style="color:var(--red)">⚠ sheet had ${escapeHtml(r.conflict)} — online kept</div>`:'');
+    const nameLine=`<div class="editable" ondblclick="inlineEdit(this,${rq},'name')" title="Double-click to edit name"><b>${r.member_name?escapeHtml(r.member_name):'<span class="why">— none —</span>'}</b> ${srcTag}</div>`;
+    const memberCell=`<div>${nameLine}${discBox}${roleSelect(r.role,'',suggested)}</div>`;
+    let pathCell='<span class="why">—</span>',projCell='<span class="why">—</span>';
+    if(isSpeech){
+      const curPath=ROW_PATH[r.role]||pathFromNote(r.note)||(r.note?'':dbPathFor(r.member_name));
+      const curProj=projValueFromNote(r.note,curPath);
+      pathCell=`<select class="role-select" data-role="${escapeHtml(r.role)}" onchange="adminSetPath(this.dataset.role,this.value)"><option value="">— path —</option>${pathList().map(p=>`<option value="${escapeHtml(p)}"${p===curPath?' selected':''}>${escapeHtml(p.replace('The Communication Series: ','Comm.Series: '))}</option>`).join('')}</select>`;
+      projCell=`<select class="role-select" data-role="${escapeHtml(r.role)}" onchange="adminAssignProject(this.dataset.role,this.value)">${projectOptions(curPath,curProj)}</select>`;
+    }
+    const status=r.member_name?(r.confirmed?'<b class="ok">Confirmed</b>':'<b class="gap">Tentative</b>'):'<b class="gap">Open</b>';
+    const omitOpt=(r.role==='Prepared Speech 4')?`<option value="omit_speech_4">Omit Speech 4 (3 speeches)</option>`:'';
+    const actionSel=`<select class="role-select" data-role="${escapeHtml(r.role)}" onchange="adminAction(this.dataset.role,this.value);this.selectedIndex=0"><option value="">— action… —</option><option value="confirm">Confirm (lock)</option><option value="amend">Amend (unlock)</option><option value="remove">Remove / clear</option>${omitOpt}</select>`;
+    const roleCell=`${escapeHtml(r.role)}${isSpeech?`<div class="slot-actions" style="margin-top:6px"><button class="mini" title="Move earlier" onclick="moveSpeech(${rq},-1)">↑</button><button class="mini" title="Move later" onclick="moveSpeech(${rq},1)">↓</button></div>`:''}`;
+    return `<tr><td>${roleCell}</td><td>${memberCell}</td><td>${pathCell}</td><td>${projCell}</td><td>${status}</td><td>${actionSel}</td></tr>`;
+  }).join('')}</tbody></table>`;
+}
 // Reorder prepared speeches (e.g. lower-level speakers first) by swapping two slots' holders.
 async function moveSpeech(role,dir){
-  const n=+String(role).replace(/\D+/g,'');const m=n+dir;if(m<1||m>4)return;
+  const maxSpeeches=getSpeechSlotsCount(currentAdminDate());
+  const n=+String(role).replace(/\D+/g,'');const m=n+dir;if(m<1||m>maxSpeeches)return;
   if(!excoPass()){show('Enter the exco passcode first.');return;}
   const date=currentAdminDate();const mg=mergedFor(date);
   const A=mg['Prepared Speech '+n]||{},B=mg['Prepared Speech '+m]||{};
@@ -710,9 +882,21 @@ function adminAssignProject(role,projVal){if(!projVal)return;const date=currentA
   const path=ROW_PATH[role]||pathFromNote(cur.note)||dbPathFor(cur.name);const note=[path,projVal].filter(Boolean).join(' ');
   adminRpc('admin_set_holder',{p_meeting_date:date,p_reservation_type:role,p_member_name:cur.name,p_note:note},`${role}: project set.`);}
 function adminAction(role,act){if(!act)return;const date=currentAdminDate();
+  if(act==='omit_speech_4'){setSpeechSlotsCount(date,3);return;}
+  if(act==='enable_speech_4'){setSpeechSlotsCount(date,4);return;}
   if(act==='remove'){if(!confirm(`Remove / clear "${role}"?`))return;return adminRpc('admin_release_slot',{p_meeting_date:date,p_reservation_type:role},`${role}: removed.`);}
   if(act==='confirm')return adminRpc('admin_set_confirmed',{p_meeting_date:date,p_reservation_type:role,p_confirmed:true},`${role}: confirmed (locked).`);
   if(act==='amend')return adminRpc('admin_set_confirmed',{p_meeting_date:date,p_reservation_type:role,p_confirmed:false},`${role}: unlocked for amending.`);
+}
+function resolveDiscrepancy(role,choice){
+  const date=currentAdminDate();const mg=mergedFor(date);const r=mg[role];if(!r||!r.discrepancy)return;
+  if(!excoPass()){show('Please sign in with exco passcode first.');return;}
+  if(choice==='sheet'){
+    const sheetVal=r.discrepancy.sheetName;
+    adminRpc('admin_set_holder',{p_meeting_date:date,p_reservation_type:role,p_member_name:sheetVal,p_note:'[SHEET-SYNC]'},`${role}: updated to Google Sheet appointment (${sheetVal}).`);
+  }else{
+    adminRpc('admin_set_confirmed',{p_meeting_date:date,p_reservation_type:role,p_confirmed:true},`${role}: confirmed online reservation (${r.name}).`);
+  }
 }
 
 // ---------- GENERATE PROGRAMMING SHEET ----------
@@ -736,6 +920,8 @@ function generateSheet(){
   const creds=MEMBERS.map(x=>({name:x.name,cred:(x.credentials||'').trim()})).filter(x=>x.cred);
   const payload={date,theme:themeFor(m.date),meta:{theme:themeFor(m.date),saa:saaFor(date),venue:venueFor(date).full,directions:venueFor(date).directions,time:meetingTime(m.date)},assignments,projects:cat,objectives:PATHS_OBJ,evalForms:EVAL_FORMS,creds};
   payload.generatedAt=new Date().toISOString();
+  payload.speechSlots=getSpeechSlotsCount(date);
+  payload.meta.speechSlots=getSpeechSlotsCount(date);
   const programme=ToastFlowMeetings.get(date);
   payload.schedule=programme.schedule;
   payload.scheduleTentative=programme.scheduleTentative===true;
@@ -756,7 +942,17 @@ function generateSheet(){
 }
 
 // ---------- exports ----------
-function exportRows(){const date=currentAdminDate();return rowsForAdmin().map(r=>({Meeting_Date:date,Role:r.role,Member:r.member_name||'',Note:r.note||'',Status:r.member_name?(r.confirmed?'Confirmed':'Tentative'):'Open'}))}
+function exportRows(){
+  const date=currentAdminDate();
+  return rowsForAdmin().filter(r=>!r.omitted).map(r=>({
+    Meeting_Date:date,
+    Role:r.role,
+    Member:r.member_name||'',
+    Note:r.note||'',
+    Status:r.member_name?(r.confirmed?'Confirmed':'Tentative'):'Open',
+    Sync_Discrepancy:r.discrepancy?`Sheet has: ${r.discrepancy.sheetName}`:''
+  }));
+}
 function csvEscape(v){return `"${String(v??'').replaceAll('"','""')}"`}
 function exportCSV(){const rows=exportRows(),hs=Object.keys(rows[0]);const csv='﻿'+[hs.join(','),...rows.map(r=>hs.map(h=>csvEscape(r[h])).join(','))].join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`ToastFlow-Programming-${currentAdminDate()}.csv`;a.click();URL.revokeObjectURL(a.href);show('CSV exported. Open it directly in Excel.')}
 async function copySheetData(){const rows=exportRows(),hs=Object.keys(rows[0]);const tsv=[hs.join('\t'),...rows.map(r=>hs.map(h=>r[h]).join('\t'))].join('\n');await navigator.clipboard.writeText(tsv);show('Copied. Paste directly into Google Sheets.')}

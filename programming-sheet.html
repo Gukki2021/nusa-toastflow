@@ -294,7 +294,12 @@ function build(){
   const note=r=>{const x=A[r]||{};return x.note||''};
 
   // prepared-speech project list (numbered) + speakers, mirrored in evaluations
-  const speeches=[1,2,3,4].map(n=>{const x=A['Prepared Speech '+n]||{};return {name:x.name||'',proj:x.projectRaw||x.note||'',full:x.project||x.projectRaw||x.note||'',title:x.title||'',pathway:x.pathway||''};});
+  const speechCount = data.meta?.speechSlots || data.speechSlots || (A['Prepared Speech 4'] && A['Prepared Speech 4'].name ? 4 : (data.meta?.speechCount || 4));
+  const count = Number(speechCount) === 3 ? 3 : 4;
+  const speeches = Array.from({length: count}, (_, i) => i + 1).map(n => {
+    const x = A['Prepared Speech ' + n] || {};
+    return {name:x.name||'',proj:x.projectRaw||x.note||'',full:x.project||x.projectRaw||x.note||'',title:x.title||'',pathway:x.pathway||''};
+  });
   const timing=s=>ToastFlowProgramme.lookup({...ToastFlowProgramme.objectives,...(data.objectives||{})},s.full)?.timing||'';
   const spItems=speeches.map(s=>({proj:s.full?esc(s.full)+(timing(s)?' ('+esc(timing(s))+')':' <span class="open">(timing TBC)</span>')+(s.title?` <span style="color:#666">— ${esc(s.title)}</span>`:''):'<span class="open">Pathways project —</span>',who:holder('Prepared Speech '+(speeches.indexOf(s)+1))}));
   const evItems=speeches.map((s,i)=>({proj:s.full?esc(s.full):'<span class="open">—</span>',who:holder('Speech Evaluator '+(i+1))}));
