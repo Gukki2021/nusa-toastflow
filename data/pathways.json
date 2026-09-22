@@ -34,6 +34,11 @@
     {"code": "L4 P1", "name": "Level 4 Project", "objective": "", "timing": ""},
     {"code": "L5 P3", "name": "Reflect on Your Path", "objective": "", "timing": ""},
     {"code": "PMP", "name": "Speech 1: Mentoring", "objective": "", "timing": ""},
-    {"code": "PMP", "name": "Speech 2: Advanced Mentoring", "objective": "", "timing": ""}
+    {"code": "PMP", "name": "Speech 2: Advanced Mentoring", "objective": "", "timing": ""},
+    {"code": "L3", "name": "Successful Club Series Presentation", "objective": "Present an educational module from the Successful Club Series (Level 3 topics).", "timing": "10 – 15 min"},
+    {"code": "L4", "name": "Successful Club Series Presentation", "objective": "Present an educational module from the Successful Club Series (Level 4 topics).", "timing": "10 – 15 min"},
+    {"code": "L4", "name": "Better Speaker Series Presentation", "objective": "Present an educational module from the Better Speaker Series.", "timing": "10 – 15 min"},
+    {"code": "L5", "name": "Successful Club Series Presentation", "objective": "Present an educational module from the Successful Club Series (Level 5 topics).", "timing": "10 – 15 min"},
+    {"code": "L5", "name": "Leadership Excellence Series Presentation", "objective": "Present an educational module from the Leadership Excellence Series.", "timing": "10 – 15 min"}
   ]
 }

@@ -6,7 +6,7 @@
 A lightweight, no-login **VP Education programming planner** for the NUS Alumni
 Toastmasters Club. Members reserve prepared-speech slots and meeting roles;
 the VPE gets **smart, fair role suggestions** drawn from past meetings and can
-**generate a print-ready programming sheet** in one click.
+**generate a print-ready program sheet** in one click.
 
 Built as static HTML/CSS/JS (no framework, no build step) with a **Supabase**
 backend for shared reservations. Deploys to **GitHub Pages**.
@@ -15,7 +15,7 @@ Member-facing instructions: [`MEMBER_BOOKING_GUIDE.md`](MEMBER_BOOKING_GUIDE.md)
 
 ## Two input sources
 
-Each meeting's programming sheet is assembled by merging two sources:
+Each meeting's program sheet is assembled by merging two sources:
 
 1. **Supabase** — roles members reserve online through this site.
 2. **Meeting Appointment Holders Google Sheet** — the VPE's manually-maintained
@@ -48,7 +48,7 @@ The published CSV is read-only and contains only what's already on the sheet.
 | File | Purpose |
 |------|---------|
 | `index.html` | Main planner + VPE admin dashboard |
-| `programming-sheet.html` | Print-ready programming sheet (A4, replicates the club's PDF layout) |
+| `programming-sheet.html` | Print-ready program sheet (A4, replicates the club's PDF layout) |
 | `scripts/recommend.js` | Recommendation engine (rotation fairness · role freshness · Pathways level) |
 | `scripts/appointments.js` | Parses the appointment-holder Google Sheet (published CSV) and merges it with Supabase |
 | `scripts/extract-data.py` | Regenerates `data/*.json` from the master spreadsheet |
@@ -167,4 +167,4 @@ Pathways** view and as a tag on each role suggestion. Git-ignored (member names)
   the whole committee (not just locally).
 - One-click "apply all top suggestions" to fill a meeting draft.
 - Email/WhatsApp reminders to confirmed role-holders.
-- Auto-import the Word/PDF programming sheet each month.
+- Auto-import the Word/PDF program sheet each month.

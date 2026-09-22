@@ -33,6 +33,59 @@
    "Leading in Your Volunteer Organization"
   ]
  },
+ "educationSeries": {
+  "Level 3": [
+   "Successful Club Series Presentation"
+  ],
+  "Level 4": [
+   "Successful Club Series Presentation",
+   "Better Speaker Series Presentation"
+  ],
+  "Level 5": [
+   "Successful Club Series Presentation",
+   "Leadership Excellence Series Presentation"
+  ]
+ },
+ "educationSeriesTopics": {
+  "Successful Club Series": [
+   "Creating the Best Club Climate (L3)",
+   "Meeting Roles and Responsibilities (L3)",
+   "Keeping the Commitment (L3)",
+   "Going Beyond Our Club (L3)",
+   "Finding New Members (L4)",
+   "Closing the Sale (L4)",
+   "How to Be a Distinguished Club (L4)",
+   "Toastmasters Educational Program (L4)",
+   "Moments of Truth (L5)",
+   "Evaluate to Motivate (L5)",
+   "Mentoring (L5)"
+  ],
+  "Better Speaker Series": [
+   "Beginning Your Speech (L4)",
+   "Concluding Your Speech (L4)",
+   "Controlling Your Fear (L4)",
+   "Impromptu Speaking (L4)",
+   "Selecting Your Topic (L4)",
+   "Know Your Audience (L4)",
+   "Organizing Your Speech (L4)",
+   "Creating an Introduction (L4)",
+   "Preparation and Practice (L4)",
+   "Using Body Language (L4)"
+  ],
+  "Leadership Excellence Series": [
+   "Service and Leadership (L5)",
+   "The Leader as a Coach (L5)",
+   "Developing a Mission (L5)",
+   "Motivating People (L5)",
+   "Building a Team (L5)",
+   "Delegate to Empower (L5)",
+   "Resolving Conflict (L5)",
+   "Visionary Leader (L5)",
+   "Values and Leadership (L5)",
+   "Goal Setting and Planning (L5)",
+   "Giving Effective Feedback (L5)"
+  ]
+ },
  "paths": {
   "Presentation Mastery": {
    "Level 1": [

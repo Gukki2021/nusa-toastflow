@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Programming Sheet · NUS Alumni Toastmasters</title>
+<title>Program Sheet · NUS Alumni Toastmasters</title>
 <style>
-/* ---- faithful replica of the club's Word/PDF programming sheet ---- */
+/* ---- faithful replica of the club's Word/PDF program sheet ---- */
 :root{--link:#0563c1;--maroon:#7b2f2f;--border:#000}
 *{box-sizing:border-box}
 body{margin:0;background:#54595f;color:#000;font-family:"Times New Roman",Times,Georgia,serif;font-size:10pt;line-height:1.22}
@@ -88,7 +88,7 @@ table.obj .evallink{margin-top:4px}table.obj .evallink a{font-size:11px;color:#b
 </head>
 <body>
 <div class="toolbar">
-  <strong>ToastFlow · Programming Sheet</strong>
+  <strong>ToastFlow · Program Sheet</strong>
   <span id="src" style="font-size:12px;opacity:.85"></span>
   <button class="btn-ghost" onclick="location.href='index.html'">← Back to planner</button>
   <button class="btn-ghost" onclick="toggleEdit(this)">✏️ Edit text</button>
@@ -222,10 +222,10 @@ async function exportWord(){
     +'.title .web{font-style:italic;font-size:10.5pt}.title .motto{font-weight:bold;font-style:italic;color:#8c1d40;font-size:12pt}'
     +'td{vertical-align:top}td img{max-width:100%;height:auto}';
   const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'
-    +'<head><meta charset="utf-8"><meta name="ProgId" content="Word.Document"><title>NUSA Programming Sheet</title>'
+    +'<head><meta charset="utf-8"><meta name="ProgId" content="Word.Document"><title>NUSA Program Sheet</title>'
     +'<style>'+css+wcss+'</style></head><body><div class="Section1">'+body+'</div></body></html>';
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+html],{type:'application/msword'}));
-  a.download='NUSA-Programming-Sheet-'+((CURRENT_PAYLOAD&&CURRENT_PAYLOAD.date)||'draft')+'.doc';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+  a.download='NUSA-Program-Sheet-'+((CURRENT_PAYLOAD&&CURRENT_PAYLOAD.date)||'draft')+'.doc';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
 }
 // Toggle inline editing so the VPE can tweak any text before exporting.
 function toggleEdit(btn){
@@ -236,10 +236,10 @@ function toggleEdit(btn){
 }
 async function shareSheetLink(){
   if(sheetEdited){alert('Text edits are included in Word / Print exports. Use those exports for this edited version; generate a new sheet after updating the planner to share a data snapshot.');return;}
-  if(!CURRENT_PAYLOAD){alert('Open this sheet from the planner (Generate Programming Sheet) first, then Share.');return;}
+  if(!CURRENT_PAYLOAD){alert('Open this sheet from the planner (Generate Program Sheet) first, then Share.');return;}
   const enc=btoa(unescape(encodeURIComponent(JSON.stringify(CURRENT_PAYLOAD))));
   const url=location.origin+location.pathname+'?d='+encodeURIComponent(enc);
-  try{if(navigator.share){await navigator.share({title:'NUSA Programming Sheet',url});return;}}catch(e){/* user cancelled / not available → fall through */}
+  try{if(navigator.share){await navigator.share({title:'NUSA Program Sheet',url});return;}}catch(e){/* user cancelled / not available → fall through */}
   try{await navigator.clipboard.writeText(url);alert('Share link copied to clipboard — anyone with it sees this sheet.');}
   catch(e){window.prompt('Copy this share link (⌘/Ctrl+C):',url);}   // clipboard blocked → show it to copy manually
 }

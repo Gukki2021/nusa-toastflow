@@ -32,13 +32,20 @@ h1,h2{font-family:Georgia,serif;line-height:1.05}h1{font-size:clamp(46px,7vw,82p
 .slot.booked{border-style:solid;background:#f7fbf8}.slot small{display:block;color:var(--muted);margin-top:3px}
 .open{font-size:11px;font-weight:850;color:var(--red);letter-spacing:.07em}.booked .open{color:#267651}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
-.roles{display:grid;gap:10px}.role{display:flex;justify-content:space-between;align-items:center;padding:14px;border:1px solid var(--line);border-radius:14px}
-.role span{font-weight:700}.role button{border:0;border-radius:999px;padding:8px 12px;background:var(--cream);font-weight:750}
+.roles{display:grid;gap:12px}
+.role{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.role-info{flex:1;min-width:0}
+.role-title{font-weight:750;font-size:14.5px;color:var(--ink);display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.role-desc{color:var(--muted);font-size:12px;margin:3px 0 6px;line-height:1.35}
+.role-skills{display:flex;flex-wrap:wrap;gap:4px}
+.role-skill-pill{display:inline-block;padding:2px 7px;background:var(--cream);border-radius:999px;font-size:10.5px;font-weight:700;color:var(--navy);letter-spacing:.02em}
+.role button{border:0;border-radius:999px;padding:8px 14px;background:var(--cream);font-weight:750;white-space:nowrap;margin-top:2px}
+.role button:hover:not(:disabled){background:var(--navy);color:#fff}
 .slot-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
 .mini{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:750;color:var(--ink)}.mini:hover{background:var(--cream)}.mini:disabled{opacity:.4}
 .footer-note{padding:16px 26px;background:var(--cream);font-size:12px;color:var(--muted)}
 dialog{border:0;border-radius:24px;padding:0;width:min(520px,calc(100% - 24px));box-shadow:0 24px 70px rgba(0,0,0,.25)}
-dialog#adminModal{width:min(960px,calc(100% - 24px))}
+dialog#adminModal,dialog#visitingModal{width:min(960px,calc(100% - 24px))}
 dialog::backdrop{background:rgba(10,18,35,.7)}form{padding:28px}.close{float:right;border:0;background:none;font-size:26px}
 label{display:block;font-size:12px;font-weight:800;margin-top:14px}
 input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
@@ -66,25 +73,26 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 <body>
 <header class="top"><div class="brand"><div class="mark">TM</div><div><strong>ToastFlow · NUS Alumni Toastmasters</strong><small>Club meeting &amp; role planner</small></div></div><div style="display:flex;gap:8px"><a class="btn ghost" href="reference.html" style="text-decoration:none">Pathways</a><button class="btn ghost" onclick="openAdmin()">Admin</button><button class="btn primary" onclick="openBooking()">Reserve a Slot</button></div></header>
 
-<section class="hero"><div class="eyebrow">2026 PROGRAMMING SHEET</div><h1>Choose your date.<br><em>Step up and speak.</em></h1><p>Our club meets on the second Friday of every month. Members can reserve a Prepared Speech or take an open meeting role without creating an account — with smart, fair role suggestions working behind the scenes.</p><div class="actions" style="margin-top:8px"><button class="btn primary" onclick="openBooking()">Reserve a Speech or Role</button><button class="btn ghost" onclick="shareRegister()">Share to a friend to register →</button></div><div class="notice">📅 Upcoming: 11 Sep · 9 Oct · 13 Nov · 11 Dec 2026</div></section>
+<section class="hero"><div class="eyebrow">2026 PROGRAM SHEET</div><h1>Choose your date.<br><em>Step up and speak.</em></h1><p>Our club meets on the second Friday of every month. Members can reserve a Prepared Speech or take an open meeting role without creating an account — with smart, fair role suggestions working behind the scenes.</p><div class="actions" style="margin-top:8px"><button class="btn primary" onclick="openBooking()">Reserve a Speech or Role</button><button class="btn ghost" onclick="shareRegister()">Share to a friend to register →</button></div><div class="notice">📅 Upcoming: 11 Sep · 9 Oct · 13 Nov · 11 Dec 2026</div></section>
 
 <section class="section"><div class="section-head"><div><div class="eyebrow">UPCOMING MEETINGS</div><h2>From now to year-end.</h2></div><div class="month-tabs" id="tabs"></div></div>
 <div class="grid"><article class="card" id="meetingCard"></article>
 <aside class="card"><div class="body"><div class="eyebrow">OPEN MEETING ROLES</div><h2 style="font-size:34px">Take a role. Build a skill.</h2><div class="roles" id="roles"></div></div><div class="footer-note">No account required. Enter your name and contact details so the club can confirm your reservation.</div></aside></div></section>
 
-<dialog id="modal"><form id="form"><button type="button" class="close" onclick="modal.close()">×</button><div class="eyebrow">QUICK RESERVATION</div><h2 style="font-size:38px;margin-bottom:6px">Reserve without logging in.</h2><p style="color:var(--muted);margin-top:0">Just your name and a role — that's all you need.</p><label>Your name<input id="name" required placeholder=""></label><label>Meeting<select id="meeting" required></select></label><label>Reservation type<select id="role" required></select></label><label>Your Pathway <span style="font-weight:400;color:var(--muted)">(for prepared speeches)</span><select id="projectPath" onchange="fillProjectSelect()"></select></label><label>Pathways project<select id="project"></select></label><label>Email or WhatsApp <span style="font-weight:400;color:var(--muted)">(optional)</span><input id="contact" placeholder="Optional — only if you'd like a confirmation"></label><label>Speech title / note <span style="font-weight:400;color:var(--muted)">(optional)</span><textarea id="note" rows="2" placeholder=""></textarea></label><div class="form-actions"><button type="button" class="btn ghost" onclick="modal.close()">Cancel</button><button class="btn primary">Reserve</button></div><div class="hint">No account required. Your name, role and speech details appear on the public programme. Contact details are private to the planning team.</div></form></dialog>
+<dialog id="modal"><form id="form"><button type="button" class="close" onclick="modal.close()">×</button><div class="eyebrow">QUICK RESERVATION</div><h2 style="font-size:38px;margin-bottom:6px">Reserve without logging in.</h2><p style="color:var(--muted);margin-top:0">Just your name and a role — that's all you need.</p><label>Your name<input id="name" required placeholder=""></label><label>Meeting<select id="meeting" required></select></label><label>Reservation type<select id="role" required></select></label><label>Your Pathway <span style="font-weight:400;color:var(--muted)">(for prepared speeches)</span><select id="projectPath" onchange="fillProjectSelect()"></select></label><label>Pathways project<select id="project" onchange="onProjectSelectChange()"></select></label><label>Email or WhatsApp <span style="font-weight:400;color:var(--muted)">(optional)</span><input id="contact" placeholder="Optional — only if you'd like a confirmation"></label><label>Speech title / note <span style="font-weight:400;color:var(--muted)">(optional)</span><textarea id="note" rows="2" placeholder=""></textarea></label><div class="form-actions"><button type="button" class="btn ghost" onclick="modal.close()">Cancel</button><button class="btn primary">Reserve</button></div><div class="hint">No account required. Your name, role and speech details appear on the public programme. Contact details are private to the planning team.</div></form></dialog>
 
 <dialog id="willModal"><form id="willForm"><button type="button" class="close" onclick="willModal.close()">×</button><div class="eyebrow">REGISTER INTEREST</div><h2 style="font-size:38px;margin-bottom:6px">Tell us what you'd like to do.</h2><p style="color:var(--muted);margin-top:0">No login, no contact details — just your name and the roles you're happy to take. The club uses this to plan.</p><label>Your name<input id="willName" required placeholder=""></label><label>Meeting<select id="willMeeting" required></select></label><label>Roles you're willing to take</label><div id="willRoles" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px"></div><label>Note (optional)<input id="willNote" placeholder="e.g. prefer an evaluator role, or a speech title"></label><div class="form-actions"><button type="button" class="btn ghost" onclick="willModal.close()">Cancel</button><button class="btn primary">Submit interest</button></div><div class="hint">You can submit again anytime to update your choices. Nothing is confirmed until roles are assigned.</div></form></dialog>
 
 <dialog id="loginModal"><form id="loginForm"><button type="button" class="close" onclick="loginModal.close()">×</button><div class="eyebrow">CLUB ADMIN</div><h2 style="font-size:34px;margin-bottom:6px">Enter passcode</h2><p style="color:var(--muted);margin-top:0">Exco members only. Enter the shared passcode to open the planner.</p><label>Passcode<span style="display:flex;gap:6px;align-items:stretch"><input id="loginPass" type="password" autocomplete="off" required style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;margin-top:7px" onclick="togglePass('loginPass',this)" aria-label="Show or hide passcode">👁</button></span></label><div class="form-actions"><button type="button" class="btn ghost" onclick="loginModal.close()">Cancel</button><button class="btn primary">Enter</button></div><div class="hint" id="loginErr" style="color:var(--red);display:none">Wrong passcode — try again.</div></form></dialog>
 
-<dialog id="adminModal"><form method="dialog"><button type="button" class="close" onclick="adminModal.close()">×</button><div class="eyebrow">CLUB ADMIN</div><h2 style="font-size:38px;margin-bottom:6px">Programming dashboard</h2><p style="color:var(--muted);margin-top:0">Review reservations, get smart role suggestions from past meetings, and generate this month's programming sheet.</p>
+<dialog id="adminModal"><form method="dialog"><button type="button" class="close" onclick="adminModal.close()">×</button><div class="eyebrow">CLUB ADMIN</div><h2 style="font-size:38px;margin-bottom:6px">Program dashboard</h2><p style="color:var(--muted);margin-top:0">Review reservations, get smart role suggestions from past meetings, and generate this month's program sheet.</p>
 <label>Meeting<select id="adminMeeting" onchange="ROW_PATH={};renderAdmin()"></select></label>
 <label>Meeting title <span style="font-weight:400;color:var(--muted)">— e.g. Chapter Meeting, Club Officers Installation…</span><span style="display:flex;gap:8px"><input id="themeInput" placeholder="Chapter Meeting" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveTheme()">Save title</button></span></label>
-<label>Venue <span style="font-weight:400;color:var(--muted)">— shown on the site &amp; programming sheet</span><span style="display:flex;gap:8px"><input id="venueInput" placeholder="e.g. SMU … Classroom 2.2 (or leave for 'To be confirmed')" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveVenue()">Save venue</button></span></label>
+<label>Venue <span style="font-weight:400;color:var(--muted)">— shown on the site &amp; program sheet</span><span style="display:flex;gap:8px"><input id="venueInput" placeholder="e.g. SMU … Classroom 2.2 (or leave for 'To be confirmed')" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveVenue()">Save venue</button></span></label>
 <div class="admin-summary" id="adminSummary"></div>
 <div class="admin-tools">
-  <button type="button" class="btn primary" onclick="generateSheet()">📄 Generate Programming Sheet</button>
+  <button type="button" class="btn primary" onclick="generateSheet()">📄 Generate Program Sheet</button>
+  <button type="button" class="btn ghost" onclick="openVisitingModal()">👥 Visiting Toastmasters Pool</button>
   <button type="button" class="btn ghost" onclick="exportCSV()">Export CSV</button>
   <button type="button" class="btn ghost" onclick="copySheetData()">Copy for Google Sheets</button>
   <button type="button" class="btn ghost" onclick="toggleRoster()">Roster &amp; Pathways</button>
@@ -92,10 +100,49 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 </div>
 <div id="rosterBox" style="display:none;margin:8px 0 4px"></div>
 <div id="willBox" style="display:none;margin:8px 0 4px"></div>
-<label style="margin-top:4px">Ice Breaker / SAA <span style="font-weight:400;color:var(--muted)">— the 7:30 opener (first role on the programming sheet)</span><span style="display:flex;gap:8px"><input id="saaInput" placeholder="e.g. Xavier (leave blank to use the appointment sheet)" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveSaa()">Save SAA</button></span></label>
+<label style="margin-top:4px">Ice Breaker / SAA <span style="font-weight:400;color:var(--muted)">— the 7:30 opener (first role on the program sheet)</span><span style="display:flex;gap:8px"><input id="saaInput" placeholder="e.g. Xavier (leave blank to use the appointment sheet)" style="flex:1"><button type="button" class="btn ghost" style="padding:8px 12px;white-space:nowrap" onclick="saveSaa()">Save SAA</button></span></label>
 <div id="adminTable"></div>
 <div id="programmeEditor"></div>
-<div class="hint">Recommendations are computed from the historical Program Plan (rotation fairness, role freshness &amp; Pathways level). They are suggestions — you decide. "Generate Programming Sheet" opens a print-ready sheet pre-filled with confirmed reservations.</div>
+<div class="hint">Recommendations are computed from the historical Program Plan (rotation fairness, role freshness &amp; Pathways level). They are suggestions — you decide. "Generate Program Sheet" opens a print-ready sheet pre-filled with confirmed reservations.</div>
+</form></dialog>
+
+<dialog id="visitingModal"><form method="dialog"><button type="button" class="close" onclick="visitingModal.close()">×</button><div class="eyebrow">TALENT POOL</div><h2 style="font-size:38px;margin-bottom:6px">Visiting Toastmasters</h2><p style="color:var(--muted);margin-top:0">A directory of past visiting Toastmasters, home clubs, credentials, and roles served to help fill meeting appointments.</p>
+<div style="display:flex;gap:10px;align-items:center;margin:16px 0 12px">
+  <input id="visitingSearch" placeholder="Search by name, home club, or credential…" oninput="renderVisitingList()" style="margin-top:0;flex:1">
+  <button type="button" class="btn ghost" style="padding:11px 16px;white-space:nowrap" onclick="toggleAddVisiting()">+ Add Visiting TM</button>
+</div>
+<div id="addVisitingForm" style="display:none;background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px">
+  <strong style="display:block;margin-bottom:8px">Add to Visiting Toastmasters Pool</strong>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <input id="newVName" placeholder="Full Name (e.g. Attapol PINSA)" style="margin-top:0">
+    <input id="newVClub" placeholder="Home Club (e.g. Toa Payoh Central CC)" style="margin-top:0">
+    <input id="newVCred" placeholder="Credentials (e.g. LP1, DTM)" style="margin-top:0">
+    <input id="newVContact" placeholder="Email or Phone (optional)" style="margin-top:0">
+    <input id="newVRoles" placeholder="Past or Target Roles" style="grid-column:span 2;margin-top:0">
+  </div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px">
+    <button type="button" class="btn ghost" style="padding:7px 14px" onclick="toggleAddVisiting()">Cancel</button>
+    <button type="button" class="btn primary" style="padding:7px 14px" onclick="saveNewVisiting()">Save to Pool</button>
+  </div>
+</div>
+<div id="visitingSummary" style="font-size:12px;color:var(--muted);margin-bottom:10px"></div>
+<div style="max-height:450px;overflow:auto;border:1px solid var(--line);border-radius:14px">
+  <table class="admin-table" style="margin:0">
+    <thead>
+      <tr style="background:var(--cream);position:sticky;top:0">
+        <th style="width:24%">Name</th>
+        <th style="width:25%">Home Club</th>
+        <th style="width:14%">Credentials</th>
+        <th style="width:25%">Roles &amp; Notes</th>
+        <th style="width:12%">Action</th>
+      </tr>
+    </thead>
+    <tbody id="visitingTableBody"></tbody>
+  </table>
+</div>
+<div class="form-actions" style="margin-top:16px">
+  <button type="button" class="btn ghost" onclick="visitingModal.close()">Close</button>
+</div>
 </form></dialog>
 <div class="toast" id="toast"></div>
 
@@ -154,27 +201,46 @@ let selectedRole='Prepared Speech 1',bookings=[],loading=false;
 let MEMBERS=[],HISTORY=[],PROJECTS=[],PATHWAYS={paths:[],projects:[]},MEMBER_PATHWAYS=[],PATHOF={};
 let APPTS=null; // parsed Meeting Appointment Holders sheet (from published CSV)
 let WILLING=[]; // member willingness registrations (public_willingness)
-let PATHS_DB={paths:{},electives:{}}; // two-level Pathways DB (path → level → projects)
+let PATHS_DB={paths:{},electives:{},educationSeries:{}}; // two-level Pathways DB (path → level → projects)
 let PATHS_OBJ={}; // { projectName: {objective, timing} } from official sources
 let EVAL_FORMS={}; // { projectName: {url, length} } — official evaluation-form download links
+let VISITING_POOL=[]; // Visiting Toastmasters pool
 // list of path names for the "Pathway" dropdown
 function pathList(){return Object.keys(PATHS_DB.paths||{});}
 // map a member's Base Camp current path to a DB path key (fuzzy)
 function dbPathFor(name){const pp=pathOf(name);if(!pp||!pp.path)return '';const p=pp.path.replace(/\s*\(Simplified Chinese\)/i,'').trim();const keys=pathList();
   return keys.find(k=>k===p)||keys.find(k=>k.toLowerCase().startsWith(p.toLowerCase().slice(0,12)))||keys.find(k=>p.toLowerCase().startsWith(k.toLowerCase().slice(0,12)))||'';}
-// build <option> groups for a path: each level's required projects + shared electives (L3–L5)
+// build <option> groups for a path: each level's required projects + shared electives + education series (L3–L5)
 function projectOptions(pathName,selected){
   const saved=selected?`<option value="${escapeHtml(selected)}" selected>${escapeHtml(selected)} (saved project)</option>`:'';
   const lv=(PATHS_DB.paths||{})[pathName];if(!lv)return saved||'<option value="">— pick a path first —</option>';
-  const el=PATHS_DB.electives||{};let html='<option value="">— select project —</option>';
+  const el=PATHS_DB.electives||{};const edu=PATHS_DB.educationSeries||{};let html='<option value="">— select project —</option>';
   ['Level 1','Level 2','Level 3','Level 4','Level 5'].forEach(L=>{
     const req=(lv[L]||[]);const elec=(/Level [345]/.test(L)?(el[L]||[]):[]);
-    const all=[...req.map(p=>[p,false]),...elec.filter(p=>!req.includes(p)).map(p=>[p,true])];
+    const series=(edu[L]||[]);
+    const all=[
+      ...req.map(p=>({name:p,tag:''})),
+      ...elec.filter(p=>!req.includes(p)).map(p=>({name:p,tag:' (elective)'})),
+      ...series.map(p=>({name:p,tag:' (education series)'}))
+    ];
     if(!all.length)return;
     const code='L'+L.slice(-1);
-    html+=`<optgroup label="${L}">`+all.map(([p,isE])=>{const v=`${code}: ${p}`;return `<option value="${escapeHtml(v)}"${selected===v?' selected':''}>${escapeHtml(p)}${isE?' (elective)':''}</option>`;}).join('')+`</optgroup>`;
+    html+=`<optgroup label="${L}">`+all.map(item=>{
+      const v=`${code}: ${item.name}`;
+      return `<option value="${escapeHtml(v)}"${selected===v?' selected':''}>${escapeHtml(item.name)}${item.tag}</option>`;
+    }).join('')+`</optgroup>`;
   });
   return html.includes(' selected')?html:html+saved;
+}
+function onProjectSelectChange(){
+  const pj=document.getElementById('project');
+  const nt=document.getElementById('note');
+  if(!pj||!nt)return;
+  if(/Series Presentation/i.test(pj.value)){
+    if(!nt.value) nt.placeholder='Specify presentation topic here (e.g. Moments of Truth / Evaluate to Motivate)';
+  } else {
+    nt.placeholder='';
+  }
 }
 const APPTS_CSV_URL=(document.querySelector('meta[name="appointments-csv-url"]')||{}).content||'';
 const headers={'apikey':SUPABASE_ANON_KEY,'Authorization':`Bearer ${SUPABASE_ANON_KEY}`,'Content-Type':'application/json'};
@@ -182,17 +248,24 @@ const headers={'apikey':SUPABASE_ANON_KEY,'Authorization':`Bearer ${SUPABASE_ANO
 // ---- load recommendation data (members + history). Kept out of Supabase for privacy in v1. ----
 // Try the private (local, git-ignored) file first, then the deployed email-free public copy.
 async function loadJSON(urls,fallback){for(const u of urls){try{const r=await fetch(u);if(r.ok){const j=await r.json();if(j&&((j.length!==undefined?j.length:Object.keys(j).length)))return j;}}catch(_){}}return fallback;}
+async function loadVisitingPool(){
+  try{
+    const r=await fetch('data/visiting-toastmasters.json');
+    if(r.ok) VISITING_POOL=await r.json();
+  }catch(e){console.warn('visiting pool not loaded',e);}
+}
 async function loadData(){
   try{
     const [m,h,p,pw]=await Promise.all([
       loadJSON(['data/members.json','data/members.public.json'],[]),
       fetch('data/history.json').then(r=>r.ok?r.json():[]).catch(()=>[]),
       fetch('data/projects.json').then(r=>r.ok?r.json():[]).catch(()=>[]),
-      fetch('data/pathways.json').then(r=>r.ok?r.json():{paths:[],projects:[]}).catch(()=>({paths:[],projects:[]}))
+      fetch('data/pathways.json').then(r=>r.ok?r.json():{paths:[],projects:[]}).catch(()=>({paths:[],projects:[]})),
+      loadVisitingPool()
     ]);
     MEMBERS=m.map(x=>({...x,name:ToastFlowPeople.canonical(x.name),credentials:ToastFlowPeople.find(x.name)?.credentials??x.credentials}));HISTORY=h;PROJECTS=p;PATHWAYS=pw;
     // two-level Pathways project database (path → level → projects)
-    try{PATHS_DB=await fetch('data/pathways-by-path.json').then(r=>r.ok?r.json():{paths:{},electives:{}});}catch(_){PATHS_DB={paths:{},electives:{}};}
+    try{PATHS_DB=await fetch('data/pathways-by-path.json').then(r=>r.ok?r.json():{paths:{},electives:{},educationSeries:{}});}catch(_){PATHS_DB={paths:{},electives:{},educationSeries:{}};}
     try{PATHS_OBJ=(await fetch('data/pathways-objectives.json').then(r=>r.ok?r.json():{objectives:{}})).objectives||{};}catch(_){PATHS_OBJ={};}
     try{EVAL_FORMS=(await fetch('data/eval-forms.json').then(r=>r.ok?r.json():{forms:{}})).forms||{};}catch(_){EVAL_FORMS={};}
     // member -> current Pathway database (from Base Camp dashboard export)
@@ -269,16 +342,116 @@ function mergedFor(date){
 }
 function renderTabs(){tabs.innerHTML=meetings.map((m,i)=>`<button class="${i===active?'active':''}" onclick="active=${i};render()">${m.month}</button>`).join('')}
 function render(){renderTabs();const m=meetings[active],mg=mergedFor(m.date);const speechSlots=[1,2,3,4].map(n=>{const role=`Prepared Speech ${n}`;const x=mg[role];const filled=slotFilled(x),hold=x&&x.hold;const acts=(filled&&!hold)?`<div class="slot-actions"><button class="mini" onclick="sharePoster('${role}')">📤 Share</button><button class="mini" onclick="downloadPoster('${role}')">⬇ Poster (free)</button><button class="mini" onclick="downloadICS(${active})">📅 Add to Calendar</button><button class="mini" onclick="addToGoogleCalendar(${active})">Google Calendar</button></div>`:'';return `<div class="slot ${filled?'booked':''}"><div style="flex:1;min-width:0"><strong>${filled?(hold?'Reserved':escapeHtml(x.name)):'Prepared Speech'}</strong><small>${filled?(hold?'Reserved':escapeHtml(x.note||'Reserved')):'Available for booking'}</small>${acts}</div><span class="open">${filled?(x.confirmed?'BOOKED':'TENTATIVE'):'OPEN'}</span></div>`}).join('');const backendNote=!configured?'Reservations are not configured yet.':backendReady?'Live shared availability is online.':'Reservations are temporarily unavailable — please contact the club VPE.';meetingCard.innerHTML=`<div class="meeting-head"><div class="date"><strong>${m.day}</strong><span>${m.label} 2026</span></div><div><h3>${themeFor(m.date)}</h3><p>Friday · ${meetingTime(m.date)} · ${venueFor(m.date).short}</p></div></div><div class="body"><div class="meta"><span>📅 ${new Date(m.date+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</span><span>🕜 ${meetingTime(m.date)}</span><span>📍 ${venueFor(m.date).full}${venueFor(m.date).directions?` · <a href="${venueFor(m.date).directions}" target="_blank" rel="noopener">Directions</a>`:''}</span></div><div class="slots">${loading?'<p>Refreshing live availability…</p>':speechSlots}</div><div class="actions"><button class="btn primary" ${backendReady?'':'disabled'} onclick="openNextSpeech()">Reserve a Speech</button><button class="btn ghost" onclick="shareMeeting(${active})">Share</button><button class="btn ghost" onclick="loadBookings()">Refresh</button></div></div><div class="footer-note">${backendNote}</div>`;renderRoles();populateForm()}
+const ROLE_META={
+  'Toastmaster of the Evening':{
+    desc:'Directs the meeting agenda, introduces speakers, and manages smooth timing and transitions.',
+    skills:['Meeting Facilitation','Leadership','Public Speaking','Organization']
+  },
+  'Table Topics Master':{
+    desc:'Prepares thought-provoking prompts and conducts the impromptu session to challenge on-the-spot thinking.',
+    skills:['Impromptu Speaking','Session Planning','Creative Thinking']
+  },
+  'Speech Evaluator':{
+    desc:'Provides constructive oral and written feedback to a speaker using commend-recommend-commend methods.',
+    skills:['Active Listening','Critical Thinking','Constructive Feedback']
+  },
+  'General Evaluator':{
+    desc:'Evaluates overall meeting flow, timeliness, environment, and evaluation team performance.',
+    skills:['Big-Picture Observation','Analytical Evaluation','Team Leadership']
+  },
+  'Timer':{
+    desc:'Tracks speaking time for speeches and roles against official thresholds and presents timing reports.',
+    skills:['Time Management','Precision','Objective Reporting']
+  },
+  'Ah-Counter':{
+    desc:'Notes filler words and verbal crutches (ah, um, so, like) to help speakers polish verbal fluency.',
+    skills:['Keen Listening','Acute Observation','Fluency Awareness']
+  },
+  'Language Evaluator':{
+    desc:'Introduces Word of the Day and highlights exemplary language usage, idioms, and grammatical refinements.',
+    skills:['Vocabulary Building','Grammatical Precision','Attentive Listening']
+  },
+  'Sergeant at Arms':{
+    desc:'Calls the meeting to order, coordinates room logistics, welcomes guests, and sets club etiquette.',
+    skills:['Event Coordination','Stage Presence','Crowd Management']
+  }
+};
+function getRoleMeta(r){
+  return ROLE_META[r]||ROLE_META[genericRole(r)]||{desc:'Key meeting appointment.',skills:['Communication','Leadership']};
+}
 function renderRoles(){const m=meetings[active],mg=mergedFor(m.date);
   const groups=publicRoleList().filter(g=>g!=='Prepared Speech');   // prepared speeches live in the slots panel
   roles.innerHTML=groups.map(g=>{const slots=concreteSlots(g);
+    const meta=getRoleMeta(g);
+    const skillsHtml=`<div class="role-skills">${meta.skills.map(s=>`<span class="role-skill-pill">${escapeHtml(s)}</span>`).join('')}</div>`;
     if(slots.length>1){                                            // grouped role (e.g. Speech Evaluator) — no numbers shown
       const open=slots.filter(r=>!slotFilled(mg[r])).length;const taken=slots.length-open;
-      return `<div class="role"><span>${g} <span class="why" style="font-weight:600">(${taken}/${slots.length} taken)</span></span><button ${open?'':'disabled'} onclick="openBooking('${g}')">${open?'Take role':'Full'}</button></div>`;
+      return `<div class="role"><div class="role-info"><div class="role-title"><span>${escapeHtml(g)}</span> <span class="why" style="font-weight:600">(${taken}/${slots.length} taken)</span></div><div class="role-desc">${escapeHtml(meta.desc)}</div>${skillsHtml}</div><button ${open?'':'disabled'} onclick="openBooking('${g}')">${open?'Take role':'Full'}</button></div>`;
     }
     const r=slots[0],x=mg[r],filled=slotFilled(x),hold=x&&x.hold;
-    return `<div class="role" ${hold?'style="opacity:.75"':''}><span>${filled?(hold?`${r} · <em>Reserved</em>`:`${r} · ${escapeHtml(x.name)}`):r}</span><button ${filled?'disabled':''} onclick="openBooking('${r}')">${filled?(hold?'Reserved':x.confirmed?'Taken':'Tentative'):'Take role'}</button></div>`;
+    const titleHtml=filled?(hold?`<span>${escapeHtml(r)} · <em>Reserved</em></span>`:`<span>${escapeHtml(r)} · ${escapeHtml(x.name)}</span>`):`<span>${escapeHtml(r)}</span>`;
+    return `<div class="role" ${hold?'style="opacity:.75"':''}><div class="role-info"><div class="role-title">${titleHtml}</div><div class="role-desc">${escapeHtml(meta.desc)}</div>${skillsHtml}</div><button ${filled?'disabled':''} onclick="openBooking('${r}')">${filled?(hold?'Reserved':x.confirmed?'Taken':'Tentative'):'Take role'}</button></div>`;
   }).join('')}
+
+function openVisitingModal(){
+  if(!VISITING_POOL.length) loadVisitingPool().then(renderVisitingList);
+  else renderVisitingList();
+  document.getElementById('visitingModal').showModal();
+}
+function renderVisitingList(){
+  const q=(document.getElementById('visitingSearch').value||'').trim().toLowerCase();
+  const filtered=VISITING_POOL.filter(v=>{
+    if(!q) return true;
+    return (v.name||'').toLowerCase().includes(q)||
+           (v.club||'').toLowerCase().includes(q)||
+           (v.credentials||'').toLowerCase().includes(q)||
+           (v.pastRoles||'').toLowerCase().includes(q)||
+           (v.notes||'').toLowerCase().includes(q);
+  });
+  const summary=document.getElementById('visitingSummary');
+  if(summary) summary.textContent=`Showing ${filtered.length} of ${VISITING_POOL.length} visiting Toastmasters`;
+  const tbody=document.getElementById('visitingTableBody');
+  if(!tbody) return;
+  tbody.innerHTML=filtered.map((v,i)=>`
+    <tr>
+      <td><strong>${escapeHtml(v.name)}</strong>${v.contact?`<br><small style="color:var(--muted)">${escapeHtml(v.contact)}</small>`:''}</td>
+      <td>${escapeHtml(v.club||'—')}</td>
+      <td>${v.credentials?`<span class="tag">${escapeHtml(v.credentials)}</span>`:'—'}</td>
+      <td><span style="font-size:12px">${escapeHtml(v.pastRoles||'—')}</span>${v.notes?`<br><small style="color:var(--muted)">${escapeHtml(v.notes)}</small>`:''}</td>
+      <td>
+        <button type="button" class="mini" onclick="copyVisitingEntry('${escapeHtml(v.name)}')">📋 Copy</button>
+      </td>
+    </tr>
+  `).join('');
+}
+function copyVisitingEntry(name){
+  const v=VISITING_POOL.find(x=>x.name===name);
+  if(!v) return;
+  const str=`${v.name}${v.credentials?', '+v.credentials:''}${v.club?' ('+v.club+')':''}`;
+  navigator.clipboard.writeText(str).then(()=>show(`Copied: ${str}`));
+}
+function toggleAddVisiting(){
+  const f=document.getElementById('addVisitingForm');
+  if(!f) return;
+  f.style.display=f.style.display==='none'?'block':'none';
+}
+function saveNewVisiting(){
+  const name=(document.getElementById('newVName').value||'').trim();
+  const club=(document.getElementById('newVClub').value||'').trim();
+  const cred=(document.getElementById('newVCred').value||'').trim();
+  const contact=(document.getElementById('newVContact').value||'').trim();
+  const roles=(document.getElementById('newVRoles').value||'').trim();
+  if(!name){show('Please enter a name');return;}
+  VISITING_POOL.unshift({name,club,credentials:cred,pastRoles:roles,contact,notes:'Added from admin pool'});
+  toggleAddVisiting();
+  document.getElementById('newVName').value='';
+  document.getElementById('newVClub').value='';
+  document.getElementById('newVCred').value='';
+  document.getElementById('newVContact').value='';
+  document.getElementById('newVRoles').value='';
+  renderVisitingList();
+  show(`Added ${name} to pool`);
+}
 function populateForm(){if(modal.open)return;meeting.innerHTML=meetings.map((m,i)=>`<option value="${m.date}" ${i===active?'selected':''}>${m.month} ${m.day}, 2026</option>`).join('');role.innerHTML=publicRoleList().map(r=>`<option>${r}</option>`).join('');role.value=genericRole(selectedRole);
   const pp=document.getElementById('projectPath');if(pp){pp.innerHTML='<option value="">— select your path —</option>'+pathList().map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('');}
   fillProjectSelect();}
