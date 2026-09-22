@@ -7,83 +7,123 @@
 /* ---- faithful replica of the club's Word/PDF program sheet ---- */
 :root{--link:#0563c1;--maroon:#7b2f2f;--border:#000}
 *{box-sizing:border-box}
-body{margin:0;background:#54595f;color:#000;font-family:"Times New Roman",Times,Georgia,serif;font-size:10pt;line-height:1.22}
+body{margin:0;background:#54595f;color:#000;font-family:"Times New Roman",Times,Georgia,serif;font-size:10pt;line-height:1.2}
 .toolbar{position:sticky;top:0;z-index:5;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:10px 18px;background:#18243f;color:#fff;font-family:Inter,system-ui,sans-serif}
 .toolbar strong{margin-right:auto}
 .toolbar button{border:0;border-radius:8px;padding:9px 15px;font-weight:700;font-size:13px;cursor:pointer}
 .btn-print{background:#d7ad59;color:#241c05}.btn-ghost{background:rgba(255,255,255,.16);color:#fff}
-.sheet{background:#fff;width:210mm;min-height:296mm;margin:16px auto;padding:11mm 12mm;box-shadow:0 10px 40px rgba(0,0,0,.3)}
-table.obj td{white-space:pre-line}
-.review-note{border:1px solid #9e7200;background:#fff8e6;padding:6px;margin:5px 0;font-size:9pt}
-.visitors{margin-top:10px;font-size:9pt}
+
+.sheet{
+  background:#fff;
+  width:210mm;
+  min-height:297mm;
+  margin:16px auto;
+  padding:10mm 12mm;
+  box-shadow:0 10px 40px rgba(0,0,0,.3);
+  position:relative;
+}
+.review-note{border:1px solid #9e7200;background:#fff8e6;padding:4px 6px;margin:4px 0;font-size:8.5pt}
 body.editing .sheet{outline:2px dashed #d7ad59;outline-offset:4px}
 body.editing .sheet [contenteditable] *:focus,body.editing .sheet:focus{background:#fff8e6}
 [contenteditable]:focus{outline:1px solid #d7ad59}
-a{color:var(--link)}
+a{color:var(--link);text-decoration:underline}
 
 /* header */
-.hdr{display:grid;grid-template-columns:140px 1fr 207px;align-items:center;gap:8px}
-.hdr img{max-width:100%;max-height:111px;height:auto;object-fit:contain}
+.hdr{display:grid;grid-template-columns:135px 1fr 185px;align-items:center;gap:10px}
+.hdr img.tm-logo{max-width:125px;max-height:105px;height:auto;object-fit:contain}
+.hdr img.nus-logo{max-width:180px;max-height:85px;height:auto;object-fit:contain;justify-self:end}
 .hdr .title{text-align:center}
-.hdr .title h1{font-size:14pt;font-weight:bold;margin:0;line-height:1.1}
-.hdr .title .web{font-style:italic;font-size:10.5pt;margin-top:3px}
+.hdr .title h1{font-size:14pt;font-weight:bold;margin:0;line-height:1.15;letter-spacing:0.5px}
+.hdr .title .web{font-style:italic;font-size:10pt;margin-top:3px}
+.hdr .title .web a{color:#000;text-decoration:underline}
 .hdr .title .motto{font-weight:bold;font-style:italic;color:var(--maroon);font-size:12pt;margin-top:3px}
 .rule{border:0;border-top:1.5px solid #000;margin:6px 0 8px}
 
 /* two-column body */
-.body{display:grid;grid-template-columns:200px 1fr;gap:12px;align-items:start}
-.exco h2{font-style:italic;font-weight:bold;font-size:12pt;margin:0}
-.exco .term{font-weight:bold;margin-bottom:8px}
-.exco .role{font-weight:bold;margin-top:6px}
-.exco .name{}
-.exco .contact{margin-top:10px}
-.exco .paynow{font-weight:bold;margin-top:12px}
-.exco .qr{width:120px;height:120px;margin:6px 0}
-.exco .fine{margin-top:6px}
+.body{display:grid;grid-template-columns:195px 1fr;gap:14px;align-items:start}
+.exco h2{font-style:italic;font-weight:bold;font-size:11pt;margin:0}
+.exco .term{font-weight:bold;font-size:10pt;margin-bottom:6px}
+.exco .role{font-weight:bold;font-size:9.5pt;margin-top:5px;line-height:1.15}
+.exco .name{font-size:9.5pt;line-height:1.15}
+.exco .visitors{margin-top:8px;font-size:9pt;line-height:1.2}
+.exco .contact{margin-top:8px;font-size:9.5pt;line-height:1.25}
+.exco .contact b,.exco .fb b{font-weight:bold}
+.exco .fb{font-size:9.5pt;line-height:1.25}
+.exco .paynow{font-weight:bold;font-size:9.5pt;margin-top:8px;line-height:1.2}
+.exco .qr{width:86px;height:86px;margin:3px 0 2px;display:block}
+.exco .fine{font-size:8pt;line-height:1.15;color:#333;margin-bottom:4px}
+.exco .guest-reg{font-weight:bold;font-size:9.5pt;margin-top:6px;line-height:1.2}
 
 /* agenda table */
-.ag-top{text-align:center;font-weight:bold;margin-bottom:2px}
-.ag-meta{margin-bottom:6px}
-.ag-meta b{font-weight:bold}
-table.agenda{width:100%;border-collapse:collapse;table-layout:fixed}
-table.agenda td{border:1px solid #000;padding:2.5px 5px;vertical-align:top}
-table.agenda tr,table.awards{break-inside:avoid}
-.exco a{overflow-wrap:anywhere}
-.col-t{width:62px;white-space:nowrap}
-.col-p{width:38%;color:var(--navy);font-weight:700}
-/* grouped rows: keep the vertical column dividers, drop the horizontal lines between them */
+.ag-top{text-align:center;font-weight:bold;font-size:10pt;margin-bottom:3px}
+.ag-meta{font-size:10pt;line-height:1.25;margin-bottom:6px}
+.ag-meta .venue-row b,.ag-meta .dress-row b{font-weight:bold}
+.ag-meta .addr-row{font-weight:bold;font-style:italic}
+table.agenda{width:100%;border-collapse:collapse;table-layout:fixed;font-size:9.5pt;line-height:1.2}
+table.agenda td{border:1px solid #000;padding:2px 4px;vertical-align:top}
+table.agenda tr{break-inside:avoid}
+.col-t{width:56px;white-space:nowrap}
+.col-item{width:auto}
+.col-p{width:35%}
+/* grouped rows: keep outer & column borders, drop internal horizontal borders */
 table.agenda tr.grp-first td{border-bottom:0}
 table.agenda tr.grp-mid td{border-top:0;border-bottom:0}
 table.agenda tr.grp-last td{border-top:0}
-.agenda ol{margin:2px 0 2px 0;padding-left:18px}
-.agenda ol li{margin:1px 0}
-.agenda .rpt{margin-top:6px}
+.ag-section-title{font-weight:bold;font-style:italic;margin-bottom:2px}
+.ag-spacer td{height:8px;padding:0;border-top:0;border-bottom:0}
 .who{white-space:pre-line}
 .open{color:#888;font-style:italic}
 
-/* awards box */
-table.awards{width:100%;border-collapse:collapse;margin-top:12px}
-table.awards td{border:1px solid #000;padding:10px 8px 20px;font-weight:bold;width:33.33%;vertical-align:top}
-
 /* page 2 */
-.p2 h2{font-weight:bold;text-decoration:underline;font-size:11pt;margin:0 0 6px}
-.p2 .menti{font-weight:normal;margin:9px 0 3px}
-.p2 .menti-qr{width:68px;height:68px}
-table.obj{width:100%;border-collapse:collapse;margin:5px 0 10px}
-table.obj td{border:1px solid #000;padding:5px 8px;vertical-align:top}
-table.obj .c1{width:32.48%}table.obj .c3{width:9.2%}
-table.obj .evallink{margin-top:4px}table.obj .evallink a{font-size:11px;color:#b52f3b;text-decoration:none;font-weight:700}
-.p2 .loc b{font-weight:bold}
-.p2 .map{width:100%;max-width:483px;max-height:254px;height:auto;object-fit:contain;object-position:left top;margin-top:5px;border:1px solid #999}
-.section-gap{height:12px}
+table.awards{width:100%;border-collapse:collapse;margin:0 0 12px;table-layout:fixed}
+table.awards td{border:1px solid #000;padding:6px 8px 32px;font-weight:bold;font-size:10pt;width:33.333%;vertical-align:top}
+
+.p2-heading{font-size:12pt;font-weight:bold;text-decoration:underline;margin:10px 0 6px;color:#000}
+.voting-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:4px 0 14px;align-items:start}
+.voting-col{font-size:10pt}
+.menti-title{font-size:10pt;line-height:1.2;margin-bottom:4px}
+.menti-qr{width:68px;height:68px;display:block;margin:4px 0;object-fit:contain}
+.menti-url{font-size:9pt;word-break:break-all}
+.menti-url a{color:var(--link);text-decoration:underline}
+
+table.obj{width:100%;border-collapse:collapse;margin:4px 0 14px;font-size:10pt;table-layout:fixed}
+table.obj td{border:1px solid #000;padding:4px 6px;vertical-align:top;line-height:1.25;white-space:pre-line}
+table.obj .c1{width:32.5%}
+table.obj .c2{width:57%}
+table.obj .c3{width:10.5%;white-space:nowrap}
+table.obj .evallink{margin-top:4px}
+table.obj .evallink a{font-size:11px;color:#b52f3b;text-decoration:none;font-weight:700}
+
+.loc-dir{font-size:10pt;margin:4px 0 6px;word-break:break-all}
+.loc-dir b{font-weight:bold}
+.loc-dir a{color:var(--link);text-decoration:underline}
+.p2 .map{width:100%;max-height:260px;height:auto;object-fit:contain;object-position:left top;margin-top:4px;border:1px solid #000;display:block}
 
 @media print{
   body{background:#fff}
   .toolbar{display:none}
-  .sheet{width:auto;min-height:0;margin:0;padding:12mm;box-shadow:none;page-break-after:always}
-  .sheet:last-child{page-break-after:auto}
+  .sheet{
+    width:210mm;
+    height:297mm;
+    min-height:297mm;
+    max-height:297mm;
+    margin:0;
+    padding:10mm 12mm;
+    box-shadow:none;
+    page-break-after:always;
+    break-after:page;
+    page-break-inside:avoid;
+    overflow:hidden;
+  }
+  .sheet:last-of-type{
+    page-break-after:auto;
+    break-after:auto;
+  }
 }
-@page{size:A4;margin:0}
+@page{
+  size:A4 portrait;
+  margin:0;
+}
 </style>
 </head>
 <body>
@@ -100,13 +140,13 @@ table.obj .evallink{margin-top:4px}table.obj .evallink a{font-size:11px;color:#b
 <!-- ================= PAGE 1 ================= -->
 <section class="sheet">
   <div class="hdr">
-    <img src="assets/tm-logo.png" alt="Toastmasters International">
+    <img class="tm-logo" src="assets/tm-logo.png" alt="Toastmasters International">
     <div class="title">
       <h1>NUS ALUMNI<br>TOASTMASTERS CLUB</h1>
       <div class="web">Web Site: <a href="http://nusalumni.toastmastersclubs.org">http://nusalumni.toastmastersclubs.org</a></div>
       <div class="motto">"To Live and To Grow"</div>
     </div>
-    <img src="assets/nus-logo.png" alt="National University of Singapore">
+    <img class="nus-logo" src="assets/nus-logo.png" alt="National University of Singapore">
   </div>
   <hr class="rule">
 
@@ -114,58 +154,68 @@ table.obj .evallink{margin-top:4px}table.obj .evallink a{font-size:11px;color:#b
     <!-- LEFT: Executive Committee -->
     <div class="exco">
       <h2>Executive Committee</h2>
-      <div class="term">2026/ 2027</div>
+      <div class="term" id="excoTerm">2026/ 2027</div>
       <div id="excoList"></div>
       <div class="visitors" id="visitors"></div>
-      <div class="contact"><b>Email</b>: <a href="mailto:nusatm@gmail.com">nusatm@gmail.com</a></div>
-      <div><b>Facebook</b>: @nusalumnitm</div>
-      <div><b>Toastmasters Pathways:</b><br><a href="https://www.toastmasters.org/pathways-overview">Pathways overview</a></div>
+      <div class="contact"><b>Email:</b> <a href="mailto:nusatm@gmail.com">nusatm@gmail.com</a></div>
+      <div class="fb"><b>Facebook:</b> @nusalumnitm</div>
       <div class="paynow">Membership and guest fee - PayNow to NUSA TMC</div>
       <img class="qr" src="assets/paynow-qr.png" alt="PayNow QR">
       <div class="fine">Guest fee of $10 applies for walk-in guests.</div>
+      <div class="guest-reg">Guest Registration</div>
+      <img class="qr" src="assets/eventbrite-qr.png" alt="Guest Registration QR">
     </div>
 
     <!-- RIGHT: Agenda -->
     <div>
       <div class="ag-top" id="agDate">Friday, __ ______ 20__</div>
       <div class="ag-meta">
-        <div><b>Venue:</b> <span id="venue">Classroom 2.2, SMU, School of Economics/School of Information Systems 2,</span></div>
-        <div><b>Address:</b> <span id="meetingAddress">To be confirmed</span></div>
-        <div><b>Dress Code:</b> Business casual (no shorts or slippers)</div>
+        <div class="venue-row"><b>Venue:</b> <span id="venue">Classroom 3.1, SMU School of Computing and Information Systems 1</span></div>
+        <div class="addr-row">Address: <span id="meetingAddress">80 Stamford Rd, Singapore 178902</span></div>
+        <div class="dress-row"><b>Dress Code:</b> Business casual (no shorts or slippers)</div>
       </div>
       <div id="reviewNote" class="review-note"></div>
       <table class="agenda"><tbody id="agenda"></tbody></table>
     </div>
   </div>
-
-  <table class="awards"><tr>
-    <td>Best Prepared Speech Speaker:</td>
-    <td>Best Table Topics Speaker:</td>
-    <td>Best Evaluator:</td>
-  </tr></table>
 </section>
 
 <!-- ================= PAGE 2 ================= -->
 <section class="sheet p2">
-  <h2>Vote for Best Speeches</h2>
-  <div class="menti">Menti.com code (Best Prepared Speech):</div>
-  <img class="menti-qr" src="assets/menti-prepared.png" alt="">
-  <div class="menti">Menti.com code (Best Table Topics):</div>
-  <img class="menti-qr" src="assets/menti-tabletopics.png" alt="">
-  <div class="menti">Menti.com code (Best Evaluator):</div>
-  <img class="menti-qr" src="assets/menti-evaluator.png" alt="">
+  <table class="awards">
+    <tr>
+      <td>Best Prepared Speech Speaker:</td>
+      <td>Best Table Topics Speaker:</td>
+      <td>Best Evaluator:</td>
+    </tr>
+  </table>
 
-  <div class="section-gap"></div>
-  <h2>Project Objectives</h2>
+  <h2 class="p2-heading">Vote for Best Speeches</h2>
+  <div class="voting-grid">
+    <div class="voting-col">
+      <div class="menti-title">Menti.com code (Best Prepared Speech):</div>
+      <img class="menti-qr" id="mentiPrepared" src="assets/menti-prepared.png" alt="Best Prepared Speech QR">
+      <div class="menti-url" id="mentiPreparedUrl"></div>
+    </div>
+    <div class="voting-col">
+      <div class="menti-title">Menti.com code (Best Table Topics):</div>
+      <img class="menti-qr" id="mentiTopics" src="assets/menti-tabletopics.png" alt="Best Table Topics QR">
+      <div class="menti-url" id="mentiTopicsUrl"></div>
+    </div>
+    <div class="voting-col">
+      <div class="menti-title">Menti.com code (Best Evaluator):</div>
+      <img class="menti-qr" id="mentiEvaluator" src="assets/menti-evaluator.png" alt="Best Evaluator QR">
+      <div class="menti-url" id="mentiEvaluatorUrl"></div>
+    </div>
+  </div>
+
+  <h2 class="p2-heading">Project Objectives</h2>
   <table class="obj"><tbody id="objectives"></tbody></table>
 
-  <div class="section-gap"></div>
   <div class="loc" id="locationDetails">
-    <h2>Location</h2>
-    <div><b>Address</b>: SMU School of Economics/ School of Computing &amp; Information Systems 2</div>
-    <div>90 Stamford Rd, Singapore 178903</div>
-    <div><b>Directions</b>: <a href="https://academy.smu.edu.sg/getting-smu/smu-school-economics-school-computing-information-systems-2">https://academy.smu.edu.sg/getting-smu/smu-school-economics-school-computing-information-systems-2</a></div>
-    <img class="map" src="assets/location-map.png" alt="Location map">
+    <h2 class="p2-heading">Location</h2>
+    <div class="loc-dir"><b>Directions:</b> <a id="locDirections" href="https://academy.smu.edu.sg/getting-smu/smu-school-computing-and-information-systems-1" target="_blank" rel="noopener">https://academy.smu.edu.sg/getting-smu/smu-school-computing-and-information-systems-1</a></div>
+    <img class="map" id="locMap" src="assets/location-map.png" alt="Location map">
   </div>
 </section>
 
@@ -179,12 +229,11 @@ const DEFAULT_EXCO=[
   ['President','WEE Gee Shing'],['VP (Education)','XU Jiaqi'],
   ['VP (Membership)','Jonta KOGA'],['VP (Public Relations)','Jayden TEO'],
   ['Sergeant at Arms','Sandy GOH'],['Secretary','LER Wee Meng'],
-  ['Treasurer','TU Yu'],['Immediate Past President','Sabrina Xu']
+  ['Treasurer','TU Yu'],['Immediate Past President','Sabrina XU']
 ];
 
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function safeURL(s){return /^(?:https?:\/\/|assets\/)[^\s]*$/i.test(String(s||''))?String(s):'';}
-// name -> Toastmasters credential (e.g. "ATMB, CL"), matched to the roster by shared name tokens
 let CREDS=[];
 function credFor(name){
   if(!name||!CREDS.length)return '';
@@ -193,141 +242,272 @@ function credFor(name){
   for(const c of CREDS){const ct=String(c.name).toLowerCase().split(/\s+/);const s=ct.filter(t=>nt.includes(t)).length;if(s>bs){bs=s;best=c.cred;}}
   return bs>=2?best:'';
 }
-// append the credential once, unless the name already carries it
-function withCred(name){const guest=(CURRENT_PAYLOAD?.guests||[]).find(g=>ToastFlowPeople.canonical(g.name)===ToastFlowPeople.canonical(name));if(guest)return esc(guest.name+(guest.credentials?', '+guest.credentials:'')+'*');const p=ToastFlowPeople.find(name);if(p)return esc(ToastFlowPeople.label(name));return esc(ToastFlowPeople.clean(name));}
+function withCred(name){
+  const guest=(CURRENT_GUESTS||[]).find(g=>ToastFlowPeople.canonical(g.name)===ToastFlowPeople.canonical(name));
+  if(guest)return esc(guest.name+(guest.credentials?', '+guest.credentials:'')+'*');
+  const p=ToastFlowPeople.find(name);
+  if(p)return esc(ToastFlowPeople.label(name));
+  return esc(ToastFlowPeople.clean(name));
+}
 function who(name){return name?withCred(name):'<span class="open">— open —</span>'}
 
 // ---- exports: Word (.doc with embedded images) + shareable link ----
 async function exportWord(){
   const imgs=[...document.querySelectorAll('.sheet img')];const map={};
-  await Promise.all(imgs.map(async img=>{try{const r=await fetch(img.src);const b=await r.blob();map[img.src]=await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.readAsDataURL(b);});}catch(e){}}));
-  // Word can't render CSS grid — rebuild each grid container as a one-row table.
-  const gridToTable=(el,widths)=>{if(!el)return;const kids=[...el.children];const t=document.createElement('table');
+  await Promise.all(imgs.map(async img=>{
+    if(!img.src||img.style.display==='none'||img.hidden)return;
+    try{
+      const r=await fetch(img.src);const b=await r.blob();
+      map[img.src]=await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.readAsDataURL(b);});
+    }catch(e){}
+  }));
+  const gridToTable=(el,widths)=>{
+    if(!el)return;
+    const kids=[...el.children];const t=document.createElement('table');
     t.setAttribute('width','100%');t.style.cssText='border-collapse:collapse;width:100%';t.setAttribute('border','0');
-    const tr=t.insertRow();kids.forEach((k,i)=>{const td=document.createElement('td');td.style.cssText='vertical-align:top;padding:0 6px';
-      if(widths&&widths[i])td.setAttribute('width',widths[i]);td.appendChild(k);tr.appendChild(td);});el.replaceWith(t);};
+    const tr=t.insertRow();
+    kids.forEach((k,i)=>{
+      const td=document.createElement('td');td.style.cssText='vertical-align:top;padding:0 6px';
+      if(widths&&widths[i])td.setAttribute('width',widths[i]);
+      td.appendChild(k);tr.appendChild(td);
+    });
+    el.replaceWith(t);
+  };
   let body='';
   document.querySelectorAll('.sheet').forEach((s,idx)=>{
     const c=s.cloneNode(true);c.removeAttribute('contenteditable');
-    c.querySelectorAll('img').forEach(im=>{if(map[im.src])im.setAttribute('src',map[im.src]);});
-    gridToTable(c.querySelector('.hdr'),['140','','207']);
-    gridToTable(c.querySelector('.body'),['200','']);
+    c.querySelectorAll('img').forEach(im=>{
+      if(im.style.display==='none'||im.hidden)im.remove();
+      else if(map[im.src])im.setAttribute('src',map[im.src]);
+    });
+    gridToTable(c.querySelector('.hdr'),['135','','185']);
+    gridToTable(c.querySelector('.body'),['195','']);
+    gridToTable(c.querySelector('.voting-grid'),['33%','33%','33%']);
     body+=(idx?'<br clear="all" style="mso-special-character:line-break;page-break-before:always">':'')+c.outerHTML;
   });
   const css=document.querySelector('style').innerHTML;
-  // Word-specific page setup + neutralise grid rules the tables now replace
-  const wcss='@page Section1{size:210mm 297mm;margin:12mm}div.Section1{page:Section1}'
+  const wcss='@page Section1{size:210mm 297mm;margin:10mm 12mm}div.Section1{page:Section1}'
     +'body{background:#fff}.toolbar{display:none}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}'
-    +'.hdr,.body{display:block}.title{text-align:center}.title h1{font-size:14pt;font-weight:bold;margin:0;line-height:1.1}'
-    +'.title .web{font-style:italic;font-size:10.5pt}.title .motto{font-weight:bold;font-style:italic;color:#8c1d40;font-size:12pt}'
+    +'.hdr,.body,.voting-grid{display:block}.title{text-align:center}.title h1{font-size:14pt;font-weight:bold;margin:0;line-height:1.1}'
+    +'.title .web{font-style:italic;font-size:10pt}.title .motto{font-weight:bold;font-style:italic;color:#7b2f2f;font-size:12pt}'
     +'td{vertical-align:top}td img{max-width:100%;height:auto}';
   const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'
     +'<head><meta charset="utf-8"><meta name="ProgId" content="Word.Document"><title>NUSA Program Sheet</title>'
     +'<style>'+css+wcss+'</style></head><body><div class="Section1">'+body+'</div></body></html>';
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+html],{type:'application/msword'}));
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+html],{type:'application/msword'}));
   a.download='NUSA-Program-Sheet-'+((CURRENT_PAYLOAD&&CURRENT_PAYLOAD.date)||'draft')+'.doc';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500);
 }
-// Toggle inline editing so the VPE can tweak any text before exporting.
+
 function toggleEdit(btn){
   const on=!document.body.classList.contains('editing');
   document.body.classList.toggle('editing',on);
   document.querySelectorAll('.sheet').forEach(s=>s.contentEditable=on);
   btn.textContent=on?'✓ Done editing':'✏️ Edit text';
 }
+
 async function shareSheetLink(){
   if(sheetEdited){alert('Text edits are included in Word / Print exports. Use those exports for this edited version; generate a new sheet after updating the planner to share a data snapshot.');return;}
   if(!CURRENT_PAYLOAD){alert('Open this sheet from the planner (Generate Program Sheet) first, then Share.');return;}
   const enc=btoa(unescape(encodeURIComponent(JSON.stringify(CURRENT_PAYLOAD))));
   const url=location.origin+location.pathname+'?d='+encodeURIComponent(enc);
-  try{if(navigator.share){await navigator.share({title:'NUSA Program Sheet',url});return;}}catch(e){/* user cancelled / not available → fall through */}
+  try{if(navigator.share){await navigator.share({title:'NUSA Program Sheet',url});return;}}catch(e){}
   try{await navigator.clipboard.writeText(url);alert('Share link copied to clipboard — anyone with it sees this sheet.');}
-  catch(e){window.prompt('Copy this share link (⌘/Ctrl+C):',url);}   // clipboard blocked → show it to copy manually
+  catch(e){window.prompt('Copy this share link (⌘/Ctrl+C):',url);}
 }
 
 let CURRENT_PAYLOAD=null;
+let CURRENT_GUESTS=[];
 let sheetEdited=false;
 document.querySelectorAll('.sheet').forEach(s=>s.addEventListener('input',()=>{sheetEdited=true;}));
 function decodePayload(enc){try{return JSON.parse(decodeURIComponent(escape(atob(enc))))}catch(e){return null}}
+
 function build(){
   const params=new URLSearchParams(location.search);
-  let payload=params.get('d')?decodePayload(params.get('d')):null;   // shared link takes priority
+  let payload=params.get('d')?decodePayload(params.get('d')):null;
   if(!payload){try{payload=JSON.parse(localStorage.getItem('toastflow_sheet')||'null')}catch(e){}}
-  const data=payload||{};CURRENT_PAYLOAD=payload;
-  CREDS=data.creds||[];                  // [{name, cred}] — for appending designations after names
-  const A=data.assignments||{};          // {role:{name,note}}
+  const data=payload||{};
+  CURRENT_PAYLOAD=payload;
+  CREDS=data.creds||[];
+  const A=data.assignments||{};
   const date=data.date||params.get('date')||'';
-  const schedule=data.schedule||ToastFlowMeetings.get(date).schedule;
+  const meetingProg=ToastFlowMeetings.get(date);
+  const schedule=data.schedule||meetingProg.schedule;
+  CURRENT_GUESTS=Array.isArray(data.guests)?data.guests:(meetingProg.guests||[]);
+
   document.getElementById('src').textContent=payload?'· saved programme snapshot':'· blank template';
 
-  // header date
+  // Header date
   const d=date?new Date(date):null;
   document.getElementById('agDate').textContent=d
     ? d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})
     : 'Friday, __ ______ 20__';
-  const venue=(data.meta&&data.meta.venue)||'Venue to be confirmed';
+
+  // Venue & Address
+  const venue=(data.meta&&data.meta.venue)||meetingProg.venue||'Classroom 3.1, SMU School of Computing and Information Systems 1';
   document.getElementById('venue').textContent=venue;
   const isAugust=date==='2026-08-14';
-  const address=data.meta?.address||(isAugust?'90 Stamford Rd, Singapore 178903':'To be confirmed');
+  const address=data.meta?.address||meetingProg.address||(isAugust?'90 Stamford Rd, Singapore 178903':'80 Stamford Rd, Singapore 178902');
   document.getElementById('meetingAddress').textContent=address;
-  if(!isAugust){
-    const directions=safeURL(data.meta?.directions),map=safeURL(data.meta?.map);
-    document.getElementById('locationDetails').innerHTML='<h2>Location</h2>'+(directions?'<div><b>Directions:</b> <a href="'+esc(directions)+'">'+esc(directions)+'</a></div>':'<div>Directions to be confirmed.</div>')+(map?'<img class="map" src="'+esc(map)+'" alt="Meeting location map">':'<div><b>Address:</b> '+esc(address)+'</div>');
-    document.querySelectorAll('.menti-qr').forEach((im,i)=>{const voting=data.voting?.[i]||{},src=safeURL(voting.image);im.hidden=!src;if(src)im.src=src;});
-    document.querySelectorAll('.menti').forEach((el,i)=>{const voting=data.voting?.[i]||{},url=safeURL(voting.url);if(url){const a=document.createElement('a');a.href=url;a.textContent=url;el.append(' ',a);}else if(!safeURL(voting.image))el.append(' TBC — set this meeting’s voting link.');});
+
+  // Directions & Map (Page 2)
+  const directions=safeURL(data.meta?.directions||meetingProg.directions||'https://academy.smu.edu.sg/getting-smu/smu-school-computing-and-information-systems-1');
+  const map=safeURL(data.meta?.map||meetingProg.map||'assets/location-map.png');
+  const dirEl=document.getElementById('locDirections');
+  if(dirEl){
+    if(directions){
+      dirEl.href=directions;
+      dirEl.textContent=directions;
+      dirEl.parentElement.style.display='';
+    } else {
+      dirEl.parentElement.style.display='none';
+    }
   }
+  const mapEl=document.getElementById('locMap');
+  if(mapEl){
+    if(map){
+      mapEl.src=map;
+      mapEl.style.display='';
+    } else {
+      mapEl.style.display='none';
+    }
+  }
+
+  // Voting QR codes & URLs (Page 2)
+  const votingList=data.voting||meetingProg.voting||[];
+  const qrIds=['mentiPrepared','mentiTopics','mentiEvaluator'];
+  const urlIds=['mentiPreparedUrl','mentiTopicsUrl','mentiEvaluatorUrl'];
+  qrIds.forEach((id,i)=>{
+    const im=document.getElementById(id);
+    const urlDiv=document.getElementById(urlIds[i]);
+    const v=votingList[i]||{};
+    const src=safeURL(v.image);
+    const url=safeURL(v.url);
+    if(im){
+      if(src){
+        im.src=src;
+        im.hidden=false;
+        im.style.display='';
+      } else {
+        im.hidden=true;
+        im.style.display='none';
+      }
+    }
+    if(urlDiv){
+      if(url){
+        urlDiv.innerHTML=`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a>`;
+        urlDiv.style.display='';
+      } else {
+        urlDiv.innerHTML='';
+        urlDiv.style.display='none';
+      }
+    }
+  });
+
+  // Draft Review note
   const pending=Object.values(A).filter(a=>a.name&&a.confirmed!==true).length;
   const openRoles=ToastFlow.ROLES.filter(r=>r!=='General Evaluator'&&!A[r]?.name).length;
-  document.getElementById('reviewNote').textContent='DRAFT — '+pending+' tentative assignment(s), '+openRoles+' open role(s). Review projects, timings, venue and voting codes before publishing.';
-  document.getElementById('reviewNote').hidden=!!(data.final&&!pending&&!openRoles&&!data.scheduleTentative&&data.meta?.address&&data.meta?.venue);
-  const guests=data.guests||[...new Set(Object.values(A).filter(a=>a.name).map(a=>ToastFlowPeople.find(a.name)).filter(p=>p?.visiting))];
-  document.getElementById('visitors').innerHTML='<b>* Visiting Toastmasters</b>'+guests.map(p=>'<div>'+esc(p.name)+(p.club?' — '+esc(p.club):'')+'</div>').join('');
+  const noteEl=document.getElementById('reviewNote');
+  if(noteEl){
+    noteEl.textContent='DRAFT — '+pending+' tentative assignment(s), '+openRoles+' open role(s). Review projects, timings, venue and voting codes before publishing.';
+    noteEl.hidden=!!(data.final&&!pending&&!openRoles&&!data.scheduleTentative&&address&&address!=='To be confirmed'&&venue&&venue!=='Venue to be confirmed');
+  }
 
-  // ExCo list
+  // Visiting Toastmasters list
+  const visEl=document.getElementById('visitors');
+  if(visEl){
+    if(CURRENT_GUESTS.length){
+      visEl.innerHTML='<div style="font-weight:bold;margin-bottom:2px">* Visiting Toastmasters</div>'+CURRENT_GUESTS.map(p=>'<div>'+esc(p.name)+(p.club?' — '+esc(p.club):'')+'</div>').join('');
+      visEl.style.display='';
+    } else {
+      visEl.innerHTML='';
+      visEl.style.display='none';
+    }
+  }
+
+  // ExCo list & term
+  let termText='2026/ 2027';
+  if(date){
+    const yr=parseInt(date.slice(0,4),10);
+    const mo=parseInt(date.slice(5,7),10);
+    if(yr&&mo){
+      termText=mo>=7?`${yr}/ ${yr+1}`:`${yr-1}/ ${yr}`;
+    }
+  }
+  document.getElementById('excoTerm').textContent=data.term||termText;
   const exco=(data.exco&&data.exco.length?data.exco:DEFAULT_EXCO);
   document.getElementById('excoList').innerHTML=exco.map(([r,n])=>
     `<div class="role">${esc(r)}</div><div class="name">${n?withCred(n):'&nbsp;'}</div>`).join('');
   const excoName=r=>{const e=exco.find(x=>x[0].replace(/[+*()]/g,'').trim().toLowerCase()===r.toLowerCase());return e?e[1]:''};
   const saa=(data.meta&&data.meta.saa)||(A['Sergeant at Arms']||{}).name||'';
 
-  const nm=r=>{const x=A[r]||{};return x.name||''};
   const holder=r=>{const x=A[r]||{};return who(x.name)+(x.name&&x.name!=='TBC'&&x.confirmed!==true?' <span class="open">(TBC)</span>':'');};
-  const note=r=>{const x=A[r]||{};return x.note||''};
 
-  // prepared-speech project list (numbered) + speakers, mirrored in evaluations
-  const speechCount = data.meta?.speechSlots || data.speechSlots || (A['Prepared Speech 4'] && A['Prepared Speech 4'].name ? 4 : (data.meta?.speechCount || 4));
-  const count = Number(speechCount) === 3 ? 3 : 4;
-  const speeches = Array.from({length: count}, (_, i) => i + 1).map(n => {
-    const x = A['Prepared Speech ' + n] || {};
+  // Speeches count (flexible 3 or 4)
+  const speechCount=data.meta?.speechSlots||data.speechSlots||(A['Prepared Speech 4']&&A['Prepared Speech 4'].name?4:(data.meta?.speechCount||4));
+  const count=Number(speechCount)===3?3:4;
+  const speeches=Array.from({length:count},(_,i)=>i+1).map(n=>{
+    const x=A['Prepared Speech '+n]||{};
     return {name:x.name||'',proj:x.projectRaw||x.note||'',full:x.project||x.projectRaw||x.note||'',title:x.title||'',pathway:x.pathway||''};
   });
   const timing=s=>ToastFlowProgramme.lookup({...ToastFlowProgramme.objectives,...(data.objectives||{})},s.full)?.timing||'';
-  const spItems=speeches.map(s=>({proj:s.full?esc(s.full)+(timing(s)?' ('+esc(timing(s))+')':' <span class="open">(timing TBC)</span>')+(s.title?` <span style="color:#666">— ${esc(s.title)}</span>`:''):'<span class="open">Pathways project —</span>',who:holder('Prepared Speech '+(speeches.indexOf(s)+1))}));
-  const evItems=speeches.map((s,i)=>({proj:s.full?esc(s.full):'<span class="open">—</span>',who:holder('Speech Evaluator '+(i+1))}));
+  const spItems=speeches.map(s=>({
+    proj:s.full?esc(s.full)+(timing(s)?' ('+esc(timing(s))+')':' <span class="open">(timing TBC)</span>')+(s.title?` <span style="color:#666">— ${esc(s.title)}</span>`:''):'<span class="open">Pathways project —</span>',
+    who:holder('Prepared Speech '+(speeches.indexOf(s)+1))
+  }));
+  const evItems=speeches.map((s,i)=>({
+    proj:s.full?esc(s.full):'<span class="open">—</span>',
+    who:holder('Speech Evaluator '+(i+1))
+  }));
 
-  // agenda rows — keep the club's 3-column Word structure (Time | Item | Person) WITH the
-  // vertical dividers. A "group" (grp-first/grp-mid/grp-last) drops only the horizontal lines
-  // between its rows, so each numbered project lines up with its speaker in the same row.
-  const A_ROWS=[];const push=(t,item,p,cls)=>A_ROWS.push({t,item,p,cls:cls||''});
+  // Agenda Rows — replicates exact Word structure
+  const A_ROWS=[];
+  const push=(t,item,p,cls)=>A_ROWS.push({t,item,p,cls:cls||''});
+
   push(schedule.saa,'Ice Breaker by SAA (1 min per pax)',A['Sergeant at Arms']?holder('Sergeant at Arms'):who(saa));
   push(schedule.tme,'Introduction by Toastmaster of the Evening',holder('Toastmaster of the Evening'));
   push(schedule.president,"President's Opening Address",who(excoName('President')));
-  push(schedule.speeches,'<b>Pathways Projects</b>','','grp-first');
-  spItems.forEach((it,i)=>push('',`${i+1}. ${it.proj}`,it.who,'grp-mid'));
-  push('',"Timer’s Report",holder('Timer'),'grp-last');
+
+  // Pathways Projects Block
+  if(spItems.length>0){
+    push(schedule.speeches,
+      `<div class="ag-section-title">Pathways Projects</div><div>1. ${spItems[0].proj}</div>`,
+      spItems[0].who,
+      'grp-first');
+    for(let i=1;i<spItems.length;i++){
+      push('',`<div>${i+1}. ${spItems[i].proj}</div>`,spItems[i].who,'grp-mid');
+    }
+    push('','&nbsp;','&nbsp;','grp-mid ag-spacer');
+    push('',"Timer’s Report",holder('Timer'),'grp-last');
+  }
+
   push(schedule.break,'Break &amp; Refreshments ('+schedule.breakMinutes+' min)','All');
+
+  // Table Topics Block
   push(schedule.topics,'Table Topics ('+schedule.topicsMinutes+' min)',holder('Table Topics Master'),'grp-first');
   push('',"Timer’s Report",holder('Timer'),'grp-last');
-  push(schedule.evaluations,'<b>Evaluations</b> (2–3 min per pax)','','grp-first');
-  evItems.forEach((it,i)=>push('',`${i+1}. ${it.proj}`,it.who,'grp-mid'));
-  push('',"Timer’s Report",holder('Timer'),'grp-last');
+
+  // Evaluations Block
+  if(evItems.length>0){
+    push(schedule.evaluations,
+      `<div style="margin-bottom:2px">Evaluations (2-3 mins per evaluator)</div><div>1. ${evItems[0].proj}</div>`,
+      evItems[0].who,
+      'grp-first');
+    for(let i=1;i<evItems.length;i++){
+      push('',`<div>${i+1}. ${evItems[i].proj}</div>`,evItems[i].who,'grp-mid');
+    }
+    push('','&nbsp;','&nbsp;','grp-mid ag-spacer');
+    push('',"Timer’s Report",holder('Timer'),'grp-last');
+  }
+
   push(schedule.ah,'Ah Counter Report (5 min)',holder('Ah-Counter'));
   push(schedule.language,'Language Evaluation (10 min)',holder('Language Evaluator'));
   push(schedule.awards,"Awards Presentation &amp; President’s Closing Address",who(excoName('President')));
   push(schedule.end,'Meeting Adjourned','All');
-  document.getElementById('agenda').innerHTML=A_ROWS.map(r=>
-    `<tr class="${r.cls}"><td class="col-t">${r.t}</td><td>${r.item}</td><td class="col-p who">${r.p}</td></tr>`).join('');
 
-  // page 2 — official project purpose + evaluation form, matched by bare project name
+  document.getElementById('agenda').innerHTML=A_ROWS.map(r=>
+    `<tr class="${r.cls}"><td class="col-t">${r.t}</td><td class="col-item">${r.item}</td><td class="col-p who">${r.p}</td></tr>`).join('');
+
+  // Page 2 Project Objectives
   const OBJ={...ToastFlowProgramme.objectives,...(data.objectives||{})}, EVAL=data.evalForms||{};
   const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
   const bareProject=ToastFlowProgramme.bare;
@@ -338,9 +518,9 @@ function build(){
   const objRows=speeches.filter(s=>s.name&&s.full).map(s=>{
     const o=look(s.full,OBJ,OBJi)||{}, f=look(s.full,EVAL,EVALi);
     const link=f&&f.url?`<div class="evallink"><a href="${esc(f.url)}" target="_blank" rel="noopener">⬇ Evaluation form</a></div>`:o.source?`<div class="evallink"><a href="${esc(o.source)}" target="_blank" rel="noopener">Project reference</a></div>`:'';
-    return `<tr><td class="c1">${esc(s.full)}${link}</td><td>${o.objective?esc(o.objective):'Full project objectives to be confirmed'}</td><td class="c3">${o.timing?esc(o.timing):'TBC'}</td></tr>`});
+    return `<tr><td class="c1">${esc(s.full)}${link}</td><td class="c2">${o.objective?esc(o.objective):'Full project objectives to be confirmed'}</td><td class="c3">${o.timing?esc(o.timing):'TBC'}</td></tr>`});
   document.getElementById('objectives').innerHTML=objRows.length?objRows.join('')
-    :'<tr><td class="c1 open">Prepared-speech projects</td><td class="open">Objectives appear here once speeches list their Pathways projects.</td><td class="c3"></td></tr>';
+    :'<tr><td class="c1 open">Prepared-speech projects</td><td class="c2 open">Objectives appear here once speeches list their Pathways projects.</td><td class="c3"></td></tr>';
 }
 build();
 </script>
