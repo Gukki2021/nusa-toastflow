@@ -1,5 +1,6 @@
 # ToastFlow: Platform Overview & ExCo Operations Guide
 **NUS Alumni Toastmasters Club (2026/2027)**  
+*Live Platform URL*: **[https://nusa-toastflow.vercel.app](https://nusa-toastflow.vercel.app)**  
 *Document for ExCo Google Drive Archive & Reference*
 
 ---
