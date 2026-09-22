@@ -2,22 +2,66 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pathways Reference · NUS Alumni Toastmasters</title>
+<title>Pathways & Member Guide · NUS Alumni Toastmasters</title>
 <style>
-:root{--navy:#18243f;--red:#b52f3b;--gold:#d7ad59;--cream:#f7f3eb;--paper:#fffdfa;--ink:#202638;--muted:#6d7382;--line:#e5ded2}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--paper);color:var(--ink)}
-a{color:var(--red)}
-.top{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px 6vw;background:rgba(255,253,250,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:center;gap:12px}.mark{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--red);color:#fff;font-weight:800}
-.brand strong,.brand small{display:block}.brand small{color:var(--muted);font-size:11px}
-.btn{border:0;border-radius:999px;padding:11px 18px;font-weight:750;text-decoration:none}.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
-.wrap{padding:48px 6vw 80px;max-width:1200px;margin:0 auto}
-.eyebrow{font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--red)}
-h1{font-family:Georgia,serif;font-size:clamp(34px,5vw,52px);margin:10px 0 8px}
-h2{font-family:Georgia,serif;font-size:26px;margin:44px 0 14px}
-.lead{color:var(--muted);max-width:760px}
-.levels{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:8px}
-.lvl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 12px 30px rgba(24,36,63,.05)}
+:root{
+  --navy:#18243f;--navy-deep:#0f172a;--red:#b52f3b;--red-dark:#8c1d40;--gold:#d7ad59;
+  --cream:#f7f3eb;--paper:#fffdfa;--ink:#202638;--muted:#5f6677;--line:#e5ded2;
+  --shadow:0 12px 30px rgba(24,36,63,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55}
+a{color:var(--red);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* topbar */
+.top{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:14px 6vw;background:rgba(255,253,250,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--red);color:#fff;font-weight:800;font-size:15px}
+.brand strong{font-size:15px;line-height:1.2;display:block}
+.brand small{color:var(--muted);font-size:11px;display:block}
+.top-actions{display:flex;gap:10px;align-items:center}
+.btn{border:0;border-radius:999px;padding:9px 18px;font-weight:750;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.ghost:hover{background:var(--cream);text-decoration:none}
+.btn.primary{background:var(--red);color:#fff}
+.btn.primary:hover{background:var(--red-dark);text-decoration:none}
+
+/* sub-nav jump links */
+.subnav{position:sticky;top:69px;z-index:15;background:var(--cream);border-bottom:1px solid var(--line);padding:8px 6vw;display:flex;gap:10px;overflow-x:auto;white-space:nowrap}
+.subnav a{font-size:13px;font-weight:700;color:var(--navy);padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.06);transition:all .15s ease}
+.subnav a:hover{background:var(--navy);color:#fff;text-decoration:none}
+
+.wrap{padding:36px 6vw 80px;max-width:1200px;margin:0 auto}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--red);text-transform:uppercase}
+h1{font-family:Georgia,serif;font-size:clamp(30px,4.5vw,46px);margin:10px 0 8px;line-height:1.15;color:var(--navy)}
+h2{font-family:Georgia,serif;font-size:clamp(22px,3vw,30px);margin:48px 0 16px;color:var(--navy);scroll-margin-top:120px;border-bottom:2px solid var(--line);padding-bottom:10px}
+h3{font-size:18px;margin:0 0 8px;color:var(--navy)}
+p.lead{color:var(--muted);font-size:16px;max-width:800px;margin-bottom:28px}
+
+/* quick start steps */
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin:20px 0 36px}
+.step-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow);position:relative;display:flex;flex-direction:column}
+.step-badge{width:36px;height:36px;border-radius:10px;background:var(--red);color:#fff;font-weight:800;display:grid;place-items:center;font-size:16px;margin-bottom:14px}
+.step-card h3{font-size:17px;margin-bottom:8px}
+.step-card p{font-size:13.5px;color:var(--muted);line-height:1.55;margin:0}
+.step-card .tip{margin-top:12px;padding:8px 12px;border-radius:8px;background:var(--cream);font-size:12px;color:var(--navy);font-weight:600}
+
+/* beginner guideline */
+.guide-box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:var(--shadow);margin:20px 0}
+.guide-phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:18px}
+.phase{border-left:3.5px solid var(--gold);padding-left:14px}
+.phase.p1{border-color:#1f6fb2}
+.phase.p2{border-color:var(--gold)}
+.phase.p3{border-color:var(--red)}
+.phase.p4{border-color:var(--navy)}
+.phase h4{font-size:15px;margin:0 0 6px;color:var(--navy)}
+.phase p{font-size:13px;color:var(--muted);margin:0;line-height:1.5}
+.guide-callout{margin-top:20px;background:#fff8e6;border:1px solid #ebd499;border-radius:10px;padding:12px 16px;font-size:13px;color:#6b4e00}
+
+/* levels grid */
+.levels{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:16px}
+.lvl{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;box-shadow:var(--shadow)}
 .lvl h3{margin:0;padding:14px 16px;color:#fff;font-size:15px;display:flex;align-items:center;gap:8px}
 .lvl .num{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;font-weight:800}
 .lvl:nth-child(1) h3{background:#0d2a4a}.lvl:nth-child(2) h3{background:#1f6fb2}
@@ -28,62 +72,189 @@ h2{font-family:Georgia,serif;font-size:26px;margin:44px 0 14px}
 .lvl .cap:first-child{margin-top:0}
 .lvl ul{margin:0;padding-left:16px}.lvl li{font-size:12.5px;margin:3px 0;line-height:1.35}
 .none{color:var(--muted);font-style:italic;font-size:12.5px}
-.notes{margin-top:20px;font-size:12.5px;color:var(--muted);max-width:900px}
+.notes{margin-top:20px;font-size:12.5px;color:var(--muted);max-width:960px}
 .notes p{margin:6px 0}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:8px}
-.rcard{border:1px solid var(--line);border-radius:14px;padding:18px;background:#fff;display:flex;flex-direction:column;gap:6px}
-.rcard .k{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--gold)}
-.rcard strong{font-size:16px}.rcard p{margin:0;color:var(--muted);font-size:13px}
-.rcard a{margin-top:auto;font-weight:700}
-.placeholder{border:1.5px dashed var(--line);color:var(--muted);background:var(--cream)}
-@media(max-width:900px){.levels{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.levels{grid-template-columns:1fr}}
+
+/* reference cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px;margin-top:16px}
+.rcard{border:1px solid var(--line);border-radius:14px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow);transition:transform .2s ease}
+.rcard:hover{transform:translateY(-3px)}
+.rcard .k{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--gold);text-transform:uppercase}
+.rcard strong{font-size:16px;color:var(--navy)}
+.rcard p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.rcard a{margin-top:auto;font-weight:700;font-size:13.5px}
+
+/* exco cloud collaboration */
+.collab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;margin-top:16px}
+.collab-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:var(--shadow)}
+.collab-card h3{display:flex;align-items:center;gap:8px;font-size:16.5px;margin-bottom:10px}
+.collab-card p{font-size:13.5px;color:var(--muted);line-height:1.6;margin:0 0 10px}
+.collab-card code{background:var(--cream);padding:2px 6px;border-radius:5px;font-size:12px;color:var(--red-dark);font-family:Consolas,monospace}
+.badge-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;background:var(--cream);color:var(--navy);margin-bottom:8px}
+
+@media(max-width:960px){.levels{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.levels{grid-template-columns:1fr}.top{flex-direction:column;gap:12px;align-items:flex-start}.top-actions{width:100%;justify-content:space-between}}
 </style>
 </head>
 <body>
+
 <header class="top">
-  <div class="brand"><div class="mark">TM</div><div><strong>ToastFlow · NUS Alumni Toastmasters</strong><small>Pathways Reference</small></div></div>
-  <a class="btn ghost" href="index.html">← Back to planner</a>
+  <div class="brand">
+    <div class="mark">TM</div>
+    <div>
+      <strong>ToastFlow · NUS Alumni Toastmasters</strong>
+      <small>Pathways &amp; Member Onboarding Guide</small>
+    </div>
+  </div>
+  <div class="top-actions">
+    <a class="btn ghost" href="index.html">← Back to planner</a>
+    <a class="btn primary" href="index.html#bookingModal" onclick="localStorage.setItem('openBooking','1');location.href='index.html';">Reserve a Slot</a>
+  </div>
 </header>
 
+<nav class="subnav">
+  <a href="#how-to-book">📋 约 Slot 步骤 (How to Book)</a>
+  <a href="#beginner-guide">🧭 新人成长指引 (Beginner Guide)</a>
+  <a href="#levels-reference">📊 Pathways 级别与角色 (Levels &amp; Roles)</a>
+  <a href="#official-resources">🏛 官方资料直达 (Official Resources)</a>
+  <a href="#cloud-collaboration">☁️ 执委会云端协作 (ExCo Cloud Guide)</a>
+</nav>
+
 <div class="wrap">
-  <div class="eyebrow">PATHWAYS REFERENCE</div>
-  <h1>Meeting roles &amp; education by level</h1>
-  <p class="lead">Which meeting roles and education-series presentations count toward each Pathways level. Use this when planning who to slot where — it's the basis of the planner's role suggestions.</p>
+  <div class="eyebrow">MEMBER ONBOARDING &amp; PATHWAYS</div>
+  <h1>欢迎来到 NUSA Toastmasters！</h1>
+  <p class="lead">本页面专为俱乐部新老会员与执委会设计，帮助大家清晰了解会议角色预约（Book Slot）步骤、新人入门成长路线、官方权威资料查询，以及执委会云端多端协作方案。</p>
+
+  <!-- ================= 1. HOW TO BOOK A SLOT ================= -->
+  <h2 id="how-to-book">1. 会员如何预约 Slot（四步图解）</h2>
+  <p class="lead">全站免账号、免密码，手机电脑均可即开即约。遵循“先到先得”原则，提交后立即在系统占位。</p>
+
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-badge">1</div>
+      <h3>选择会议月份</h3>
+      <p>进入 ToastFlow 首页，在顶部下拉菜单中切换目标月份（如 9 月、10 月例会）。页面将实时展示该场会议当前的空余槽位与预约状态。</p>
+      <div class="tip">💡 建议在每月初查看未来会议安排，提前锁定演讲机会。</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-badge">2</div>
+      <h3>选择预约类型</h3>
+      <p><strong>备稿演讲</strong>：点击 <em>Reserve a Speech</em>，选择第 1–4 号备稿演讲槽位。<br><strong>会议角色</strong>：在下方各角色卡片旁点击 <em>Take role</em>（如 Timer、Ah-Counter、Table Topics Master 等）。</p>
+      <div class="tip">💡 新会员首选非演讲角色，熟悉会议节奏。</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-badge">3</div>
+      <h3>填写姓名与项目</h3>
+      <p>输入您的英文姓名（系统会自动匹配会员通讯录头衔）。备稿演讲请选择您的 <strong>Pathway 路径与对应 Project</strong>，系统会自动联动演讲时长与项目目标要求。</p>
+      <div class="tip">💡 可选填演讲题目或给评估员的备注信息。</div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-badge">4</div>
+      <h3>提交与确认</h3>
+      <p>点击 <strong>Reserve</strong>，成功后该角色立即进入 <strong>Tentative (待确认/已占位)</strong> 状态，防止他人重复预约。VPE 审核后会在后台设为 <strong>Confirmed</strong> 并载入当月 Program Sheet。</p>
+      <div class="tip">💡 如需更改或请假，请提前联系教育副会长 (VPE)。</div>
+    </div>
+  </div>
+
+  <!-- ================= 2. BEGINNER GUIDELINES ================= -->
+  <h2 id="beginner-guide">2. 新人入门指引与推荐成长路线</h2>
+  <p class="lead">对于初入俱乐部的萌新，如何科学地开启自己的 Toastmasters 之旅？推荐遵循以下 4 阶段进阶法：</p>
+
+  <div class="guide-box">
+    <div class="guide-phases">
+      <div class="phase p1">
+        <span class="badge-tag">阶段一 · 初探例会</span>
+        <h4>从 Timer / Ah-Counter 起步</h4>
+        <p><strong>推荐角色</strong>：计时员 (Timer) 或 哼声词计数员 (Ah-Counter)。<br>
+        <strong>原因</strong>：发言时间短、心理压力小，但要求全程全神贯注聆听，最能迅速熟悉流程各环节的时间控制，并建立对口语冗余词的敏感度。</p>
+      </div>
+
+      <div class="phase p2">
+        <span class="badge-tag">阶段二 · 即兴当众表达</span>
+        <h4>勇跃参与 Table Topics</h4>
+        <p><strong>核心任务</strong>：积极举手上台参与即兴演讲环节。<br>
+        <strong>原因</strong>：无需提前准备，练习在 1–2 分钟内临场思考、提炼观点并展开结构化叙述（如 PREP 法）。官方要求在交付破冰演讲前必须至少参与一次即兴演讲！</p>
+      </div>
+
+      <div class="phase p3">
+        <span class="badge-tag">阶段三 · 首篇正式演讲</span>
+        <h4>交付 Level 1 Ice Breaker</h4>
+        <p><strong>核心任务</strong>：完成第一篇正式备稿演讲（4–6 分钟）。<br>
+        <strong>原因</strong>：向全体俱乐部成员介绍您自己、您的成长故事或梦想。不必追求完美技巧，关键在于踏出自信登台的第一步，并收获专属评估员的温暖反馈。</p>
+      </div>
+
+      <div class="phase p4">
+        <span class="badge-tag">阶段四 · 倾听与领导力</span>
+        <h4>尝试 Evaluator 与 TME</h4>
+        <p><strong>进阶角色</strong>：个评员 (Speech Evaluator)、即兴主持 (Table Topics Master)、晚会司仪 (TME)。<br>
+        <strong>原因</strong>：锻炼高阶倾听、现场调控与建设性反馈能力（CRC 汉堡包法则：赞赏-建议-鼓励），真正迈向综合沟通与领导者。</p>
+      </div>
+    </div>
+
+    <div class="guide-callout">
+      📌 <strong>关于 Mentor（导师）制度</strong>：俱乐部为每位新会员配备了一对一资深导师。在准备 Ice Breaker 演讲稿或初次承担关键角色前，可随时预约导师为您打磨讲稿与模拟走位。
+    </div>
+  </div>
+
+  <!-- ================= 3. PATHWAYS LEVELS & ROLES ================= -->
+  <h2 id="levels-reference">3. Pathways 5 个级别与角色对应要求</h2>
+  <p class="lead">Toastmasters Pathways 共有 5 个学习级别。每个级别不仅包含备稿演讲，还对会议角色履职及教育讲座（Education Series）有明确规定：</p>
 
   <div class="levels">
-    <div class="lvl"><h3><span class="num">1</span> Mastering Fundamentals</h3><div class="body">
-      <div class="cap">Meeting roles</div>
-      <ul><li>Table Topics Speaker*</li><li>Evaluator</li><li>Timer <em>or</em> Ah-Counter</li></ul>
-      <div class="cap">Education series</div><div class="none">None</div>
-    </div></div>
-    <div class="lvl"><h3><span class="num">2</span> Learning Your Style</h3><div class="body">
-      <div class="cap">Meeting roles</div>
-      <ul><li>Grammarian</li><li>Topicsmaster</li><li>Evaluator</li><li>Toastmaster, Timer, or Ah-Counter</li></ul>
-      <div class="cap">Education series</div><div class="none">None</div>
-    </div></div>
-    <div class="lvl"><h3><span class="num">3</span> Increasing Knowledge</h3><div class="body">
-      <div class="cap">Meeting roles</div>
-      <ul><li>Toastmaster</li><li>Evaluator</li><li>Topicsmaster, Table Topics Speaker, <em>or</em> Introductory Mentor**</li></ul>
-      <div class="cap">Successful Club Series (one of)</div>
-      <ul><li>Creating the Best Club Climate</li><li>Meeting Roles and Responsibilities</li><li>Keeping the Commitment</li><li>Going Beyond Our Club</li></ul>
-    </div></div>
-    <div class="lvl"><h3><span class="num">4</span> Building Skills</h3><div class="body">
-      <div class="cap">Meeting roles</div>
-      <ul><li>Toastmaster</li><li>General Evaluator</li><li>Evaluator</li><li>Table Topics Speaker, Topicsmaster, a Specialized Role,*** or repeat a role above</li></ul>
-      <div class="cap">Successful Club Series (one of)</div>
-      <ul><li>Finding New Members</li><li>Closing the Sale</li><li>How to Be a Distinguished Club</li><li>Toastmasters Educational Program</li></ul>
-      <div class="cap">Better Speaker Series (one of)</div>
-      <ul><li>Beginning Your Speech</li><li>Concluding Your Speech</li><li>Controlling Your Fear</li><li>Impromptu Speaking</li><li>Selecting Your Topic</li><li>Know Your Audience</li><li>Organizing Your Speech</li><li>Creating an Introduction</li><li>Preparation and Practice</li><li>Using Body Language</li></ul>
-    </div></div>
-    <div class="lvl"><h3><span class="num">5</span> Leadership Excellence</h3><div class="body">
-      <div class="cap">Meeting roles</div>
-      <ul><li>General Evaluator (twice)</li><li>Toastmaster (twice)</li><li>Evaluator (twice)</li><li>Table Topics Speaker, Topicsmaster, Ah-Counter, Timer, Grammarian, Club Mentor, a Specialized Role,*** or repeat a role above</li></ul>
-      <div class="cap">Successful Club Series (one of)</div>
-      <ul><li>Moments of Truth</li><li>Evaluate to Motivate</li><li>Mentoring</li></ul>
-      <div class="cap">Leadership Excellence Series (one of)</div>
-      <ul><li>Service and Leadership</li><li>The Leader as a Coach</li><li>Developing a Mission</li><li>Motivating People</li><li>Building a Team</li><li>Delegate to Empower</li><li>Resolving Conflict</li><li>Visionary Leader</li><li>Values and Leadership</li><li>Goal Setting and Planning</li><li>Giving Effective Feedback</li></ul>
-    </div></div>
+    <div class="lvl">
+      <h3><span class="num">1</span> Mastering Fundamentals</h3>
+      <div class="body">
+        <div class="cap">Meeting roles</div>
+        <ul><li>Table Topics Speaker*</li><li>Evaluator</li><li>Timer <em>or</em> Ah-Counter</li></ul>
+        <div class="cap">Education series</div><div class="none">None</div>
+      </div>
+    </div>
+
+    <div class="lvl">
+      <h3><span class="num">2</span> Learning Your Style</h3>
+      <div class="body">
+        <div class="cap">Meeting roles</div>
+        <ul><li>Grammarian</li><li>Topicsmaster</li><li>Evaluator</li><li>Toastmaster, Timer, or Ah-Counter</li></ul>
+        <div class="cap">Education series</div><div class="none">None</div>
+      </div>
+    </div>
+
+    <div class="lvl">
+      <h3><span class="num">3</span> Increasing Knowledge</h3>
+      <div class="body">
+        <div class="cap">Meeting roles</div>
+        <ul><li>Toastmaster</li><li>Evaluator</li><li>Topicsmaster, Table Topics Speaker, <em>or</em> Introductory Mentor**</li></ul>
+        <div class="cap">Successful Club Series (one of)</div>
+        <ul><li>Creating the Best Club Climate</li><li>Meeting Roles and Responsibilities</li><li>Keeping the Commitment</li><li>Going Beyond Our Club</li></ul>
+      </div>
+    </div>
+
+    <div class="lvl">
+      <h3><span class="num">4</span> Building Skills</h3>
+      <div class="body">
+        <div class="cap">Meeting roles</div>
+        <ul><li>Toastmaster</li><li>General Evaluator</li><li>Evaluator</li><li>Table Topics Speaker, Topicsmaster, a Specialized Role,*** or repeat a role above</li></ul>
+        <div class="cap">Successful Club Series (one of)</div>
+        <ul><li>Finding New Members</li><li>Closing the Sale</li><li>How to Be a Distinguished Club</li><li>Toastmasters Educational Program</li></ul>
+        <div class="cap">Better Speaker Series (one of)</div>
+        <ul><li>Beginning Your Speech</li><li>Concluding Your Speech</li><li>Controlling Your Fear</li><li>Impromptu Speaking</li><li>Selecting Your Topic</li><li>Know Your Audience</li><li>Organizing Your Speech</li><li>Creating an Introduction</li><li>Preparation and Practice</li><li>Using Body Language</li></ul>
+      </div>
+    </div>
+
+    <div class="lvl">
+      <h3><span class="num">5</span> Leadership Excellence</h3>
+      <div class="body">
+        <div class="cap">Meeting roles</div>
+        <ul><li>General Evaluator (twice)</li><li>Toastmaster (twice)</li><li>Evaluator (twice)</li><li>Table Topics Speaker, Topicsmaster, Ah-Counter, Timer, Grammarian, Club Mentor, a Specialized Role,*** or repeat a role above</li></ul>
+        <div class="cap">Successful Club Series (one of)</div>
+        <ul><li>Moments of Truth</li><li>Evaluate to Motivate</li><li>Mentoring</li></ul>
+        <div class="cap">Leadership Excellence Series (one of)</div>
+        <ul><li>Service and Leadership</li><li>The Leader as a Coach</li><li>Developing a Mission</li><li>Motivating People</li><li>Building a Team</li><li>Delegate to Empower</li><li>Resolving Conflict</li><li>Visionary Leader</li><li>Values and Leadership</li><li>Goal Setting and Planning</li><li>Giving Effective Feedback</li></ul>
+      </div>
+    </div>
   </div>
 
   <div class="notes">
@@ -92,14 +263,88 @@ h2{font-family:Georgia,serif;font-size:26px;margin:44px 0 14px}
     <p><strong>***</strong> Completing a specialized role allows you to fill a role that is specific to your club or a unique situation — e.g. an Online Moderator, or managing visual aids for another member.</p>
   </div>
 
-  <h2>Reference documents</h2>
+  <!-- ================= 4. OFFICIAL RESOURCES ================= -->
+  <h2 id="official-resources">4. 官方权威资料引用与直达库</h2>
+  <p class="lead">所有 Pathways 课程、学习资源与评估标准均由国际演讲会（Toastmasters International）官方提供，可通过以下官方渠道获取：</p>
+
   <div class="cards">
     <div class="rcard">
-      <div class="k">OFFICIAL · TOASTMASTERS</div>
-      <strong>Paths and Core Competencies</strong>
-      <p>The five core competencies, all 11 paths, levels, and electives (13 pages).</p>
-      <a href="assets/reference/8077-paths-and-core-competencies.pdf" target="_blank">Open PDF →</a>
+      <div class="k">OFFICIAL · BASE CAMP</div>
+      <strong>Base Camp 官方学习中心</strong>
+      <p>登录后即可进入个人在线课程，开启评估测试、阅读演讲项目讲义，以及标记 Level 完成。</p>
+      <a href="https://basecamp.toastmasters.org/" target="_blank" rel="noopener">进入 Base Camp 学习平台 ↗</a>
+    </div>
+
+    <div class="rcard">
+      <div class="k">OFFICIAL · PATHWAYS</div>
+      <strong>Pathways 体系与选径测评</strong>
+      <p>官方 Pathways 详细概览、11 条专业路径介绍与在线选课测评（Pathways Assessment）。</p>
+      <a href="https://www.toastmasters.org/pathways-overview" target="_blank" rel="noopener">浏览 Pathways 官方主页 ↗</a>
+    </div>
+
+    <div class="rcard">
+      <div class="k">OFFICIAL · DOCUMENT</div>
+      <strong>11 条路径与胜任力全册 (PDF)</strong>
+      <p>官方完整指南：五大核心胜任力解析、全部 11 门路径必修与选修项目列表（共 13 页）。</p>
+      <a href="assets/reference/8077-paths-and-core-competencies.pdf" target="_blank">阅读官方 PDF (本地下载) →</a>
+    </div>
+
+    <div class="rcard">
+      <div class="k">OFFICIAL · EVALUATIONS</div>
+      <strong>官方项目评估表资源库</strong>
+      <p>每个备稿演讲项目配套的标准评估表（Evaluation Resource），可在 Base Camp 对应项目的资源库中下载。</p>
+      <a href="https://www.toastmasters.org/resources/resource-library?t=Evaluation+Resource" target="_blank" rel="noopener">搜索官方评估表 ↗</a>
     </div>
   </div>
+
+  <!-- ================= 5. CLOUD COLLABORATION & MAINTENANCE ================= -->
+  <h2 id="cloud-collaboration">5. 执委会云端协作与多端维护方案</h2>
+  <p class="lead">针对您提出的“如何与 Toastmasters 主席/各执委共同编辑网站”、“Club Google Account 共同维护”以及“利用 Google AI Studio / Elaine 进行在线同步维护”的需求，以下是完整的技术与操作方案：</p>
+
+  <div class="collab-grid">
+    <div class="collab-card">
+      <span class="badge-tag">方案 A · 零代码日常协作</span>
+      <h3>🌐 Supabase 云端后台共同管理</h3>
+      <p><strong>适用场景</strong>：主席、VPE、VPM 等各执委日常排期、人员确认、生成 Program Sheet。</p>
+      <p><strong>如何使用</strong>：本系统的底层预订数据运行在 <strong>Supabase Cloud</strong>。任何执委只要在网站首页点击 <code>Admin</code> 并输入管理员密码，即可直接在手机或电脑浏览器中共同编辑、调整名单、切换 3/4 备稿槽位、生成节目单。所有修改实时云端同步，无需触碰任何代码！</p>
+      <p><strong>账号绑定</strong>：可在 Supabase 控制台中将俱乐部官方 Google Account (<code>nusatm@gmail.com</code>) 添加为项目协作成员（Team Member）。</p>
+    </div>
+
+    <div class="collab-card">
+      <span class="badge-tag">方案 B · 传统表格双向同步</span>
+      <h3>📊 Google Account &amp; Google Sheets 同步</h3>
+      <p><strong>适用场景</strong>：执委会习惯在 Google Sheet 上汇总年度执委与会员排期。</p>
+      <p><strong>如何使用</strong>：俱乐部官方 Google 账号共享的 <code>Meeting Appointment Holders</code> 表格，已被本系统接入。网站后台内置了智能比对引擎，若在线预约与 Google Sheet 存在不一致，系统会自动标红提示，并支持以最新更新日期为准进行一键同步追踪。</p>
+    </div>
+
+    <div class="collab-card">
+      <span class="badge-tag">方案 C · 代码托管共同编辑</span>
+      <h3>🐙 GitHub 仓库多执委协作</h3>
+      <p><strong>适用场景</strong>：主席或技术执委需要修改网页文字、模板样式或上传新图片。</p>
+      <p><strong>操作步骤</strong>：
+        <br>1. 当前网站源码托管在 GitHub。您只需在 GitHub 仓库中打开 <code>Settings -> Collaborators -> Add people</code>；
+        <br>2. 输入主席的个人 GitHub 账号，或俱乐部公共 GitHub/Google 邮箱，发送协作邀请；
+        <br>3. 接受后，主席可以直接在浏览器中打开 GitHub 页面点击 ✏️ 编辑任意代码并提交（Commit）；GitHub Pages 会在 1–2 分钟内<strong>自动重新构建并发布上线</strong>！
+      </p>
+    </div>
+
+    <div class="collab-card">
+      <span class="badge-tag">方案 D · AI 智能化同步维护</span>
+      <h3>🤖 Elaine / Google AI Studio 在线维护</h3>
+      <p><strong>适用场景</strong>：通过自然语言与 AI 助手共同在线迭代网站功能与维护页面。</p>
+      <p><strong>实现机制</strong>：
+        <br>• <strong>Google AI Studio</strong>：俱乐部官方 Google 账号登录 <a href="https://aistudio.google.com/" target="_blank" rel="noopener">Google AI Studio</a>，配置 System Prompt 与项目上下文。任何执委提出需求，AI Studio 即可直接生成符合本站架构的代码增量。
+        <br>• <strong>Elaine / Antigravity Agentic 协作</strong>：主席或执委使用 Elaine 时，只需克隆或授权同一个 GitHub 仓库（<code>Gukki2021/nusa-toastflow</code>），执委用自然语言下达指令（如“调整 11 月例会流程”或“更新执委会名单”），AI 自动修改并 push 到 main 分支，即刻自动生效上线。
+      </p>
+    </div>
+  </div>
+
+  <div style="margin-top:40px;text-align:center;padding:28px;background:var(--cream);border-radius:18px">
+    <h3 style="margin-bottom:8px">准备好开始您的演讲与领导力之旅了吗？</h3>
+    <p style="color:var(--muted);margin-bottom:16px">回到主控面板，查看当月空余槽位并锁定您的下一个角色！</p>
+    <a class="btn primary" href="index.html" style="font-size:15px;padding:12px 28px">返回主面板 (Go to ToastFlow) →</a>
+  </div>
 </div>
-</body></html>
+
+</body>
+</html>
