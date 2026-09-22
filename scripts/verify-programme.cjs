@@ -67,7 +67,7 @@ const base = process.env.TOASTFLOW_BASE_URL || 'http://127.0.0.1:8765/';
     await page.evaluate(()=>{adminMeeting.innerHTML='<option value="2026-10-09">October</option>';window.open=()=>null;generateSheet();});
     assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('toastflow_sheet')).assignments['Prepared Speech 1'].project),'');
     const october=await page.evaluate(()=>JSON.parse(localStorage.getItem('toastflow_sheet')));assert.equal(october.guests.length,0);assert.equal(october.meta.address,'');assert.equal(october.final,false);
-    await fresh.goto(base+'programming-sheet.html?d='+encodeURIComponent(Buffer.from(JSON.stringify(october)).toString('base64')),{waitUntil:'networkidle'});assert.ok(!(await fresh.locator('.sheet').first().innerText()).includes('Vincent CHUA'));assert.equal(await fresh.locator('.menti-qr:visible').count(),0);
+    await fresh.goto(base+'programming-sheet.html?d='+encodeURIComponent(Buffer.from(JSON.stringify(october)).toString('base64')),{waitUntil:'networkidle'});assert.ok(!(await fresh.locator('.sheet').first().innerText()).includes('Vincent CHUA'));assert.equal(await fresh.locator('.menti-qr:visible').count(),3);
     await page.evaluate(()=>{adminMeeting.innerHTML='<option value="2026-08-14">August</option>';generateSheet();});const august=await page.evaluate(()=>JSON.parse(localStorage.getItem('toastflow_sheet')));assert.equal(august.schedule.end,'9:50');assert.equal(august.guests.length,4);assert.ok(!august.guests.some(g=>g.name==='Jun TAY'));
     await sheet.screenshot({path:path.join(scratch,'september-sheet.png'),fullPage:true});
     await sheet.pdf({path:path.join(output,'NUSA-Program-2026-09-11.pdf'),format:'A4',printBackground:true,preferCSSPageSize:true});

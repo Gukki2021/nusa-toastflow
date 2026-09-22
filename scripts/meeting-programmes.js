@@ -27,8 +27,13 @@
       ]
     }
   };
+  const defaultVoting=[
+    {image:'assets/menti-prepared.png'},
+    {image:'assets/menti-tabletopics.png'},
+    {image:'assets/menti-evaluator.png'}
+  ];
   let overrides={};
-  function get(date){return JSON.parse(JSON.stringify(overrides[date]||programmes[date]||{schedule:septemberSchedule,scheduleTentative:true,guests:[]}));}
+  function get(date){return JSON.parse(JSON.stringify(overrides[date]||programmes[date]||{schedule:septemberSchedule,scheduleTentative:true,guests:[],voting:defaultVoting}));}
   function set(date,programme){overrides[date]=JSON.parse(JSON.stringify(programme));}
   function replace(rows){overrides={};rows.forEach(r=>set(r.meeting_date,r.programme));}
   return {get,set,replace};

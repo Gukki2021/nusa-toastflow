@@ -372,25 +372,26 @@ function build(){
     }
   }
 
-  // Voting QR codes & URLs (Page 2)
-  const votingList=data.voting||meetingProg.voting||[];
+  // Voting QR codes & URLs (Page 2) — permanent Mentimeter QR codes
+  const defaultVoting=[
+    {image:'assets/menti-prepared.png'},
+    {image:'assets/menti-tabletopics.png'},
+    {image:'assets/menti-evaluator.png'}
+  ];
   const qrIds=['mentiPrepared','mentiTopics','mentiEvaluator'];
   const urlIds=['mentiPreparedUrl','mentiTopicsUrl','mentiEvaluatorUrl'];
+  const rawVoting=data.voting||meetingProg.voting||defaultVoting;
+  const votingList=(Array.isArray(rawVoting)&&rawVoting.length)?rawVoting:defaultVoting;
   qrIds.forEach((id,i)=>{
     const im=document.getElementById(id);
     const urlDiv=document.getElementById(urlIds[i]);
-    const v=votingList[i]||{};
-    const src=safeURL(v.image);
+    const v=votingList[i]||defaultVoting[i]||{};
+    const src=safeURL(v.image)||defaultVoting[i].image;
     const url=safeURL(v.url);
     if(im){
-      if(src){
-        im.src=src;
-        im.hidden=false;
-        im.style.display='';
-      } else {
-        im.hidden=true;
-        im.style.display='none';
-      }
+      im.src=src;
+      im.hidden=false;
+      im.style.display='';
     }
     if(urlDiv){
       if(url){
