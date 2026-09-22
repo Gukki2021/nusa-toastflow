@@ -16,7 +16,8 @@
 *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--paper);color:var(--ink)}
 button,input,select,textarea{font:inherit}button{cursor:pointer}
 .top{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px 6vw;background:rgba(255,253,250,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:center;gap:12px}.mark{flex:0 0 42px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--red);color:#fff;font-weight:800}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-logo{flex:0 0 42px;width:42px;height:42px;border-radius:50%;object-fit:cover;border:1px solid rgba(0,0,0,.08);box-shadow:0 2px 6px rgba(0,0,0,.06)}
 .brand strong,.brand small{display:block}.brand small{color:var(--muted);font-size:11px}
 .btn{border:0;border-radius:999px;padding:11px 18px;font-weight:750}.primary{background:var(--red);color:#fff}.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
 .hero{padding:78px 7vw 54px;background:radial-gradient(circle at 80% 15%,rgba(215,173,89,.18),transparent 28%),linear-gradient(135deg,#fbf7ef,#fffdfa)}
@@ -69,13 +70,49 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 .tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 7px;border-radius:999px;background:var(--cream);color:var(--navy);margin-left:6px}
 .role-select{width:100%;max-width:200px;padding:7px 8px;margin:0;font-size:12px;border:1px solid var(--line);border-radius:8px;background:#fff}
 .editable{cursor:text;padding:3px 5px;border-radius:6px;min-height:22px}.editable:hover{background:var(--cream);outline:1px dashed var(--line)}
-@media(max-width:700px){.admin-summary{grid-template-columns:1fr}.admin-table{display:block;overflow:auto}}
-@media(max-width:850px){.grid{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}}
-@media(max-width:600px){.top{padding:13px 16px}.top .primary{display:none}.hero,.section{padding-left:20px;padding-right:20px}.meeting-head{flex-direction:column}.brand strong{font-size:12px}}
+@media(max-width:850px){
+  .grid{grid-template-columns:1fr}
+  .section-head{align-items:flex-start;flex-direction:column;gap:16px}
+}
+@media(max-width:700px){
+  .admin-summary{grid-template-columns:1fr}
+  .admin-table{display:block;overflow:auto}
+  .admin-tools{gap:6px}
+  .admin-tools .btn{font-size:12px;padding:8px 12px}
+}
+@media(max-width:640px){
+  .top{padding:10px 14px;gap:8px}
+  .brand{gap:8px}
+  .brand-logo{width:36px;height:36px;flex:0 0 36px}
+  .brand strong{font-size:12.5px;line-height:1.2}
+  .brand small{font-size:10px}
+  .top-actions{display:flex;gap:6px;align-items:center}
+  .top .btn{padding:7px 11px;font-size:12px}
+  .hero,.section{padding-left:16px;padding-right:16px;padding-top:40px;padding-bottom:40px}
+  h1{font-size:36px !important;margin:12px 0}
+  .hero p{font-size:15.5px}
+  .actions{display:flex;flex-direction:column;width:100%;gap:8px}
+  .actions .btn{width:100%;justify-content:center;text-align:center;padding:12px 18px;font-size:14.5px}
+  .meeting-head{flex-direction:column;gap:14px;padding:18px 16px}
+  .date strong{font-size:42px}
+  .meeting-head h3{font-size:21px}
+  .body{padding:18px 16px}
+  .slot{padding:12px;align-items:flex-start}
+  .slot-actions{gap:4px}
+  .mini{padding:6px 9px;font-size:11.5px}
+  .role{padding:12px 14px;flex-direction:column;align-items:stretch;gap:10px}
+  .role button{align-self:flex-start;width:100%;padding:10px;text-align:center}
+  .month-tabs{gap:6px;width:100%}
+  .month-tabs button{padding:8px 12px;font-size:13px}
+  dialog{width:calc(100% - 16px);border-radius:18px;max-height:92vh;overflow-y:auto}
+  dialog form{padding:18px 16px}
+  dialog h2{font-size:26px !important}
+  input,select,textarea{font-size:16px} /* Prevents iOS auto-zoom */
+}
 </style>
 </head>
 <body>
-<header class="top"><div class="brand"><div class="mark">TM</div><div><strong>ToastFlow · NUS Alumni Toastmasters</strong><small>Club meeting &amp; role planner</small></div></div><div style="display:flex;gap:8px"><a class="btn ghost" href="reference.html" style="text-decoration:none">Pathways &amp; Guide</a><button class="btn ghost" onclick="openAdmin()">Admin</button><button class="btn primary" onclick="openBooking()">Reserve a Slot</button></div></header>
+<header class="top"><div class="brand"><img class="brand-logo" src="assets/club-logo.png" alt="NUS Alumni Toastmasters Club"><div><strong>ToastFlow · NUS Alumni Toastmasters</strong><small>Club meeting &amp; role planner</small></div></div><div class="top-actions" style="display:flex;gap:8px"><a class="btn ghost" href="reference.html" style="text-decoration:none">Pathways &amp; Guide</a><button class="btn ghost" onclick="openAdmin()">Admin</button><button class="btn primary" onclick="openBooking()">Reserve a Slot</button></div></header>
 
 <section class="hero"><div class="eyebrow">2026 PROGRAM SHEET</div><h1>Choose your date.<br><em>Step up and speak.</em></h1><p>Our club meets on the second Friday of every month. Members can reserve a Prepared Speech or take an open meeting role without creating an account — with smart, fair role suggestions working behind the scenes.</p><div class="actions" style="margin-top:8px"><button class="btn primary" onclick="openBooking()">Reserve a Speech or Role</button><button class="btn ghost" onclick="shareRegister()">Share to a friend to register →</button></div><div class="notice">📅 Upcoming: 11 Sep · 9 Oct · 13 Nov · 11 Dec 2026</div></section>
 
