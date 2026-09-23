@@ -50,7 +50,7 @@ h1,h2{font-family:Georgia,serif;line-height:1.05}h1{font-size:clamp(46px,7vw,82p
 .mini{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:750;color:var(--ink)}.mini:hover{background:var(--cream)}.mini:disabled{opacity:.4}
 .footer-note{padding:16px 26px;background:var(--cream);font-size:12px;color:var(--muted)}
 dialog{border:0;border-radius:24px;padding:0;width:min(520px,calc(100% - 24px));box-shadow:0 24px 70px rgba(0,0,0,.25)}
-dialog#adminModal,dialog#visitingModal{width:min(960px,calc(100% - 24px))}
+dialog#adminModal,dialog#visitingModal{width:min(1140px,calc(100% - 24px))}
 dialog::backdrop{background:rgba(10,18,35,.7)}form{padding:28px}.close{float:right;border:0;background:none;font-size:26px}
 label{display:block;font-size:12px;font-weight:800;margin-top:14px}
 input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
@@ -69,6 +69,9 @@ input,select,textarea{width:100%;margin-top:7px;padding:12px;border:1px solid va
 .rec .sc{font-size:10px;color:var(--gold);font-weight:800}
 .tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.05em;padding:2px 7px;border-radius:999px;background:var(--cream);color:var(--navy);margin-left:6px}
 .role-select{width:100%;max-width:200px;padding:7px 8px;margin:0;font-size:12px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.title-input{width:100%;min-width:130px;max-width:220px;padding:6px 9px;margin:0;font-size:12px;border:1px solid var(--line);border-radius:8px;background:#fff;transition:border-color .15s,box-shadow .15s}
+.title-input:focus{border-color:var(--navy);box-shadow:0 0 0 2px rgba(24,36,63,.1);outline:none;background:#fffdf6}
+.title-input::placeholder{color:#a0a6b5;font-style:italic}
 .editable{cursor:text;padding:3px 5px;border-radius:6px;min-height:22px}.editable:hover{background:var(--cream);outline:1px dashed var(--line)}
 @media(max-width:850px){
   .grid{grid-template-columns:1fr}
@@ -397,8 +400,20 @@ function isTentative(v){return /\?|(^|[^a-z])(tbc|tbd)([^a-z]|$)|one more|to be 
 // a slot counts as filled only if it has a real name and isn't left open/tentative
 function slotFilled(e){return !!(e&&e.name&&!e.open)}
 // notes are stored as "Pathways project — optional title"
-function projectOf(note){return String(note||'').split(' — ')[0].trim()}
-function titleOf(note){return String(note||'').split(' — ').slice(1).join(' — ').trim()}
+function projectOf(note){
+  const str=String(note||'').trim();
+  if(!str)return '';
+  if(str.includes(' — '))return str.split(' — ')[0].trim();
+  if(looksLikeProject(str)||pathFromNote(str))return str;
+  return '';
+}
+function titleOf(note){
+  const str=String(note||'').trim();
+  if(!str)return '';
+  if(str.includes(' — '))return str.split(' — ').slice(1).join(' — ').trim();
+  if(!pathFromNote(str)&&!looksLikeProject(str)&&!isHold('',str)&&str!=='[SHEET-SYNC]')return str;
+  return '';
+}
 // does this text look like a real Pathways project (vs a speech title)?
 function looksLikeProject(s){return /\bL[1-5]\b|\bP[1-6]\b|ice breaker|vocal variety|body language|communication style|leadership style|mentoring|humou?r|storytelling|writing a speech|active listening|reflect on your path|evaluation and feedback/i.test(String(s||''))}
 // what to show in the admin Pathways column: the stored project if it looks like one,
@@ -799,12 +814,12 @@ function renderAdmin(){
     </div>
   `:'';
 
-  adminTable.innerHTML=discBanner+`<table class="admin-table"><thead><tr><th style="width:16%">Role / Slot</th><th style="width:24%">Member <span class="why">(pick / dbl-click)</span></th><th style="width:15%">Pathway</th><th style="width:20%">Project</th><th style="width:9%">Status</th><th style="width:16%">Exco actions</th></tr></thead><tbody>${rows.map(r=>{
+  adminTable.innerHTML=discBanner+`<table class="admin-table"><thead><tr><th style="width:14%">Role / Slot</th><th style="width:19%">Member <span class="why">(pick / dbl-click)</span></th><th style="width:13%">Pathway</th><th style="width:16%">Project</th><th style="width:18%">Speech Title / Remark</th><th style="width:8%">Status</th><th style="width:12%">Exco actions</th></tr></thead><tbody>${rows.map(r=>{
     const rq=JSON.stringify(r.role).replace(/"/g,'&quot;');
     if(r.omitted){
       return `<tr style="background:#faf8f5;opacity:.65">
         <td><span style="text-decoration:line-through;color:var(--muted)">${escapeHtml(r.role)}</span></td>
-        <td colspan="4" style="font-size:12px;color:var(--muted);font-style:italic">Omitted for this meeting (3 speech schedule active)</td>
+        <td colspan="5" style="font-size:12px;color:var(--muted);font-style:italic">Omitted for this meeting (3 speech schedule active)</td>
         <td><button type="button" class="mini" onclick="setSpeechSlotsCount('${date}', 4)">➕ Enable</button></td>
       </tr>`;
     }
@@ -824,18 +839,23 @@ function renderAdmin(){
     `:(r.conflict?`<div class="why" style="color:var(--red)">⚠ sheet had ${escapeHtml(r.conflict)} — online kept</div>`:'');
     const nameLine=`<div class="editable" ondblclick="inlineEdit(this,${rq},'name')" title="Double-click to edit name"><b>${r.member_name?escapeHtml(r.member_name):'<span class="why">— none —</span>'}</b> ${srcTag}</div>`;
     const memberCell=`<div>${nameLine}${discBox}${roleSelect(r.role,'',suggested)}</div>`;
-    let pathCell='<span class="why">—</span>',projCell='<span class="why">—</span>';
+    let pathCell='<span class="why">—</span>',projCell='<span class="why">—</span>',titleCell='';
     if(isSpeech){
       const curPath=ROW_PATH[r.role]||pathFromNote(r.note)||(r.note?'':dbPathFor(r.member_name));
       const curProj=projValueFromNote(r.note,curPath);
       pathCell=`<select class="role-select" data-role="${escapeHtml(r.role)}" onchange="adminSetPath(this.dataset.role,this.value)"><option value="">— path —</option>${pathList().map(p=>`<option value="${escapeHtml(p)}"${p===curPath?' selected':''}>${escapeHtml(p.replace('The Communication Series: ','Comm.Series: '))}</option>`).join('')}</select>`;
       projCell=`<select class="role-select" data-role="${escapeHtml(r.role)}" onchange="adminAssignProject(this.dataset.role,this.value)">${projectOptions(curPath,curProj)}</select>`;
+      const curTitle=titleOf(r.note);
+      titleCell=`<input class="title-input" data-role="${escapeHtml(r.role)}" value="${escapeHtml(curTitle)}" placeholder="Add speech title…" onchange="adminSetTitle(this.dataset.role,this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">`;
+    }else{
+      const curRemark=(r.note&&!r.hold&&r.note!=='[SHEET-SYNC]'&&r.note!=='[SOFTBLOCK]'&&r.note!=='[EXTERNAL]')?r.note:'';
+      titleCell=`<input class="title-input" data-role="${escapeHtml(r.role)}" value="${escapeHtml(curRemark)}" placeholder="Remark (optional)…" onchange="adminSetRemark(this.dataset.role,this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">`;
     }
     const status=r.member_name?(r.confirmed?'<b class="ok">Confirmed</b>':'<b class="gap">Tentative</b>'):'<b class="gap">Open</b>';
     const omitOpt=(r.role==='Prepared Speech 4')?`<option value="omit_speech_4">Omit Speech 4 (3 speeches)</option>`:'';
     const actionSel=`<select class="role-select" data-role="${escapeHtml(r.role)}" onchange="adminAction(this.dataset.role,this.value);this.selectedIndex=0"><option value="">— action… —</option><option value="confirm">Confirm (lock)</option><option value="amend">Amend (unlock)</option><option value="remove">Remove / clear</option>${omitOpt}</select>`;
     const roleCell=`${escapeHtml(r.role)}${isSpeech?`<div class="slot-actions" style="margin-top:6px"><button class="mini" title="Move earlier" onclick="moveSpeech(${rq},-1)">↑</button><button class="mini" title="Move later" onclick="moveSpeech(${rq},1)">↓</button></div>`:''}`;
-    return `<tr><td>${roleCell}</td><td>${memberCell}</td><td>${pathCell}</td><td>${projCell}</td><td>${status}</td><td>${actionSel}</td></tr>`;
+    return `<tr><td>${roleCell}</td><td>${memberCell}</td><td>${pathCell}</td><td>${projCell}</td><td>${titleCell}</td><td>${status}</td><td>${actionSel}</td></tr>`;
   }).join('')}</tbody></table>`;
 }
 // Reorder prepared speeches (e.g. lower-level speakers first) by swapping two slots' holders.
@@ -919,8 +939,28 @@ function projValueFromNote(note,path){let s=(note||'').split(' — ')[0].trim();
 function adminSetPath(role,path){ROW_PATH[role]=path;renderAdmin();}
 function adminAssignProject(role,projVal){if(!projVal)return;const date=currentAdminDate();const cur=mergedFor(date)[role]||{};
   if(!slotFilled(cur)){show('Assign a speaker first, then the project.');renderAdmin();return;}
-  const path=ROW_PATH[role]||pathFromNote(cur.note)||dbPathFor(cur.name);const note=[path,projVal].filter(Boolean).join(' ');
+  const path=ROW_PATH[role]||pathFromNote(cur.note)||dbPathFor(cur.name);
+  const projPart=[path,projVal].filter(Boolean).join(' ');
+  const title=titleOf(cur.note);
+  const note=[projPart,title].filter(Boolean).join(' — ');
   adminRpc('admin_set_holder',{p_meeting_date:date,p_reservation_type:role,p_member_name:cur.name,p_note:note},`${role}: project set.`);}
+function adminSetTitle(role,titleVal){
+  const date=currentAdminDate();const cur=mergedFor(date)[role]||{};
+  if(!slotFilled(cur)){show('Assign a speaker first before adding speech title.');renderAdmin();return;}
+  const cleanTitle=(titleVal||'').trim();
+  const projPart=projectOf(cur.note);
+  const note=[projPart,cleanTitle].filter(Boolean).join(' — ');
+  if(note===(cur.note||''))return;
+  adminRpc('admin_set_holder',{p_meeting_date:date,p_reservation_type:role,p_member_name:cur.name,p_note:note},`${role}: speech title updated.`);
+}
+function adminSetRemark(role,remarkVal){
+  const date=currentAdminDate();const cur=mergedFor(date)[role]||{};
+  const clean=(remarkVal||'').trim();
+  if(!slotFilled(cur)&&!clean)return;
+  if(clean===(cur.note||''))return;
+  const name=cur.name||'TBC';
+  adminRpc('admin_set_holder',{p_meeting_date:date,p_reservation_type:role,p_member_name:name,p_note:clean},`${role}: remark updated.`);
+}
 function adminAction(role,act){if(!act)return;const date=currentAdminDate();
   if(act==='omit_speech_4'){setSpeechSlotsCount(date,3);return;}
   if(act==='enable_speech_4'){setSpeechSlotsCount(date,4);return;}
@@ -948,7 +988,8 @@ function generateSheet(){
     if(!slotFilled(x))continue;
     const a={name:ToastFlowPeople.canonical(x.name),note:x.note||'',confirmed:x.confirmed===true};
     if(/^Prepared Speech/.test(r)){                       // build the FULL Pathways project name
-      const parts=(x.note||'').split(' — ');let projRaw=(parts[0]||'').trim();const title=parts.slice(1).join(' — ').trim();
+      const projRaw=projectOf(x.note);
+      const title=titleOf(x.note);
       const path=pathFromNote(projRaw); // Only this meeting's explicit project; no historical inference.
       const existing=pathFromNote(projRaw);                              // does the note already name a path?
       let full = existing ? projRaw : (path&&projRaw ? path+' '+projRaw : (projRaw||path));

@@ -455,7 +455,7 @@ function build(){
   });
   const timing=s=>ToastFlowProgramme.lookup({...ToastFlowProgramme.objectives,...(data.objectives||{})},s.full)?.timing||'';
   const spItems=speeches.map(s=>({
-    proj:s.full?esc(s.full)+(timing(s)?' ('+esc(timing(s))+')':' <span class="open">(timing TBC)</span>')+(s.title?` <span style="color:#666">— ${esc(s.title)}</span>`:''):'<span class="open">Pathways project —</span>',
+    proj:s.full?esc(s.full)+(timing(s)?' ('+esc(timing(s))+')':' <span class="open">(timing TBC)</span>')+(s.title?` <span style="color:#666">— ${esc(s.title)}</span>`:''):(s.title?`<span style="color:#222;font-style:italic">“${esc(s.title)}”</span> <span class="open">(Project TBC)</span>`:'<span class="open">Pathways project —</span>'),
     who:holder('Prepared Speech '+(speeches.indexOf(s)+1))
   }));
   const evItems=speeches.map((s,i)=>({
@@ -519,10 +519,12 @@ function build(){
   const OBJi=indexBy(OBJ), EVALi=indexBy(EVAL);
   const look=(full,raw,byNorm)=>{const bp=bareProject(full);if(!bp)return null;
     return raw[bp]||byNorm[norm(bp)]||null;};
-  const objRows=speeches.filter(s=>s.name&&s.full).map(s=>{
+  const objRows=speeches.filter(s=>s.name&&(s.full||s.title)).map(s=>{
     const o=look(s.full,OBJ,OBJi)||{}, f=look(s.full,EVAL,EVALi);
+    const titleHtml=s.title?`<div style="font-style:italic;color:#444;font-size:12px;font-weight:normal;margin-top:2px">“${esc(s.title)}”</div>`:'';
     const link=f&&f.url?`<div class="evallink"><a href="${esc(f.url)}" target="_blank" rel="noopener">⬇ Evaluation form</a></div>`:o.source?`<div class="evallink"><a href="${esc(o.source)}" target="_blank" rel="noopener">Project reference</a></div>`:'';
-    return `<tr><td class="c1">${esc(s.full)}${link}</td><td class="c2">${o.objective?esc(o.objective):'Full project objectives to be confirmed'}</td><td class="c3">${o.timing?esc(o.timing):'TBC'}</td></tr>`});
+    const projLabel=s.full?esc(s.full):'<span class="open">Pathways Project TBC</span>';
+    return `<tr><td class="c1">${projLabel}${titleHtml}${link}</td><td class="c2">${o.objective?esc(o.objective):'Full project objectives to be confirmed'}</td><td class="c3">${o.timing?esc(o.timing):'TBC'}</td></tr>`});
   document.getElementById('objectives').innerHTML=objRows.length?objRows.join('')
     :'<tr><td class="c1 open">Prepared-speech projects</td><td class="c2 open">Objectives appear here once speeches list their Pathways projects.</td><td class="c3"></td></tr>';
 }
